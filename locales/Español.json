@@ -20,7 +20,10 @@
       "launch_game": "Lanzar Juego",
       "exit": "Salir"
     },
-    "language": "Idioma"
+    "language": "Idioma",
+    "theme": "Tema",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro"
   },
   "ui": {
     "disabled_mods": "Mods Deshabilitados",
@@ -62,7 +65,10 @@
     "launch_error": "Error",
     "launch_failed": "Error al lanzar Mewgenics:\n{error}",
     "permission_denied_modlist": "Permiso denegado: No se puede escribir en modlist.txt.\nAsegúrate de que la carpeta tenga permisos de escritura.",
-    "save_error": "Error al guardar la lista de mods:\n{error}"
+    "save_error": "Error al guardar la lista de mods:\n{error}",
+    "success": "Éxito",
+    "unpack_complete": "¡Desempaquetado completo!",
+    "repack_complete": "¡Reempaquetado completo!"
   },
   "progress": {
     "unpacking": "Desempaquetando Recursos",

@@ -21,7 +21,10 @@
             "copy_launch_options": "复制启动选项（用于 Steam）",
             "exit": "退出"
         },
-        "language": "语言"
+        "language": "语言",
+        "theme": "主题",
+        "theme_light": "浅色",
+        "theme_dark": "深色"
     },
     "ui": {
         "disabled_mods": "已禁用的模组",
@@ -71,7 +74,10 @@
         "launch_options_title": "Steam 启动选项",
         "launch_options_instructions": "复制这些启动选项并粘贴到 Steam 中：\n右键点击游戏 → 属性 → 启动选项\n\n注意：在 Linux/Proton/Steam Deck 上，将模组保存在游戏目录中以获得最佳兼容性。",
         "copy_to_clipboard": "复制到剪贴板",
-        "close": "关闭"
+        "close": "关闭",
+        "success": "成功",
+        "unpack_complete": "解包完成！",
+        "repack_complete": "重新打包完成！"
     },
     "progress": {
         "unpacking": "解包资源中",

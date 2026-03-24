@@ -6,6 +6,7 @@ from app.core.models.mod_list import ModList
 from app.core.services.mod_service import ModService
 from app.core.services.config_service import ConfigService
 from app.core.services.game_launcher_service import GameLauncherService
+from app.core.services.dll_injection_service import DllInjectionService
 from app.core.services.translation_service import TranslationService
 from app.core.services.pack_service import PackService
 from app.core.services.modlist_io_service import ModListIOService
@@ -27,12 +28,14 @@ class MainController:
         translation_service: TranslationService,
         pack_service: PackService,
         modlist_io_service: ModListIOService,
-        theme_service: ThemeService
+        theme_service: ThemeService,
+        dll_injection_service: DllInjectionService = None
     ):
         self.root = root
         self.config_service = config_service
         self.mod_service = mod_service
         self.launcher_service = launcher_service
+        self.dll_injection_service = dll_injection_service or DllInjectionService()
         self.translation_service = translation_service
         self.pack_service = pack_service
         self.modlist_io_service = modlist_io_service
@@ -96,6 +99,7 @@ class MainController:
             on_open_game=lambda: open_file_or_folder(self.config.game_install_dir),
             on_launch=self._launch_game,
             on_copy_launch=self._copy_launch_options,
+            on_cleanup_dlls=self._cleanup_dll_injection,
             on_exit=self.root.quit
         )
         
@@ -203,8 +207,9 @@ class MainController:
             _, name = selection
             mod = self.mod_list.get_mod_by_name(name)
             if mod:
+                has_dlls = self.dll_injection_service.mod_has_dlls(mod)
                 self.window.preview_panel.update_preview(
-                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url
+                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url, has_dlls
                 )
     
     def _update_preview_from_enabled(self):
@@ -213,15 +218,46 @@ class MainController:
             _, name = selection
             mod = self.mod_list.get_mod_by_name(name)
             if mod:
+                has_dlls = self.dll_injection_service.mod_has_dlls(mod)
                 self.window.preview_panel.update_preview(
-                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url
+                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url, has_dlls
                 )
     
     def _enable_all(self):
+        # Check for DLL mods before enabling all
+        self._check_dll_injection_prompt()
         self.mod_list.enable_all()
     
     def _disable_all(self):
         self.mod_list.disable_all()
+    
+    def _enable_mod_with_dll_check(self, mod_name: str):
+        """Enable a mod and check if DLL injection prompt should be shown."""
+        mod = self.mod_list.get_mod_by_name(mod_name)
+        if mod:
+            # Check if this mod has DLLs and prompt hasn't been shown
+            if self.dll_injection_service.mod_has_dlls(mod):
+                self._check_dll_injection_prompt()
+        
+        # Enable the mod
+        self.mod_list.enable_mod(mod_name)
+    
+    def _check_dll_injection_prompt(self):
+        """Check if DLL injection prompt should be shown and show it."""
+        if not self.config.dll_injection_prompted:
+            result = messagebox.askyesno(
+                self.translation_service.get("messages.dll_injection_title", "Enable DLL Mod Injection?"),
+                self.translation_service.get(
+                    "messages.dll_injection_prompt",
+                    "This mod contains DLL files. Would you like to enable DLL injection?\n\n"
+                    "DLL injection allows mods to modify game behavior at runtime. "
+                    "You can change this setting later in Settings > Launch Options."
+                )
+            )
+            
+            self.config.dll_injection_enabled = result
+            self.config.dll_injection_prompted = True
+            self.config_service.save_config(self.config)
     
     def _swap_selected(self):
         disabled_selection = self.window.disabled_list_widget.get_selection()
@@ -229,7 +265,7 @@ class MainController:
         
         if disabled_selection:
             _, name = disabled_selection
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
         elif enabled_selection:
             _, name = enabled_selection
             self.mod_list.disable_mod(name)
@@ -238,7 +274,7 @@ class MainController:
         selection = self.window.disabled_list_widget.get_selection()
         if selection:
             _, name = selection
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
     
     def _toggle_enabled(self):
         selection = self.window.enabled_list_widget.get_selection()
@@ -251,7 +287,7 @@ class MainController:
         index = widget.nearest(event.y)
         if index >= 0:
             name = widget.get(index)
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
     
     def _disable_selected_enabled(self, event):
         widget = event.widget
@@ -364,7 +400,7 @@ class MainController:
             if source_list == self.window.enabled_list_widget.listbox:
                 self.mod_list.disable_mod(item)
             else:
-                self.mod_list.enable_mod(item)
+                self._enable_mod_with_dll_check(item)
             moved_between_lists = True
         
         if not moved_between_lists and self.drag_data["changed"]:
@@ -389,7 +425,7 @@ class MainController:
         menu = tk.Menu(self.root, tearoff=0)
         menu.add_command(
             label=self.translation_service.get("context_menu.enable"),
-            command=lambda: self.mod_list.enable_mod(name)
+            command=lambda: self._enable_mod_with_dll_check(name)
         )
         menu.post(event.x_root, event.y_root)
     
@@ -578,6 +614,24 @@ class MainController:
                 self.mod_list
             )
             
+            # If DLL injection is enabled and we're running from an .exe,
+            # copy Mewtator.exe to the same directory as the .bat file
+            if self.config.dll_injection_enabled and self.dll_injection_service.has_dll_mods(self.mod_list):
+                import sys
+                import shutil
+                
+                if sys.executable.endswith(".exe"):
+                    bat_dir = os.path.dirname(filepath)
+                    mewtator_exe_dest = os.path.join(bat_dir, "Mewtator.exe")
+                    
+                    # Only copy if it doesn't already exist or if it's different
+                    if not os.path.exists(mewtator_exe_dest) or os.path.abspath(sys.executable) != os.path.abspath(mewtator_exe_dest):
+                        try:
+                            shutil.copy2(sys.executable, mewtator_exe_dest)
+                        except Exception as copy_error:
+                            # Non-critical error - the .bat file can still use absolute path
+                            pass
+            
             info_dialog = Toplevel(parent_dialog or self.root)
             info_dialog.title(self.translation_service.get("messages.export_bat_success_title", "Export Successful"))
             info_dialog.geometry("650x400")
@@ -648,6 +702,65 @@ class MainController:
                 f"Failed to export launch script:\n{str(e)}"
             )
     
+    def _cleanup_dll_injection(self):
+        """Clean up DLL injection files from game directory."""
+        if not self.config.game_install_dir:
+            messagebox.showwarning(
+                self.translation_service.get("messages.warning", "Warning"),
+                self.translation_service.get("messages.game_dir_not_set", "Game directory is not configured.")
+            )
+            return
+        
+        # Check if DLL injection is currently deployed
+        if not self.dll_injection_service.is_dll_injection_active(self.config.game_install_dir):
+            messagebox.showinfo(
+                self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+                self.translation_service.get(
+                    "messages.dll_cleanup_nothing",
+                    "No DLL injection files found in the game directory."
+                )
+            )
+            return
+        
+        # Confirm cleanup
+        result = messagebox.askyesno(
+            self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+            self.translation_service.get(
+                "messages.dll_cleanup_confirm",
+                "This will remove all DLL injection files from the game directory.\n\n"
+                "The game must not be running. Continue?"
+            )
+        )
+        
+        if not result:
+            return
+        
+        # Perform cleanup
+        try:
+            success = self.dll_injection_service.cleanup_dll_injection(self.config.game_install_dir)
+            
+            if success:
+                messagebox.showinfo(
+                    self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+                    self.translation_service.get(
+                        "messages.dll_cleanup_success",
+                        "DLL injection files have been successfully removed."
+                    )
+                )
+            else:
+                messagebox.showwarning(
+                    self.translation_service.get("messages.warning", "Warning"),
+                    self.translation_service.get(
+                        "messages.dll_cleanup_failed",
+                        "Failed to clean up some DLL injection files. They may be in use by the game."
+                    )
+                )
+        except Exception as e:
+            messagebox.showerror(
+                self.translation_service.get("messages.error", "Error"),
+                f"Error during DLL cleanup:\n{str(e)}"
+            )
+    
     def _auto_sort(self):
         """Auto-sort enabled mods alphabetically and by requirements."""
         if not self.mod_list.enabled_mods:
@@ -686,10 +799,16 @@ class MainController:
             
             self.pack_service.unpack(self.config.game_install_dir, output_dir, progress)
             pw.close()
-            messagebox.showinfo("Success", "Unpacking complete!")
+            messagebox.showinfo(
+                self.translation_service.get("messages.success"),
+                self.translation_service.get("messages.unpack_complete")
+            )
         except Exception as e:
             pw.close()
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror(
+                self.translation_service.get("messages.error"),
+                str(e)
+            )
     
     def _repack(self):
         source_dir = os.path.join(self.config.mod_folder, "_unpacked")
@@ -703,10 +822,16 @@ class MainController:
             
             self.pack_service.repack(source_dir, gpak_output, progress)
             pw.close()
-            messagebox.showinfo("Success", "Repacking complete!")
+            messagebox.showinfo(
+                self.translation_service.get("messages.success"),
+                self.translation_service.get("messages.repack_complete")
+            )
         except Exception as e:
             pw.close()
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror(
+                self.translation_service.get("messages.error"),
+                str(e)
+            )
     
     def _import_modlist(self):
         with self.theme_service.file_dialog_safe_theme():

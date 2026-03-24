@@ -21,7 +21,10 @@
             "copy_launch_options": "Meow Meow Meow (meow Meow)",
             "exit": "Meow"
         },
-        "language": "Meow"
+        "language": "Meow",
+        "theme": "Meow",
+        "theme_light": "Meow",
+        "theme_dark": "Meow"
     },
     "ui": {
         "disabled_mods": "Meow Meow",
@@ -71,7 +74,10 @@
         "launch_options_title": "Meow Meow Meow",
         "launch_options_instructions": "Meow meow meow meow meow meow meow meow Meow:\nMeow-meow meow → Meow → Meow Meow\n\nMeow: Meow Meow/Meow/Meow Meow, meow meow meow meow meow meow meow meow meow.",
         "copy_to_clipboard": "Meow meow Meow",
-        "close": "Meow"
+        "close": "Meow",
+        "success": "Meow!",
+        "unpack_complete": "Meow meow!",
+        "repack_complete": "Meow meow!"
     },
     "progress": {
         "unpacking": "Meow Meow",

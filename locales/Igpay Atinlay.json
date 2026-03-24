@@ -21,7 +21,10 @@
             "copy_launch_options": "Opy-Cay Aunch-Lay Options-ay (or-fay Eam-Stay)",
             "exit": "Exit-ay"
         },
-        "language": "Anguage-Lay"
+        "language": "Anguage-Lay",
+        "theme": "Eme-Thay",
+        "theme_light": "Ight-Lay",
+        "theme_dark": "Ark-Day"
     },
     "ui": {
         "disabled_mods": "Isabled-Day Ods-May",
@@ -71,7 +74,10 @@
         "launch_options_title": "Eam-Stay Aunch-Lay Options-ay",
         "launch_options_instructions": "Opy-Cay ese-thay aunch-lay options-ay and-ay aste-pay em-thay in-ay Eam-Stay:\nIght-Ray-ick-clay ame-gay → Operties-Pray → Aunch-Lay Options-ay\n\nOte-Nay: On-ay Inux-Lay/Oton-Pray/Eam-Stay Eck-Day, eep-kay ods-may in-ay e-thay ame-gay irectory-day or-fay est-bay ompatibility-cay.",
         "copy_to_clipboard": "Opy-Cay o-tay Ipboard-Clay",
-        "close": "Ose-Clay"
+        "close": "Ose-Clay",
+        "success": "Uccess-Say!",
+        "unpack_complete": "Unpacking-ay omplete-cay!",
+        "repack_complete": "Epacking-Ray omplete-cay!"
     },
     "progress": {
         "unpacking": "Unpacking-ay Esources-Ray",

@@ -21,7 +21,10 @@
             "copy_launch_options": "Copia Opzioni di Avvio (per Steam)",
             "exit": "Esci"
         },
-        "language": "Lingua"
+        "language": "Lingua",
+        "theme": "Tema",
+        "theme_light": "Chiaro",
+        "theme_dark": "Scuro"
     },
     "ui": {
         "disabled_mods": "Mod Disabilitati",
@@ -71,7 +74,10 @@
         "launch_options_title": "Opzioni di Avvio Steam",
         "launch_options_instructions": "Copia queste opzioni di avvio e incollale in Steam:\nClic destro sul gioco → Proprietà → Opzioni di Avvio\n\nNota: Su Linux/Proton/Steam Deck, mantieni le mod nella directory del gioco per una migliore compatibilità.",
         "copy_to_clipboard": "Copia negli Appunti",
-        "close": "Chiudi"
+        "close": "Chiudi",
+        "success": "Successo",
+        "unpack_complete": "Estrazione completata!",
+        "repack_complete": "Ricompressione completata!"
     },
     "progress": {
         "unpacking": "Estrazione Risorse",

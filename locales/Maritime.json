@@ -21,7 +21,10 @@
             "copy_launch_options": "Copy Launch Orders (fer Steam)",
             "exit": "Abandon Ship"
         },
-        "language": "Tongue"
+        "language": "Tongue",
+        "theme": "Ship's Colors",
+        "theme_light": "Daylight",
+        "theme_dark": "Moonless Night"
     },
     "ui": {
         "disabled_mods": "Landlubber Mods",
@@ -71,7 +74,10 @@
         "launch_options_title": "Steam Launch Orders",
         "launch_options_instructions": "Copy these launch orders and paste 'em in Steam:\nRight-click game → Properties → Launch Options\n\nNote: On Linux/Proton/Steam Deck, keep mods in th' game bay fer best sailin'.",
         "copy_to_clipboard": "Copy to Logbook",
-        "close": "Shove Off"
+        "close": "Shove Off",
+        "success": "Aye, Success!",
+        "unpack_complete": "Plunderin' complete!",
+        "repack_complete": "Stowin' complete!"
     },
     "progress": {
         "unpacking": "Plunderin' Cargo",

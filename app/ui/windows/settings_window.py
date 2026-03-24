@@ -98,6 +98,23 @@ class SettingsWindow:
         )
         debug_console_check.pack(anchor="w")
         
+        self.dll_injection_var = BooleanVar(value=self.config.dll_injection_enabled)
+        dll_injection_check = ttk.Checkbutton(
+            checkbox_frame,
+            text=t.get("settings.dll_injection", "Enable DLL Mod Injection"),
+            variable=self.dll_injection_var
+        )
+        dll_injection_check.pack(anchor="w")
+        
+        # Add hint label for DLL injection
+        dll_hint_label = ttk.Label(
+            checkbox_frame,
+            text=t.get("settings.dll_injection_hint", "Required for mods using .dll files (Windows/Proton)"),
+            font=("Arial", 9),
+            style="Hint.TLabel"
+        )
+        dll_hint_label.pack(anchor="w", padx=(20, 0))
+        
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # # Mod Launch Settings Overrides Section
         # self._add_separator(t.get("settings.mod_overrides", "Mod Launch Settings Overrides"))
@@ -266,6 +283,7 @@ class SettingsWindow:
         self.config.custom_launch_options = self.custom_launch_entry.get().strip()
         self.config.dev_mode_enabled = self.dev_mode_var.get()
         self.config.debug_console_enabled = self.debug_console_var.get()
+        self.config.dll_injection_enabled = self.dll_injection_var.get()
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()

@@ -30,6 +30,7 @@ class MenuBarComponent:
         on_open_game: Callable,
         on_launch: Callable,
         on_copy_launch: Callable,
+        on_cleanup_dlls: Callable,
         on_exit: Callable
     ):
         file_menu = Menu(self.menubar, tearoff=0)
@@ -63,6 +64,13 @@ class MenuBarComponent:
             label=self.t.get("menu.file.copy_launch_options", "Copy Launch Options (for Steam)"),
             command=on_copy_launch,
             accelerator="F3"
+        )
+        
+        file_menu.add_separator()
+        
+        file_menu.add_command(
+            label=self.t.get("menu.file.cleanup_dlls", "Clean Up DLL Injection"),
+            command=on_cleanup_dlls
         )
         
         file_menu.add_separator()
@@ -107,8 +115,11 @@ class MenuBarComponent:
         self._theme_var = StringVar(value=current_theme)
 
         for theme in available_themes:
+            # Translate theme names
+            theme_key = f"menu.theme_{theme}"
+            theme_label = self.t.get(theme_key, theme.capitalize())
             theme_menu.add_radiobutton(
-                label=theme,
+                label=theme_label,
                 value=theme,
                 variable=self._theme_var,
                 command=lambda t=theme: on_change(t)

@@ -21,7 +21,10 @@
             "copy_launch_options": "Startoptionen Kopieren (für Steam)",
             "exit": "Beenden"
         },
-        "language": "Sprache"
+        "language": "Sprache",
+        "theme": "Thema",
+        "theme_light": "Hell",
+        "theme_dark": "Dunkel"
     },
     "ui": {
         "disabled_mods": "Deaktivierte Mods",
@@ -71,7 +74,10 @@
         "launch_options_title": "Steam-Startoptionen",
         "launch_options_instructions": "Kopieren Sie diese Startoptionen und fügen Sie sie in Steam ein:\nRechtsklick auf Spiel → Eigenschaften → Startoptionen\n\nHinweis: Behalten Sie Mods auf Linux/Proton/Steam Deck im Spielverzeichnis für beste Kompatibilität.",
         "copy_to_clipboard": "In Zwischenablage Kopieren",
-        "close": "Schließen"
+        "close": "Schließen",
+        "success": "Erfolg",
+        "unpack_complete": "Entpacken abgeschlossen!",
+        "repack_complete": "Neu packen abgeschlossen!"
     },
     "progress": {
         "unpacking": "Ressourcen Entpacken",

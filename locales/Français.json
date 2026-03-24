@@ -21,7 +21,10 @@
             "copy_launch_options": "Copier les Options de Lancement (pour Steam)",
             "exit": "Quitter"
         },
-        "language": "Langue"
+        "language": "Langue",
+        "theme": "Thème",
+        "theme_light": "Clair",
+        "theme_dark": "Sombre"
     },
     "ui": {
         "disabled_mods": "Mods Désactivés",
@@ -71,7 +74,10 @@
         "launch_options_title": "Options de Lancement Steam",
         "launch_options_instructions": "Copiez ces options de lancement et collez-les dans Steam :\nClic droit sur le jeu → Propriétés → Options de Lancement\n\nNote : Sur Linux/Proton/Steam Deck, gardez les mods dans le répertoire du jeu pour une meilleure compatibilité.",
         "copy_to_clipboard": "Copier dans le Presse-papiers",
-        "close": "Fermer"
+        "close": "Fermer",
+        "success": "Succès",
+        "unpack_complete": "Décompression terminée !",
+        "repack_complete": "Recompression terminée !"
     },
     "progress": {
         "unpacking": "Décompression des Ressources",

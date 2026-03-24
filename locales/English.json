@@ -21,9 +21,13 @@
             "open_game": "Open Game Folder",
             "launch_game": "Launch Game",
             "copy_launch_options": "Launch Options & Export",
+            "cleanup_dlls": "Clean Up DLL Injection",
             "exit": "Exit"
         },
-        "language": "Language"
+        "language": "Language",
+        "theme": "Theme",
+        "theme_light": "Light",
+        "theme_dark": "Dark"
     },
     "ui": {
         "disabled_mods": "Disabled Mods",
@@ -37,7 +41,8 @@
         "auto_sort": "Auto-Sort"
     },
     "preview": {
-        "url": "URL: {url}"
+        "url": "URL: {url}",
+        "contains_dlls": "⚠ Contains DLL files (requires DLL injection)"
     },
     "context_menu": {
         "move_top": "Move to Top",
@@ -65,7 +70,10 @@
         "inherit_save_override": "Inherit Save Override",
         "advanced": "Advanced",
         "use_original_load_order": "Use Original Load Order (Top Priority)",
-        "close_on_launch": "Close Launcher When Game Launches"
+        "close_on_launch": "Close Launcher When Game Launches",
+        "dll_injection": "Enable DLL Mod Injection",
+        "dll_injection_hint": "Required for mods using .dll files (Windows/Proton)",
+        "shortcuts": "Shortcuts: Enter=Save • Esc=Cancel • Tab=Navigate"
     },
     "messages": {
         "setup_required_title": "Setup Required",
@@ -94,7 +102,7 @@
         "export_bat_success_title": "Export Successful",
         "export_bat_success": "Export Successful!",
         "export_bat_instructions": "The launch script has been saved. To use it with Steam:\n\n1. Right-click Mewgenics in your Steam library\n2. Select Properties → Launch Options\n3. Paste the following line:",
-        "export_bat_note": "Note: The batch file contains all your current mod settings.\nRe-export if you change mods or settings.",
+        "export_bat_note": "Note: The batch file contains all your current mod settings. Re-export if you change mods or settings.\n\nIf DLL injection is enabled, Mewtator.exe and configuration files are included for standalone operation.",
         "close": "Close",
         "no_mods_to_sort": "No mods are enabled to sort.",
         "auto_sort_success": "Mods sorted successfully!",
@@ -105,7 +113,19 @@
         "conflict_warnings_text": "The following conflicts were detected:\n\n{warnings}\n\nContinue launching?",
         "import_modlist": "Import Modlist",
         "export_modlist": "Export Modlist",
-        "modlist_name_prompt": "Enter modlist name:"
+        "modlist_name_prompt": "Enter modlist name:",
+        "dll_injection_title": "Enable DLL Mod Injection?",
+        "dll_injection_prompt": "This mod contains DLL files. Would you like to enable DLL injection?\n\nDLL injection allows mods to modify game behavior at runtime. You can change this setting later in Settings > Launch Options.",
+        "dll_cleanup_title": "DLL Cleanup",
+        "dll_cleanup_nothing": "No DLL injection files found in the game directory.",
+        "dll_cleanup_confirm": "This will remove all DLL injection files from the game directory.\n\nThe game must not be running. Continue?",
+        "dll_cleanup_success": "DLL injection files have been successfully removed.",
+        "dll_cleanup_failed": "Failed to clean up some DLL injection files. They may be in use by the game.",
+        "warning": "Warning",
+        "game_dir_not_set": "Game directory is not configured.",
+        "success": "Success",
+        "unpack_complete": "Unpacking complete!",
+        "repack_complete": "Repacking complete!"
     },
     "alerts": {
         "requirement_conflict": "Requirement Conflicts",

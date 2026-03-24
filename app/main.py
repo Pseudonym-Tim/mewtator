@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
+import sys
+import json
 
 from app.infrastructure.config_repository import ConfigRepository
 from app.infrastructure.mod_repository import ModRepository
@@ -7,6 +9,7 @@ from app.infrastructure.translation_repository import TranslationRepository
 from app.core.services.config_service import ConfigService
 from app.core.services.mod_service import ModService
 from app.core.services.game_launcher_service import GameLauncherService
+from app.core.services.dll_injection_service import DllInjectionService
 from app.core.services.translation_service import TranslationService
 from app.core.services.pack_service import PackService
 from app.core.services.modlist_io_service import ModListIOService
@@ -71,6 +74,51 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     return result[0]
 
 
+def setup_dlls_cli(config_file: str) -> int:
+    """CLI mode: Setup DLL injection without GUI.
+    
+    Args:
+        config_file: Path to JSON file containing DLL configuration
+        
+    Returns:
+        Exit code: 0 for success, 1 for failure
+    """
+    try:
+        # Read DLL configuration from file
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config_data = json.load(f)
+        
+        game_dir = config_data.get('game_dir')
+        dll_mods = config_data.get('dll_mods', [])
+        
+        if not game_dir:
+            print("Error: game_dir not found in configuration file", file=sys.stderr)
+            return 1
+        
+        # Create DLL injection service
+        dll_injection_service = DllInjectionService()
+        
+        # Setup DLL injection
+        success = dll_injection_service.setup_dll_injection(game_dir, dll_mods)
+        
+        if success:
+            print(f"DLL injection setup successful: {len(dll_mods)} mod(s) deployed")
+            return 0
+        else:
+            print("DLL injection setup failed", file=sys.stderr)
+            return 1
+            
+    except FileNotFoundError:
+        print(f"Error: Configuration file not found: {config_file}", file=sys.stderr)
+        return 1
+    except json.JSONDecodeError as e:
+        print(f"Error parsing configuration file: {e}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"Error during DLL setup: {e}", file=sys.stderr)
+        return 1
+
+
 def main():
     root = tk.Tk()
     
@@ -101,7 +149,8 @@ def main():
     
     mod_repo = ModRepository(config.mod_folder)
     mod_service = ModService(mod_repo)
-    launcher_service = GameLauncherService()
+    dll_injection_service = DllInjectionService()
+    launcher_service = GameLauncherService(dll_injection_service)
     pack_service = PackService()
     modlist_io_service = ModListIOService()
     
@@ -113,11 +162,23 @@ def main():
         translation_service,
         pack_service,
         modlist_io_service,
-        theme_service
+        theme_service,
+        dll_injection_service
     )
     
     controller.start()
 
 
 if __name__ == "__main__":
+    # Check for CLI mode
+    if len(sys.argv) > 1 and sys.argv[1] == "--setup-dlls":
+        if len(sys.argv) != 3:
+            print("Usage: Mewtator.exe --setup-dlls <dll_config.json>", file=sys.stderr)
+            sys.exit(1)
+        
+        config_file = sys.argv[2]
+        exit_code = setup_dlls_cli(config_file)
+        sys.exit(exit_code)
+    
+    # Normal GUI mode
     main()
