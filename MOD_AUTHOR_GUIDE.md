@@ -188,7 +188,6 @@ Make your mod easy to identify:
 {
   "requirements": [
     "Mod",                    // Any version
-    "Mod>=1.0.0",            // At least 1.0.0
     "Mod>=1.0.0",            // At least 1.0.0 (most common)
     "Mod>1.2.0",             // Greater than 1.2.0 (skip buggy version)
     "Mod<=2.9.9",            // Up to 2.9.9 (before breaking change)

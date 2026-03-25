@@ -57,7 +57,7 @@ class PreviewPanel(ttk.Frame):
         
         # Show DLL indicator if mod contains DLL files
         if has_dlls:
-            dll_text = self.translation_service.get("preview.contains_dlls", "⚠ Contains DLL files (requires DLL injection)")
+            dll_text = self.translation_service.get("preview.contains_dlls", "⚠ Contains DLL files (requires chainloader)")
             self.dll_info_label.config(text=dll_text)
         else:
             self.dll_info_label.config(text="")

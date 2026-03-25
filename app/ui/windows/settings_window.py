@@ -101,7 +101,7 @@ class SettingsWindow:
         self.dll_injection_var = BooleanVar(value=self.config.dll_injection_enabled)
         dll_injection_check = ttk.Checkbutton(
             checkbox_frame,
-            text=t.get("settings.dll_injection", "Enable DLL Mod Injection"),
+            text=t.get("settings.dll_injection", "Enable DLL Mod Support"),
             variable=self.dll_injection_var
         )
         dll_injection_check.pack(anchor="w")
@@ -109,7 +109,7 @@ class SettingsWindow:
         # Add hint label for DLL injection
         dll_hint_label = ttk.Label(
             checkbox_frame,
-            text=t.get("settings.dll_injection_hint", "Required for mods using .dll files (Windows/Proton)"),
+            text=t.get("settings.dll_injection_hint", "Creates manifest for chainloader (required for .dll mods)"),
             font=("Arial", 9),
             style="Hint.TLabel"
         )

@@ -87,6 +87,7 @@ class MainController:
         self.mod_service.validate_requirements(self.mod_list)
         self._refresh_lists()
         self.window.apply_theme(self.theme_service, self.config.theme)
+        self._auto_configure_chainloader()
     
     def _setup_menu_bar(self):
         self.window.menu_bar.create_file_menu(
@@ -183,6 +184,8 @@ class MainController:
                     color = "red"
                 elif mod.has_unmet_requirements:
                     color = "orange"
+                elif self.dll_injection_service.mod_has_dlls(mod) and not self.config.dll_injection_enabled:
+                    color = "red"
                 else:
                     color = None
                 enabled_widget.add_item(mod.name, color)
@@ -200,6 +203,7 @@ class MainController:
         self.mod_service.validate_requirements(self.mod_list)
         self.mod_service.save_mod_order(self.mod_list)
         self._refresh_lists()
+        self._update_dll_manifest()
     
     def _update_preview_from_disabled(self):
         selection = self.window.disabled_list_widget.get_selection()
@@ -225,7 +229,9 @@ class MainController:
     
     def _enable_all(self):
         # Check for DLL mods before enabling all
-        self._check_dll_injection_prompt()
+        if self.dll_injection_service.has_dll_mods(self.mod_list):
+            if not self._check_dll_injection_prompt():
+                return  # User declined or DLL support is disabled
         self.mod_list.enable_all()
     
     def _disable_all(self):
@@ -235,29 +241,71 @@ class MainController:
         """Enable a mod and check if DLL injection prompt should be shown."""
         mod = self.mod_list.get_mod_by_name(mod_name)
         if mod:
-            # Check if this mod has DLLs and prompt hasn't been shown
+            # Check if this mod has DLLs
             if self.dll_injection_service.mod_has_dlls(mod):
-                self._check_dll_injection_prompt()
+                if not self._check_dll_injection_prompt():
+                    return  # User declined or DLL support is disabled
         
         # Enable the mod
         self.mod_list.enable_mod(mod_name)
     
+    def _auto_configure_chainloader(self):
+        """Auto-detect chainloader.ini and configure it if found."""
+        if not self.config.game_install_dir:
+            return
+        
+        # Check if chainloader exists and DLL support is enabled
+        if self.dll_injection_service.chainloader_exists(self.config.game_install_dir):
+            if self.config.dll_injection_enabled:
+                # Update manifest immediately
+                self._update_dll_manifest()
+    
+    def _update_dll_manifest(self):
+        """Update the DLL manifest file if DLL support is enabled."""
+        if not self.config.game_install_dir or not self.config.mod_folder:
+            return
+        
+        # Only update if DLL support is enabled and chainloader exists
+        if self.config.dll_injection_enabled and self.dll_injection_service.chainloader_exists(self.config.game_install_dir):
+            dll_mods = self.dll_injection_service.scan_for_dll_mods(self.mod_list)
+            if dll_mods:
+                self.dll_injection_service.update_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder, dll_mods)
+            else:
+                # No DLL mods enabled, clear the manifest
+                self.dll_injection_service.clear_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder)
+    
     def _check_dll_injection_prompt(self):
-        """Check if DLL injection prompt should be shown and show it."""
-        if not self.config.dll_injection_prompted:
+        """Check if DLL injection prompt should be shown and show it. Returns True if DLL support is enabled."""
+        if not self.config.dll_injection_enabled:
+            # Check if chainloader.ini exists in game directory
+            chainloader_exists = False
+            chainloader_warning = ""
+            if self.config.game_install_dir:
+                chainloader_exists = self.dll_injection_service.chainloader_exists(self.config.game_install_dir)
+                if not chainloader_exists:
+                    chainloader_warning = "\n\nWARNING: chainloader.ini was not found in your game directory. You need to install a DLL chainloader for DLL mods to work."
+            
             result = messagebox.askyesno(
-                self.translation_service.get("messages.dll_injection_title", "Enable DLL Mod Injection?"),
+                self.translation_service.get("messages.dll_injection_title", "Enable DLL Mod Support?"),
                 self.translation_service.get(
                     "messages.dll_injection_prompt",
-                    "This mod contains DLL files. Would you like to enable DLL injection?\n\n"
-                    "DLL injection allows mods to modify game behavior at runtime. "
+                    "This mod contains DLL files. Would you like to enable DLL mod support?\n\n"
+                    "Mewtator will create a manifest file that a chainloader (external DLL loader) can read. "
                     "You can change this setting later in Settings > Launch Options."
-                )
+                ) + chainloader_warning
             )
             
             self.config.dll_injection_enabled = result
             self.config.dll_injection_prompted = True
             self.config_service.save_config(self.config)
+            
+            # Update manifest immediately if enabled
+            if result:
+                self._update_dll_manifest()
+            
+            return result
+        
+        return True
     
     def _swap_selected(self):
         disabled_selection = self.window.disabled_list_widget.get_selection()
@@ -614,24 +662,6 @@ class MainController:
                 self.mod_list
             )
             
-            # If DLL injection is enabled and we're running from an .exe,
-            # copy Mewtator.exe to the same directory as the .bat file
-            if self.config.dll_injection_enabled and self.dll_injection_service.has_dll_mods(self.mod_list):
-                import sys
-                import shutil
-                
-                if sys.executable.endswith(".exe"):
-                    bat_dir = os.path.dirname(filepath)
-                    mewtator_exe_dest = os.path.join(bat_dir, "Mewtator.exe")
-                    
-                    # Only copy if it doesn't already exist or if it's different
-                    if not os.path.exists(mewtator_exe_dest) or os.path.abspath(sys.executable) != os.path.abspath(mewtator_exe_dest):
-                        try:
-                            shutil.copy2(sys.executable, mewtator_exe_dest)
-                        except Exception as copy_error:
-                            # Non-critical error - the .bat file can still use absolute path
-                            pass
-            
             info_dialog = Toplevel(parent_dialog or self.root)
             info_dialog.title(self.translation_service.get("messages.export_bat_success_title", "Export Successful"))
             info_dialog.geometry("650x400")
@@ -703,7 +733,7 @@ class MainController:
             )
     
     def _cleanup_dll_injection(self):
-        """Clean up DLL injection files from game directory."""
+        """Clean up DLL manifest and chainloader configuration."""
         if not self.config.game_install_dir:
             messagebox.showwarning(
                 self.translation_service.get("messages.warning", "Warning"),
@@ -711,13 +741,13 @@ class MainController:
             )
             return
         
-        # Check if DLL injection is currently deployed
-        if not self.dll_injection_service.is_dll_injection_active(self.config.game_install_dir):
+        # Check if chainloader configuration exists
+        if not self.dll_injection_service.is_chainloader_configured(self.config.game_install_dir):
             messagebox.showinfo(
                 self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
                 self.translation_service.get(
                     "messages.dll_cleanup_nothing",
-                    "No DLL injection files found in the game directory."
+                    "No DLL manifest found in chainloader configuration."
                 )
             )
             return
@@ -727,8 +757,8 @@ class MainController:
             self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
             self.translation_service.get(
                 "messages.dll_cleanup_confirm",
-                "This will remove all DLL injection files from the game directory.\n\n"
-                "The game must not be running. Continue?"
+                "This will clear the DLL manifest from chainloader configuration.\n\n"
+                "Continue?"
             )
         )
         
@@ -737,24 +767,15 @@ class MainController:
         
         # Perform cleanup
         try:
-            success = self.dll_injection_service.cleanup_dll_injection(self.config.game_install_dir)
+            self.dll_injection_service.clear_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder)
             
-            if success:
-                messagebox.showinfo(
-                    self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
-                    self.translation_service.get(
-                        "messages.dll_cleanup_success",
-                        "DLL injection files have been successfully removed."
-                    )
+            messagebox.showinfo(
+                self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+                self.translation_service.get(
+                    "messages.dll_cleanup_success",
+                    "DLL manifest has been cleared from chainloader configuration."
                 )
-            else:
-                messagebox.showwarning(
-                    self.translation_service.get("messages.warning", "Warning"),
-                    self.translation_service.get(
-                        "messages.dll_cleanup_failed",
-                        "Failed to clean up some DLL injection files. They may be in use by the game."
-                    )
-                )
+            )
         except Exception as e:
             messagebox.showerror(
                 self.translation_service.get("messages.error", "Error"),
