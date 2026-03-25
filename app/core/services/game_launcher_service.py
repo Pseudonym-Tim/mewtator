@@ -150,7 +150,6 @@ class GameLauncherService:
         bat_content = "@echo off\n"
         bat_content += "REM Mewtator Auto-Generated Launch Script\n"
         bat_content += "REM This script launches Mewgenics with mods\n"
-        bat_content += "REM Note: Launch the game via Mewtator at least once to configure DLL mods\n\n"
         
         cmd_parts = [f'start "" "{exe_path}"']
         cmd_parts.extend(f'"{arg}"' if ' ' in str(arg) else str(arg) for arg in extra_args)

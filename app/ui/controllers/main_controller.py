@@ -296,7 +296,6 @@ class MainController:
             )
             
             self.config.dll_injection_enabled = result
-            self.config.dll_injection_prompted = True
             self.config_service.save_config(self.config)
             
             # Update manifest immediately if enabled

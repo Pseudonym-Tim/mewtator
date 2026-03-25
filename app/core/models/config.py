@@ -16,7 +16,6 @@ class Config:
     close_on_launch: bool = False
     use_original_load_order: bool = False
     dll_injection_enabled: bool = False
-    dll_injection_prompted: bool = False
     
     def is_valid(self) -> bool:
         return bool(
@@ -45,7 +44,6 @@ class Config:
             "close_on_launch": self.close_on_launch,
             "use_original_load_order": self.use_original_load_order,
             "dll_injection_enabled": self.dll_injection_enabled,
-            "dll_injection_prompted": self.dll_injection_prompted,
         }
     
     @classmethod
@@ -63,5 +61,4 @@ class Config:
             close_on_launch=data.get("close_on_launch", False),
             use_original_load_order=data.get("use_original_load_order", False),
             dll_injection_enabled=data.get("dll_injection_enabled", False),
-            dll_injection_prompted=data.get("dll_injection_prompted", False),
         )
