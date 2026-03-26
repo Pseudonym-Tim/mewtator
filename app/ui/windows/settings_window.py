@@ -2,6 +2,7 @@ from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog, messagebox
 from tkinter import ttk
 from typing import Callable
 import os
+import webbrowser
 
 
 class SettingsWindow:
@@ -31,7 +32,12 @@ class SettingsWindow:
         style = ttk.Style(self.win)
         hint_color = "#9a9a9a" if theme_name == "dark" else "#666666"
         style.configure("Hint.TLabel", foreground=hint_color, background=colors["bg"])
-    
+        
+        # Configure link style
+        link_color = "#5DADE2" if theme_name == "dark" else "#2E7DBE"
+        style.configure("Link.TLabel", foreground=link_color, background=colors["bg"])
+        
+
     def _build_ui(self):
         t = self.translation_service
         
@@ -97,6 +103,60 @@ class SettingsWindow:
             variable=self.debug_console_var
         )
         debug_console_check.pack(anchor="w")
+        
+        self.dll_injection_var = BooleanVar(value=self.config.dll_injection_enabled)
+        dll_injection_check = ttk.Checkbutton(
+            checkbox_frame,
+            text=t.get("settings.dll_injection", "Enable DLL Mod Support"),
+            variable=self.dll_injection_var
+        )
+        dll_injection_check.pack(anchor="w")
+        
+        # Add hint label for DLL injection
+        dll_hint_text = t.get("settings.dll_injection_hint", "Creates manifest for Mewjector chainloader (required for .dll mods)\nGet Mewjector: nexusmods.com/mewgenics/mods/218")
+        lines = dll_hint_text.split('\n')
+        
+        dll_hint_label = ttk.Label(
+            checkbox_frame,
+            text=lines[0],
+            font=("Arial", 9),
+            style="Hint.TLabel"
+        )
+        dll_hint_label.pack(anchor="w", padx=(20, 0))
+        
+        # Create a frame for the link line
+        link_frame = ttk.Frame(checkbox_frame)
+        link_frame.pack(anchor="w", padx=(20, 0))
+        
+        # Add the "Get Mewjector: " label
+        get_text_label = ttk.Label(
+            link_frame,
+            text=t.get("settings.mewjector_link_text", "Get Mewjector: "),
+            font=("Arial", 9),
+            style="Hint.TLabel"
+        )
+        get_text_label.pack(side="left")
+        
+        # Add the clickable link
+        mewjector_url = "https://www.nexusmods.com/mewgenics/mods/218"
+        link_label = ttk.Label(
+            link_frame,
+            text=t.get("settings.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
+            font=("Arial", 9, "underline"),
+            style="Link.TLabel",
+            cursor="hand2"
+        )
+        link_label.pack(side="left")
+        link_label.bind("<Button-1>", lambda e: webbrowser.open(mewjector_url))
+        
+        # Add security warning for DLL injection
+        dll_warning_label = ttk.Label(
+            checkbox_frame,
+            text=t.get("settings.dll_injection_warning", "\u26a0 Security: Only install DLL mods from trusted sources"),
+            font=("Arial", 9, "bold"),
+            foreground="#FF6B6B"
+        )
+        dll_warning_label.pack(anchor="w", padx=(20, 0))
         
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # # Mod Launch Settings Overrides Section
@@ -266,6 +326,7 @@ class SettingsWindow:
         self.config.custom_launch_options = self.custom_launch_entry.get().strip()
         self.config.dev_mode_enabled = self.dev_mode_var.get()
         self.config.debug_console_enabled = self.debug_console_var.get()
+        self.config.dll_injection_enabled = self.dll_injection_var.get()
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()

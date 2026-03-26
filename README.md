@@ -19,6 +19,24 @@ Download here:
 - Multi-language support
 - Import/export modlists
 
+## DLL Mod Support
+
+Mewtator supports DLL-based mods through integration with Mewjector (external DLL chainloader).
+
+**⚠️ Important:** DLL files execute with full system privileges. Only install DLL mods from trusted sources!
+
+**Requirements:**
+- **Mewjector (DLL Chainloader):** [Download from Nexus Mods](https://www.nexusmods.com/mewgenics/mods/218)
+- Enable "DLL Mod Support" in Settings → Launch Options
+
+**How it works:**
+1. Mewtator detects DLL files in your mods
+2. Creates a manifest file listing all DLL paths
+3. Updates Mewjector's configuration to load the DLLs
+4. Mewjector loads DLLs when the game starts
+
+For mod authors creating DLL mods, see the DLL Mod Security section in [MOD_AUTHOR_GUIDE.md](MOD_AUTHOR_GUIDE.md).
+
 ## Translations
 
 Mewtator supports multiple languages. Currently available:

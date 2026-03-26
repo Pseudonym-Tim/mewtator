@@ -23,6 +23,9 @@ class PreviewPanel(ttk.Frame):
         self.version_label = ttk.Label(self, font=("Arial", 12))
         self.version_label.pack(anchor="w", padx=10)
         
+        self.dll_info_label = ttk.Label(self, font=("Arial", 10, "italic"), foreground="#FF8C00")
+        self.dll_info_label.pack(anchor="w", padx=10)
+        
         self.url_label = tk.Label(
             self,
             font=("Arial", 10, "underline"),
@@ -47,10 +50,17 @@ class PreviewPanel(ttk.Frame):
         self.desc_box.pack(fill=BOTH, expand=True, padx=10, pady=10)
         self.desc_scroll.config(command=self.desc_box.yview)
     
-    def update_preview(self, title: str, author: str, version: str, description: str, preview_path: Optional[str], url: str = ""):
+    def update_preview(self, title: str, author: str, version: str, description: str, preview_path: Optional[str], url: str = "", has_dlls: bool = False):
         self.title_label.config(text=title)
         self.author_label.config(text=f"Author: {author}")
         self.version_label.config(text=f"Version: {version}")
+        
+        # Show DLL indicator if mod contains DLL files
+        if has_dlls:
+            dll_text = self.translation_service.get("preview.contains_dlls", "\u26a0 Contains DLL files - Only install from trusted sources!")
+            self.dll_info_label.config(text=dll_text)
+        else:
+            self.dll_info_label.config(text="")
         
         self.current_url = url
         if url:
@@ -80,6 +90,7 @@ class PreviewPanel(ttk.Frame):
         self.title_label.config(text="")
         self.author_label.config(text="")
         self.version_label.config(text="")
+        self.dll_info_label.config(text="")
         self.url_label.config(text="")
         self.current_url = ""
         self.desc_box.config(state="normal")

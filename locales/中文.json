@@ -13,15 +13,21 @@
         "file": {
             "label": "文件",
             "settings": "设置",
+            "import_modlist": "导入模组列表...",
+            "export_modlist": "导出模组列表...",
             "unpack": "解包基础资源",
             "repack": "重新打包资源",
             "open_mods": "打开模组文件夹",
             "open_game": "打开游戏文件夹",
             "launch_game": "启动游戏",
             "copy_launch_options": "复制启动选项（用于 Steam）",
+            "cleanup_dlls": "清理 DLL 注入",
             "exit": "退出"
         },
-        "language": "语言"
+        "language": "语言",
+        "theme": "主题",
+        "theme_light": "浅色",
+        "theme_dark": "深色"
     },
     "ui": {
         "disabled_mods": "已禁用的模组",
@@ -30,6 +36,13 @@
         "enable_all": "全部启用",
         "launch_game": "启动游戏",
         "no_preview": "无预览图片"
+    },
+    "mod_list": {
+        "auto_sort": "自动排序"
+    },
+    "preview": {
+        "url": "URL：{url}",
+        "contains_dlls": "⚠ 包含 DLL 文件 - 仅从可信源安装！"
     },
     "context_menu": {
         "move_top": "移至顶部",
@@ -47,7 +60,23 @@
         "save": "保存设置",
         "select_language_title": "选择语言",
         "select_language_text": "选择您的首选语言：",
-        "confirm": "确认"
+        "confirm": "确认",
+        "launch_options": "启动选项",
+        "custom_launch_options": "自定义启动选项",
+        "dev_mode": "启用开发者模式 (-dev_mode true)",
+        "debug_console": "启用调试控制台 (-enable_debugconsole true)",
+        "mod_overrides": "模组启动设置覆盖",
+        "savefile_suffix_override": "存档后缀覆盖",
+        "inherit_save_override": "继承存档覆盖",
+        "advanced": "高级",
+        "use_original_load_order": "使用原始加载顺序（最高优先级）",
+        "close_on_launch": "游戏启动时关闭启动器",
+        "dll_injection": "启用 DLL 模组支持",
+        "dll_injection_hint": "为 Mewjector 链加载器创建清单（.dll 模组需要）",
+        "dll_injection_warning": "⚠ 安全：仅安装来自可信源的 DLL 模组",
+        "mewjector_link_text": "获取 Mewjector：",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "快捷键：Enter=保存 • Esc=取消 • Tab=导航"
     },
     "messages": {
         "setup_required_title": "需要设置",
@@ -71,7 +100,49 @@
         "launch_options_title": "Steam 启动选项",
         "launch_options_instructions": "复制这些启动选项并粘贴到 Steam 中：\n右键点击游戏 → 属性 → 启动选项\n\n注意：在 Linux/Proton/Steam Deck 上，将模组保存在游戏目录中以获得最佳兼容性。",
         "copy_to_clipboard": "复制到剪贴板",
-        "close": "关闭"
+        "close": "关闭",
+        "success": "成功",
+        "unpack_complete": "解包完成！",
+        "repack_complete": "重新打包完成！",
+        "launch_options_title": "Steam 启动选项",
+        "launch_options_instructions": "复制这些启动选项并粘贴到 Steam 中：\n右键点击游戏 → 属性 → 启动选项\n\n注意：在 Linux/Proton/Steam Deck 上，请将模组保存在游戏目录中以获得最佳兼容性。",
+        "copy_to_clipboard": "复制到剪贴板",
+        "export_bat": "导出为 .BAT 文件",
+        "export_bat_title": "导出启动脚本",
+        "export_bat_success_title": "导出成功",
+        "export_bat_success": "导出成功！",
+        "export_bat_instructions": "启动脚本已保存。要在 Steam 中使用它：\n\n1. 在 Steam 库中右键点击 Mewgenics\n2. 选择属性 → 启动选项\n3. 粘贴以下行：",
+        "export_bat_note": "注意：批处理文件包含您当前的所有模组设置。如果您更改了模组或设置，请重新导出。",
+        "no_mods_to_sort": "没有启用的模组可以排序。",
+        "auto_sort_success": "模组排序成功！",
+        "auto_sort_warnings": "模组排序完成，但有警告：\n\n{warnings}",
+        "requirement_warnings_title": "未满足的要求",
+        "requirement_warnings_text": "一些模组有未满足的要求：\n\n{errors}\n\n仍要继续启动吗？",
+        "conflict_warnings_title": "配置冲突",
+        "conflict_warnings_text": "检测到以下冲突：\n\n{warnings}\n\n仍要继续启动吗？",
+        "import_modlist": "导入模组列表",
+        "export_modlist": "导出模组列表",
+        "modlist_name_prompt": "输入模组列表名称：",
+        "dll_injection_title": "启用 DLL 模组支持？",
+        "dll_injection_prompt": "⚠ 安全警告：DLL 文件可以以完全系统权限执行任意代码。仅启用来自可信源的 DLL 模组！\n\n此模组包含 DLL 文件。您想启用 DLL 模组支持吗？\n\nMewtator 将创建一个 Mewjector（外部 DLL 链加载器）可读取的清单文件。您可以在设置 > 启动选项中更改此设置。",
+        "dll_injection_chainloader_warning": "\n\n⚠ 警告：在您的游戏目录中找不到 chainloader.ini。您需要安装 Mewjector（DLL 链加载器）才能使 DLL 模组工作。",
+        "mewjector_link_text": "在此获取 Mewjector：",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "DLL 清理",
+        "dll_cleanup_nothing": "在链加载器配置中找不到 DLL 清单。",
+        "dll_cleanup_confirm": "这将从链加载器配置中清除 DLL 清单。\n\n继续吗？",
+        "dll_cleanup_success": "DLL 清单已从链加载器配置中清除。",
+        "warning": "警告",
+        "game_dir_not_set": "游戏目录未配置。"
+    },
+    "dialog": {
+        "yes": "是",
+        "no": "否"
+    },
+    "alerts": {
+        "requirement_conflict": "需求冲突",
+        "requirement_conflict_text": "发现以下需求冲突：\n\n{errors}\n\n仍要继续启动吗？",
+        "savefile_conflict": "启动设置信息"
     },
     "progress": {
         "unpacking": "解包资源中",

@@ -21,7 +21,10 @@
             "copy_launch_options": "Opy-Cay Aunch-Lay Options-ay (or-fay Eam-Stay)",
             "exit": "Exit-ay"
         },
-        "language": "Anguage-Lay"
+        "language": "Anguage-Lay",
+        "theme": "Eme-Thay",
+        "theme_light": "Ight-Lay",
+        "theme_dark": "Ark-Day"
     },
     "ui": {
         "disabled_mods": "Isabled-Day Ods-May",
@@ -30,6 +33,13 @@
         "enable_all": "Enable-ay All-ay",
         "launch_game": "Aunch-Lay Ame-Gay",
         "no_preview": "O-Nay Eview-Pray Image-ay"
+    },
+    "mod_list": {
+        "auto_sort": "Auto-ay-Ort-Say"
+    },
+    "preview": {
+        "url": "URL-ay: {url}",
+        "contains_dlls": "⚠ Ontains-Cay DLL iles-fay - Only-ay install-ay om-fray usted-tray ources-say!"
     },
     "context_menu": {
         "move_top": "Ove-May o-tay Op-Tay",
@@ -47,7 +57,23 @@
         "save": "Ave-Say Ettings-Say",
         "select_language_title": "Elect-Say Anguage-Lay",
         "select_language_text": "Oose-Chay our-yay eferred-pray anguage-lay:",
-        "confirm": "Onfirm-Cay"
+        "confirm": "Onfirm-Cay",
+        "launch_options": "Aunch-Lay Options-ay",
+        "custom_launch_options": "Ustom-Cay Aunch-Lay Options-ay",
+        "dev_mode": "Enable-ay Ev-Day Ode-May (-dev_mode true)",
+        "debug_console": "Enable-ay Ebug-Day Onsole-Cay (-enable_debugconsole true)",
+        "mod_overrides": "Od-May Aunch-Lay Ettings-Say Overrides-ay",
+        "savefile_suffix_override": "Avefile-Say Uffix-Say Override-ay",
+        "inherit_save_override": "Inherit-ay Ave-Say Override-ay",
+        "advanced": "Advanced-ay",
+        "use_original_load_order": "Use-ay Original-ay Oad-Lay Order-ay (Op-Tay Iority-Pray)",
+        "close_on_launch": "Ose-Clay Auncher-Lay En-Whay Ame-Gay Aunches-Lay",
+        "dll_injection": "Enable-ay DLL Od-May Upport-Say",
+        "dll_injection_hint": "Eates-Cray anifest-may or-fay Ewjector-May ainloader-chay (equired-ray or-fay .dll-ay ods-may)",
+        "dll_injection_warning": "⚠ Ecurity-Say: Only-ay install-ay DLL ods-may om-fray usted-tray ources-say",
+        "mewjector_link_text": "Et-Gay Ewjector-May: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "Ortcuts-Shay: Enter-ay=Ave-Say • Esc-ay=Ancel-Cay • Tab-ay=Avigate-Nay"
     },
     "messages": {
         "setup_required_title": "Etup-Say Equired-Ray",
@@ -71,7 +97,49 @@
         "launch_options_title": "Eam-Stay Aunch-Lay Options-ay",
         "launch_options_instructions": "Opy-Cay ese-thay aunch-lay options-ay and-ay aste-pay em-thay in-ay Eam-Stay:\nIght-Ray-ick-clay ame-gay → Operties-Pray → Aunch-Lay Options-ay\n\nOte-Nay: On-ay Inux-Lay/Oton-Pray/Eam-Stay Eck-Day, eep-kay ods-may in-ay e-thay ame-gay irectory-day or-fay est-bay ompatibility-cay.",
         "copy_to_clipboard": "Opy-Cay o-tay Ipboard-Clay",
-        "close": "Ose-Clay"
+        "close": "Ose-Clay",
+        "success": "Uccess-Say!",
+        "unpack_complete": "Unpacking-ay omplete-cay!",
+        "repack_complete": "Epacking-Ray omplete-cay!",
+        "launch_options_title": "Eam-Stay Aunch-Lay Options-ay",
+        "launch_options_instructions": "Opy-Cay ese-thay aunch-lay options-ay and-ay aste-pay em-thay in-ay Eam-Stay:\nIght-Ray-ick-clay ame-gay → Operties-Pray → Aunch-Lay Options-ay\n\nOte-Nay: On-ay Inux-Lay/Oton-Pray/Eam-Stay Eck-Day, eep-kay ods-may in-ay e-thay ame-gay irectory-day or-fay est-bay ompatibility-cay.",
+        "copy_to_clipboard": "Opy-Cay o-tay Ipboard-Clay",
+        "export_bat": "Export-ay o-tay .BAT-ay Ile-Fay",
+        "export_bat_title": "Export-ay Aunch-Lay Ipt-Scray",
+        "export_bat_success_title": "Export-ay Uccessful-Say",
+        "export_bat_success": "Export-ay Uccessful-Say!",
+        "export_bat_instructions": "E-Thay aunch-lay ipt-scray as-hay een-bay aved-say. O-Tay use-ay it-ay ith-way Eam-Stay:\n\n1. Ight-Ray-ick-clay Ewgenics-May in-ay our-yay Eam-Stay ibrary-lay\n2. Elect-Say Operties-Pray → Aunch-Lay Options-ay\n3. Aste-Pay e-thay ollowing-fay ine-lay:",
+        "export_bat_note": "Ote-Nay: E-Thay atch-bay ile-fay ontains-cay all-ay our-yay urrent-cay od-may ettings-say. E-Ray-export-ay if-ay ou-yay ange-chay ods-may or-ay ettings-say.",
+        "no_mods_to_sort": "O-Nay ods-may are-ay enabled-ay o-tay ort-say.",
+        "auto_sort_success": "Ods-May orted-say uccessfully-say!",
+        "auto_sort_warnings": "Ods-May orted-say ith-way arnings-way:\n\n{warnings}",
+        "requirement_warnings_title": "Unmet-ay Equirements-Ray",
+        "requirement_warnings_text": "Ome-Say ods-may ave-hay unmet-ay equirements-ray:\n\n{errors}\n\nOntinue-Cay aunching-lay?",
+        "conflict_warnings_title": "Onfiguration-Cay Onflicts-Cay",
+        "conflict_warnings_text": "E-Thay ollowing-fay onflicts-cay ere-way etected-day:\n\n{warnings}\n\nOntinue-Cay aunching-lay?",
+        "import_modlist": "Import-ay Odlist-May",
+        "export_modlist": "Export-ay Odlist-May",
+        "modlist_name_prompt": "Enter-ay odlist-may ame-nay:",
+        "dll_injection_title": "Enable-ay DLL Od-May Upport-Say?",
+        "dll_injection_prompt": "⚠ ECURITY-SAY ARNING-WAY: DLL iles-fay an-cay execute-ay arbitrary-ay ode-cay ith-way ull-fay ystem-say rivileges-pay. Only-ay enable-ay DLL ods-may om-fray usted-tray ources-say!\n\nIs-Thay od-may ontains-cay DLL iles-fay. Ould-Way ou-yay ike-lay o-tay enable-ay DLL od-may upport-say?\n\nEwtator-May ill-way eate-cray a-ay anifest-may ile-fay at-thay Ewjector-May (external-ay DLL ainloader-chay) an-cay ead-ray. Ou-Yay an-cay ange-chay is-thay etting-say ater-lay in-ay Ettings-Say > Aunch-Lay Options-ay.",
+        "dll_injection_chainloader_warning": "\n\n⚠ ARNING-WAY: chainloader.ini-ay ot-nay ound-fay in-ay our-yay ame-gay irectory-day. Ou-Yay eed-nay o-tay install-ay Ewjector-May (DLL ainloader-chay) or-fay DLL ods-may o-tay ork-way.",
+        "mewjector_link_text": "Et-Gay Ewjector-May ere-hay: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "DLL Eanup-Clay",
+        "dll_cleanup_nothing": "O-Nay DLL anifest-may ound-fay in-ay ainloader-chay onfiguration-cay.",
+        "dll_cleanup_confirm": "Is-Thay ill-way ear-clay e-thay DLL anifest-may om-fray ainloader-chay onfiguration-cay.\n\nOntinue-Cay?",
+        "dll_cleanup_success": "DLL anifest-may as-hay een-bay eared-clay om-fray ainloader-chay onfiguration-cay.",
+        "warning": "Arning-Way",
+        "game_dir_not_set": "Ame-Gay irectory-day is-ay ot-nay onfigured-cay."
+    },
+    "dialog": {
+        "yes": "Es-Yay",
+        "no": "O-Nay"
+    },
+    "alerts": {
+        "requirement_conflict": "Equirement-Ray Onflicts-Cay",
+        "requirement_conflict_text": "E-Thay ollowing-fay equirement-ray onflicts-cay ere-way ound-fay:\n\n{errors}\n\nOntinue-Cay aunching-lay?",
+        "savefile_conflict": "Aunch-Lay Ettings-Say Info-ay"
     },
     "progress": {
         "unpacking": "Unpacking-ay Esources-Ray",

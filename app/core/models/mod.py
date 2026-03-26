@@ -52,6 +52,14 @@ class Mod:
             return []
         return reqs
     
+    @property
+    def dll_order(self) -> Optional[List[str]]:
+        """Get the DLL load order from metadata, if specified."""
+        dll_order = self.metadata.get("dll_order", [])
+        if not isinstance(dll_order, list):
+            return None
+        return dll_order if dll_order else None
+    
     def to_dict(self) -> Dict[str, Any]:
         return {
             "name": self.name,

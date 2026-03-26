@@ -13,15 +13,21 @@
         "file": {
             "label": "Arquivo",
             "settings": "Configurações",
+            "import_modlist": "Importar Lista de Mods...",
+            "export_modlist": "Exportar Lista de Mods...",
             "unpack": "Descompactar Recursos Base",
             "repack": "Recompactar Recursos",
             "open_mods": "Abrir Pasta de Mods",
             "open_game": "Abrir Pasta do Jogo",
             "launch_game": "Iniciar Jogo",
             "copy_launch_options": "Copiar Opções de Inicialização (para Steam)",
+            "cleanup_dlls": "Limpar Injeção de DLL",
             "exit": "Sair"
         },
-        "language": "Idioma"
+        "language": "Idioma",
+        "theme": "Tema",
+        "theme_light": "Claro",
+        "theme_dark": "Escuro"
     },
     "ui": {
         "disabled_mods": "Mods Desativados",
@@ -30,6 +36,13 @@
         "enable_all": "Ativar Todos",
         "launch_game": "Iniciar Jogo",
         "no_preview": "Sem Imagem de Visualização"
+    },
+    "mod_list": {
+        "auto_sort": "Auto-Organizar"
+    },
+    "preview": {
+        "url": "URL: {url}",
+        "contains_dlls": "⚠ Contém arquivos DLL - Instale apenas de fontes confiáveis!"
     },
     "context_menu": {
         "move_top": "Mover para o Topo",
@@ -47,7 +60,23 @@
         "save": "Salvar Configurações",
         "select_language_title": "Selecionar Idioma",
         "select_language_text": "Escolha seu idioma preferido:",
-        "confirm": "Confirmar"
+        "confirm": "Confirmar",
+        "launch_options": "Opções de Inicialização",
+        "custom_launch_options": "Opções de Inicialização Personalizadas",
+        "dev_mode": "Ativar Modo Desenvolvedor (-dev_mode true)",
+        "debug_console": "Ativar Console de Depuração (-enable_debugconsole true)",
+        "mod_overrides": "Sobrescrever Configurações de Inicialização de Mods",
+        "savefile_suffix_override": "Sobrescrever Sufixo de Arquivo de Salvamento",
+        "inherit_save_override": "Sobrescrever Herdar Salvamento",
+        "advanced": "Avançado",
+        "use_original_load_order": "Usar Ordem de Carregamento Original (Prioridade Máxima)",
+        "close_on_launch": "Fechar Launcher ao Iniciar Jogo",
+        "dll_injection": "Ativar Suporte a Mods DLL",
+        "dll_injection_hint": "Cria manifesto para o carregador Mewjector (necessário para mods .dll)",
+        "dll_injection_warning": "⚠ Segurança: Instale apenas mods DLL de fontes confiáveis",
+        "mewjector_link_text": "Obter Mewjector: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "Atalhos: Enter=Salvar • Esc=Cancelar • Tab=Navegar"
     },
     "messages": {
         "setup_required_title": "Configuração Necessária",
@@ -71,7 +100,46 @@
         "launch_options_title": "Opções de Inicialização do Steam",
         "launch_options_instructions": "Copie estas opções de inicialização e cole no Steam:\nClique com o botão direito no jogo → Propriedades → Opções de Inicialização\n\nNota: No Linux/Proton/Steam Deck, mantenha os mods no diretório do jogo para melhor compatibilidade.",
         "copy_to_clipboard": "Copiar para a Área de Transferência",
-        "close": "Fechar"
+        "export_bat": "Exportar para Arquivo .BAT",
+        "export_bat_title": "Exportar Script de Inicialização",
+        "export_bat_success_title": "Exportação Bem-Sucedida",
+        "export_bat_success": "Exportação Bem-Sucedida!",
+        "export_bat_instructions": "O script de inicialização foi salvo. Para usá-lo com Steam:\n\n1. Clique com o botão direito em Mewgenics na sua biblioteca Steam\n2. Selecione Propriedades → Opções de Inicialização\n3. Cole a seguinte linha:",
+        "export_bat_note": "Nota: O arquivo em lote contém todas as suas configurações de mods atuais. Reexporte se você alterar os mods ou configurações.",
+        "no_mods_to_sort": "Nenhum mod ativado para organizar.",
+        "auto_sort_success": "Mods organizados com sucesso!",
+        "auto_sort_warnings": "Mods organizados com avisos:\n\n{warnings}",
+        "requirement_warnings_title": "Requisitos Não Atendidos",
+        "requirement_warnings_text": "Alguns mods têm requisitos não atendidos:\n\n{errors}\n\nIniciar mesmo assim?",
+        "conflict_warnings_title": "Conflitos de Configuração",
+        "conflict_warnings_text": "Os seguintes conflitos foram detectados:\n\n{warnings}\n\nIniciar mesmo assim?",
+        "import_modlist": "Importar Lista de Mods",
+        "export_modlist": "Exportar Lista de Mods",
+        "modlist_name_prompt": "Digite o nome da lista de mods:",
+        "dll_injection_title": "Ativar Suporte a Mods DLL?",
+        "dll_injection_prompt": "⚠ AVISO DE SEGURANÇA: Arquivos DLL podem executar código arbitrário com privilégios completos do sistema. Ative apenas mods DLL de fontes confiáveis!\n\nEste mod contém arquivos DLL. Deseja ativar o suporte a mods DLL?\n\nMewtator criará um arquivo de manifesto que Mewjector (carregador DLL externo) pode ler. Você pode alterar esta configuração mais tarde em Configurações > Opções de Inicialização.",
+        "dll_injection_chainloader_warning": "\n\n⚠ AVISO: chainloader.ini não foi encontrado no diretório do jogo. Você precisa instalar Mewjector (carregador DLL) para que os mods DLL funcionem.",
+        "mewjector_link_text": "Obter Mewjector aqui: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "Limpeza de DLL",
+        "dll_cleanup_nothing": "Nenhum manifesto DLL encontrado na configuração do carregador.",
+        "dll_cleanup_confirm": "Isso limpará o manifesto DLL da configuração do carregador.\n\nContinuar?",
+        "dll_cleanup_success": "O manifesto DLL foi limpo da configuração do carregador.",
+        "warning": "Aviso",
+        "game_dir_not_set": "O diretório do jogo não está configurado.",
+        "close": "Fechar",
+        "success": "Sucesso",
+        "unpack_complete": "Descompactação concluída!",
+        "repack_complete": "Recompactação concluída!"
+    },
+    "dialog": {
+        "yes": "Sim",
+        "no": "Não"
+    },
+    "alerts": {
+        "requirement_conflict": "Conflitos de Requisitos",
+        "requirement_conflict_text": "Os seguintes conflitos de requisitos foram encontrados:\n\n{errors}\n\nIniciar mesmo assim?",
+        "savefile_conflict": "Info Configurações de Inicialização"
     },
     "progress": {
         "unpacking": "Descompactando Recursos",

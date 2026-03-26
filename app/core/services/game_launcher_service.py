@@ -4,12 +4,14 @@ from typing import List
 from app.core.strategies.platform_strategy import PlatformFactory
 from app.core.strategies.launch_strategy import LaunchStrategyFactory
 from app.core.strategies.path_strategy import PathStrategyFactory
+from app.core.services.dll_injection_service import DllInjectionService
 from app.utils.logging_utils import get_logger
 
 
 class GameLauncherService:
-    def __init__(self):
+    def __init__(self, dll_injection_service: DllInjectionService = None):
         self.platform = PlatformFactory.create()
+        self.dll_injection_service = dll_injection_service or DllInjectionService()
     
     def find_executable(self, game_dir: str) -> str:
         exe_names = self.platform.get_executable_names()
@@ -79,6 +81,25 @@ class GameLauncherService:
         if not os.path.isfile(exe_path):
             raise FileNotFoundError(f"Game executable not found: {exe_path}")
         
+        # Update chainloader manifest if DLL mods are enabled
+        if config and config.dll_injection_enabled and mod_list:
+            dll_mods = self.dll_injection_service.scan_for_dll_mods(mod_list)
+            if dll_mods:
+                logger = get_logger()
+                logger.info("Updating chainloader manifest for %d mod(s) with DLLs", len(dll_mods))
+                manifest_updated = self.dll_injection_service.update_chainloader_manifest(game_dir, config.mod_folder, dll_mods)
+                if manifest_updated:
+                    logger.info("Chainloader manifest updated successfully")
+                else:
+                    logger.warning("Failed to update chainloader manifest - chainloader.ini may not exist")
+            else:
+                # Clear manifest if no DLL mods are enabled
+                self.dll_injection_service.clear_chainloader_manifest(game_dir, config.mod_folder)
+        else:
+            # Clear manifest if DLL injection is disabled
+            if config:
+                self.dll_injection_service.clear_chainloader_manifest(game_dir, config.mod_folder)
+        
         launch_strategy = LaunchStrategyFactory.create(game_dir)
         path_strategy = PathStrategyFactory.create(game_dir)
         
@@ -126,6 +147,10 @@ class GameLauncherService:
         final_paths = self._apply_load_order(mod_paths, config)
         converted_paths = path_strategy.convert_mod_paths(final_paths, game_dir)
         
+        bat_content = "@echo off\n"
+        bat_content += "REM Mewtator Auto-Generated Launch Script\n"
+        bat_content += "REM This script launches Mewgenics with mods\n"
+        
         cmd_parts = [f'start "" "{exe_path}"']
         cmd_parts.extend(f'"{arg}"' if ' ' in str(arg) else str(arg) for arg in extra_args)
         
@@ -133,9 +158,6 @@ class GameLauncherService:
             cmd_parts.append("-modpaths")
             cmd_parts.extend(f'"{path}"' for path in converted_paths)
         
-        bat_content = "@echo off\n"
-        bat_content += "REM Mewtator Auto-Generated Launch Script\n"
-        bat_content += "REM This script launches Mewgenics with mods\n\n"
         bat_content += " ".join(cmd_parts) + "\n"
         bat_content += "exit\n"
         

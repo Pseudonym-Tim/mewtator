@@ -21,9 +21,13 @@
             "open_game": "Open Game Folder",
             "launch_game": "Launch Game",
             "copy_launch_options": "Launch Options & Export",
+            "cleanup_dlls": "Clean Up DLL Injection",
             "exit": "Exit"
         },
-        "language": "Language"
+        "language": "Language",
+        "theme": "Theme",
+        "theme_light": "Light",
+        "theme_dark": "Dark"
     },
     "ui": {
         "disabled_mods": "Disabled Mods",
@@ -37,7 +41,8 @@
         "auto_sort": "Auto-Sort"
     },
     "preview": {
-        "url": "URL: {url}"
+        "url": "URL: {url}",
+        "contains_dlls": "⚠ Contains DLL files - Only install from trusted sources!"
     },
     "context_menu": {
         "move_top": "Move to Top",
@@ -65,7 +70,13 @@
         "inherit_save_override": "Inherit Save Override",
         "advanced": "Advanced",
         "use_original_load_order": "Use Original Load Order (Top Priority)",
-        "close_on_launch": "Close Launcher When Game Launches"
+        "close_on_launch": "Close Launcher When Game Launches",
+        "dll_injection": "Enable DLL Mod Support",
+        "dll_injection_hint": "Creates manifest for Mewjector chainloader (required for .dll mods)",
+        "dll_injection_warning": "⚠ Security: Only install DLL mods from trusted sources",
+        "mewjector_link_text": "Get Mewjector: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "Shortcuts: Enter=Save • Esc=Cancel • Tab=Navigate"
     },
     "messages": {
         "setup_required_title": "Setup Required",
@@ -94,7 +105,7 @@
         "export_bat_success_title": "Export Successful",
         "export_bat_success": "Export Successful!",
         "export_bat_instructions": "The launch script has been saved. To use it with Steam:\n\n1. Right-click Mewgenics in your Steam library\n2. Select Properties → Launch Options\n3. Paste the following line:",
-        "export_bat_note": "Note: The batch file contains all your current mod settings.\nRe-export if you change mods or settings.",
+        "export_bat_note": "Note: The batch file contains all your current mod settings. Re-export if you change mods or settings.\n\nIf DLL injection is enabled, Mewtator.exe and configuration files are included for standalone operation.",
         "close": "Close",
         "no_mods_to_sort": "No mods are enabled to sort.",
         "auto_sort_success": "Mods sorted successfully!",
@@ -105,7 +116,25 @@
         "conflict_warnings_text": "The following conflicts were detected:\n\n{warnings}\n\nContinue launching?",
         "import_modlist": "Import Modlist",
         "export_modlist": "Export Modlist",
-        "modlist_name_prompt": "Enter modlist name:"
+        "modlist_name_prompt": "Enter modlist name:",
+        "dll_injection_title": "Enable DLL Mod Support?",
+        "dll_injection_prompt": "⚠ SECURITY WARNING: DLL files can execute arbitrary code with full system privileges. Only enable DLL mods from trusted sources!\n\nThis mod contains DLL files. Would you like to enable DLL mod support?\n\nMewtator will create a manifest file that Mewjector (external DLL chainloader) can read. You can change this setting later in Settings > Launch Options.",
+        "dll_injection_chainloader_warning": "\n\n⚠ WARNING: chainloader.ini was not found in your game directory. You need to install Mewjector (DLL chainloader) for DLL mods to work.",
+        "mewjector_link_text": "Get Mewjector here: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "DLL Cleanup",
+        "dll_cleanup_nothing": "No DLL manifest found in chainloader configuration.",
+        "dll_cleanup_confirm": "This will clear the DLL manifest from chainloader configuration.\n\nContinue?",
+        "dll_cleanup_success": "DLL manifest has been cleared from chainloader configuration.",
+        "warning": "Warning",
+        "game_dir_not_set": "Game directory is not configured.",
+        "success": "Success",
+        "unpack_complete": "Unpacking complete!",
+        "repack_complete": "Repacking complete!"
+    },
+    "dialog": {
+        "yes": "Yes",
+        "no": "No"
     },
     "alerts": {
         "requirement_conflict": "Requirement Conflicts",

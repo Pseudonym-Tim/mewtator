@@ -2,10 +2,12 @@ import os
 import tkinter as tk
 from tkinter import messagebox, Toplevel, Label, Text, Button, WORD, BOTH, filedialog, simpledialog
 from tkinter import ttk
+import webbrowser
 from app.core.models.mod_list import ModList
 from app.core.services.mod_service import ModService
 from app.core.services.config_service import ConfigService
 from app.core.services.game_launcher_service import GameLauncherService
+from app.core.services.dll_injection_service import DllInjectionService
 from app.core.services.translation_service import TranslationService
 from app.core.services.pack_service import PackService
 from app.core.services.modlist_io_service import ModListIOService
@@ -27,12 +29,14 @@ class MainController:
         translation_service: TranslationService,
         pack_service: PackService,
         modlist_io_service: ModListIOService,
-        theme_service: ThemeService
+        theme_service: ThemeService,
+        dll_injection_service: DllInjectionService = None
     ):
         self.root = root
         self.config_service = config_service
         self.mod_service = mod_service
         self.launcher_service = launcher_service
+        self.dll_injection_service = dll_injection_service or DllInjectionService()
         self.translation_service = translation_service
         self.pack_service = pack_service
         self.modlist_io_service = modlist_io_service
@@ -84,6 +88,7 @@ class MainController:
         self.mod_service.validate_requirements(self.mod_list)
         self._refresh_lists()
         self.window.apply_theme(self.theme_service, self.config.theme)
+        self._auto_configure_chainloader()
     
     def _setup_menu_bar(self):
         self.window.menu_bar.create_file_menu(
@@ -96,6 +101,7 @@ class MainController:
             on_open_game=lambda: open_file_or_folder(self.config.game_install_dir),
             on_launch=self._launch_game,
             on_copy_launch=self._copy_launch_options,
+            on_cleanup_dlls=self._cleanup_dll_injection,
             on_exit=self.root.quit
         )
         
@@ -179,6 +185,8 @@ class MainController:
                     color = "red"
                 elif mod.has_unmet_requirements:
                     color = "orange"
+                elif self.dll_injection_service.mod_has_dlls(mod) and not self.config.dll_injection_enabled:
+                    color = "red"
                 else:
                     color = None
                 enabled_widget.add_item(mod.name, color)
@@ -196,6 +204,7 @@ class MainController:
         self.mod_service.validate_requirements(self.mod_list)
         self.mod_service.save_mod_order(self.mod_list)
         self._refresh_lists()
+        self._update_dll_manifest()
     
     def _update_preview_from_disabled(self):
         selection = self.window.disabled_list_widget.get_selection()
@@ -203,8 +212,9 @@ class MainController:
             _, name = selection
             mod = self.mod_list.get_mod_by_name(name)
             if mod:
+                has_dlls = self.dll_injection_service.mod_has_dlls(mod)
                 self.window.preview_panel.update_preview(
-                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url
+                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url, has_dlls
                 )
     
     def _update_preview_from_enabled(self):
@@ -213,15 +223,98 @@ class MainController:
             _, name = selection
             mod = self.mod_list.get_mod_by_name(name)
             if mod:
+                has_dlls = self.dll_injection_service.mod_has_dlls(mod)
                 self.window.preview_panel.update_preview(
-                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url
+                    mod.title, mod.author, mod.version, mod.description, mod.preview_path, mod.url, has_dlls
                 )
     
     def _enable_all(self):
+        # Check for DLL mods before enabling all
+        if self.dll_injection_service.has_dll_mods(self.mod_list):
+            if not self._check_dll_injection_prompt():
+                return  # User declined or DLL support is disabled
         self.mod_list.enable_all()
     
     def _disable_all(self):
         self.mod_list.disable_all()
+    
+    def _enable_mod_with_dll_check(self, mod_name: str):
+        """Enable a mod and check if DLL injection prompt should be shown."""
+        mod = self.mod_list.get_mod_by_name(mod_name)
+        if mod:
+            # Check if this mod has DLLs
+            if self.dll_injection_service.mod_has_dlls(mod):
+                if not self._check_dll_injection_prompt():
+                    return  # User declined or DLL support is disabled
+        
+        # Enable the mod
+        self.mod_list.enable_mod(mod_name)
+    
+    def _auto_configure_chainloader(self):
+        """Auto-detect chainloader.ini and configure it if found."""
+        if not self.config.game_install_dir:
+            return
+        
+        # Check if chainloader exists and DLL support is enabled
+        if self.dll_injection_service.chainloader_exists(self.config.game_install_dir):
+            if self.config.dll_injection_enabled:
+                # Update manifest immediately
+                self._update_dll_manifest()
+    
+    def _update_dll_manifest(self):
+        """Update the DLL manifest file if DLL support is enabled."""
+        if not self.config.game_install_dir or not self.config.mod_folder:
+            return
+        
+        # Only update if DLL support is enabled and chainloader exists
+        if self.config.dll_injection_enabled and self.dll_injection_service.chainloader_exists(self.config.game_install_dir):
+            dll_mods = self.dll_injection_service.scan_for_dll_mods(self.mod_list)
+            if dll_mods:
+                self.dll_injection_service.update_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder, dll_mods)
+            else:
+                # No DLL mods enabled, clear the manifest
+                self.dll_injection_service.clear_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder)
+    
+    def _check_dll_injection_prompt(self):
+        """Check if DLL injection prompt should be shown and show it. Returns True if DLL support is enabled."""
+        if not self.config.dll_injection_enabled:
+            # Check if chainloader.ini exists in game directory
+            chainloader_exists = False
+            show_link = False
+            warning_message = (
+                "⚠ SECURITY WARNING: DLL files can execute arbitrary code with full system privileges. "
+                "Only enable DLL mods from trusted sources!\n\n"
+                "This mod contains DLL files. Would you like to enable DLL mod support?\n\n"
+                "Mewtator will create a manifest file that Mewjector (external DLL chainloader) can read. "
+                "You can change this setting later in Settings > Launch Options."
+            )
+            
+            if self.config.game_install_dir:
+                chainloader_exists = self.dll_injection_service.chainloader_exists(self.config.game_install_dir)
+                if not chainloader_exists:
+                    chainloader_warning = self.translation_service.get(
+                        "messages.dll_injection_chainloader_warning",
+                        "\n\n⚠ WARNING: chainloader.ini was not found in your game directory. You need to install Mewjector (DLL chainloader) for DLL mods to work."
+                    )
+                    warning_message += chainloader_warning
+                    show_link = True
+            
+            result = self._show_dll_prompt_dialog(
+                self.translation_service.get("messages.dll_injection_title", "Enable DLL Mod Support?"),
+                self.translation_service.get("messages.dll_injection_prompt", warning_message),
+                show_link=show_link
+            )
+            
+            self.config.dll_injection_enabled = result
+            self.config_service.save_config(self.config)
+            
+            # Update manifest immediately if enabled
+            if result:
+                self._update_dll_manifest()
+            
+            return result
+        
+        return True
     
     def _swap_selected(self):
         disabled_selection = self.window.disabled_list_widget.get_selection()
@@ -229,7 +322,7 @@ class MainController:
         
         if disabled_selection:
             _, name = disabled_selection
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
         elif enabled_selection:
             _, name = enabled_selection
             self.mod_list.disable_mod(name)
@@ -238,7 +331,7 @@ class MainController:
         selection = self.window.disabled_list_widget.get_selection()
         if selection:
             _, name = selection
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
     
     def _toggle_enabled(self):
         selection = self.window.enabled_list_widget.get_selection()
@@ -251,7 +344,7 @@ class MainController:
         index = widget.nearest(event.y)
         if index >= 0:
             name = widget.get(index)
-            self.mod_list.enable_mod(name)
+            self._enable_mod_with_dll_check(name)
     
     def _disable_selected_enabled(self, event):
         widget = event.widget
@@ -364,7 +457,7 @@ class MainController:
             if source_list == self.window.enabled_list_widget.listbox:
                 self.mod_list.disable_mod(item)
             else:
-                self.mod_list.enable_mod(item)
+                self._enable_mod_with_dll_check(item)
             moved_between_lists = True
         
         if not moved_between_lists and self.drag_data["changed"]:
@@ -389,7 +482,7 @@ class MainController:
         menu = tk.Menu(self.root, tearoff=0)
         menu.add_command(
             label=self.translation_service.get("context_menu.enable"),
-            command=lambda: self.mod_list.enable_mod(name)
+            command=lambda: self._enable_mod_with_dll_check(name)
         )
         menu.post(event.x_root, event.y_root)
     
@@ -648,6 +741,56 @@ class MainController:
                 f"Failed to export launch script:\n{str(e)}"
             )
     
+    def _cleanup_dll_injection(self):
+        """Clean up DLL manifest and chainloader configuration."""
+        if not self.config.game_install_dir:
+            messagebox.showwarning(
+                self.translation_service.get("messages.warning", "Warning"),
+                self.translation_service.get("messages.game_dir_not_set", "Game directory is not configured.")
+            )
+            return
+        
+        # Check if chainloader configuration exists
+        if not self.dll_injection_service.is_chainloader_configured(self.config.game_install_dir):
+            messagebox.showinfo(
+                self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+                self.translation_service.get(
+                    "messages.dll_cleanup_nothing",
+                    "No DLL manifest found in chainloader configuration."
+                )
+            )
+            return
+        
+        # Confirm cleanup
+        result = messagebox.askyesno(
+            self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+            self.translation_service.get(
+                "messages.dll_cleanup_confirm",
+                "This will clear the DLL manifest from chainloader configuration.\n\n"
+                "Continue?"
+            )
+        )
+        
+        if not result:
+            return
+        
+        # Perform cleanup
+        try:
+            self.dll_injection_service.clear_chainloader_manifest(self.config.game_install_dir, self.config.mod_folder)
+            
+            messagebox.showinfo(
+                self.translation_service.get("messages.dll_cleanup_title", "DLL Cleanup"),
+                self.translation_service.get(
+                    "messages.dll_cleanup_success",
+                    "DLL manifest has been cleared from chainloader configuration."
+                )
+            )
+        except Exception as e:
+            messagebox.showerror(
+                self.translation_service.get("messages.error", "Error"),
+                f"Error during DLL cleanup:\n{str(e)}"
+            )
+    
     def _auto_sort(self):
         """Auto-sort enabled mods alphabetically and by requirements."""
         if not self.mod_list.enabled_mods:
@@ -686,10 +829,16 @@ class MainController:
             
             self.pack_service.unpack(self.config.game_install_dir, output_dir, progress)
             pw.close()
-            messagebox.showinfo("Success", "Unpacking complete!")
+            messagebox.showinfo(
+                self.translation_service.get("messages.success"),
+                self.translation_service.get("messages.unpack_complete")
+            )
         except Exception as e:
             pw.close()
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror(
+                self.translation_service.get("messages.error"),
+                str(e)
+            )
     
     def _repack(self):
         source_dir = os.path.join(self.config.mod_folder, "_unpacked")
@@ -703,10 +852,16 @@ class MainController:
             
             self.pack_service.repack(source_dir, gpak_output, progress)
             pw.close()
-            messagebox.showinfo("Success", "Repacking complete!")
+            messagebox.showinfo(
+                self.translation_service.get("messages.success"),
+                self.translation_service.get("messages.repack_complete")
+            )
         except Exception as e:
             pw.close()
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror(
+                self.translation_service.get("messages.error"),
+                str(e)
+            )
     
     def _import_modlist(self):
         with self.theme_service.file_dialog_safe_theme():
@@ -811,6 +966,75 @@ class MainController:
         ttk.Label(container, text=message, wraplength=460, justify="left").pack(anchor="w", pady=(0, 12))
 
         ttk.Button(container, text=self.translation_service.get("settings.confirm", "OK"), command=dialog.destroy).pack(anchor="e")
+    
+    def _show_dll_prompt_dialog(self, title: str, message: str, show_link: bool = True):
+        """Show a custom yes/no dialog with optional clickable Mewjector link. Returns True if user clicks Yes."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title(title)
+        dialog.geometry("600x400" if show_link else "600x350")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        theme_name = self.theme_service.normalize_theme_name(self.config.theme)
+        colors = self.theme_service.get_color_scheme(theme_name)
+        dialog.configure(bg=colors["bg"])
+        self.theme_service.apply_titlebar(dialog, theme_name)
+        
+        container = ttk.Frame(dialog)
+        container.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Title
+        ttk.Label(container, text=title, font=("Arial", 14, "bold")).pack(anchor="w", pady=(0, 12))
+        
+        # Message
+        ttk.Label(container, text=message, wraplength=560, justify="left").pack(anchor="w", pady=(0, 12))
+        
+        # Clickable link if requested
+        if show_link:
+            link_frame = ttk.Frame(container)
+            link_frame.pack(anchor="w", pady=(0, 12))
+            
+            ttk.Label(
+                link_frame,
+                text=self.translation_service.get("messages.mewjector_link_text", "Get Mewjector here: "),
+                font=("Arial", 10)
+            ).pack(side="left")
+            
+            mewjector_url = "https://www.nexusmods.com/mewgenics/mods/218"
+            link_color = "#5DADE2" if theme_name == "dark" else "#2E7DBE"
+            link_label = tk.Label(
+                link_frame,
+                text=self.translation_service.get("messages.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
+                font=("Arial", 10, "underline"),
+                fg=link_color,
+                bg=colors["bg"],
+                cursor="hand2"
+            )
+            link_label.pack(side="left")
+            link_label.bind("<Button-1>", lambda e: webbrowser.open(mewjector_url))
+        
+        # Button frame
+        button_frame = ttk.Frame(container)
+        button_frame.pack(anchor="e", pady=(20, 0))
+        
+        result = {"value": False}
+        
+        def on_yes():
+            result["value"] = True
+            dialog.destroy()
+        
+        def on_no():
+            result["value"] = False
+            dialog.destroy()
+        
+        ttk.Button(button_frame, text=self.translation_service.get("dialog.no", "No"), command=on_no, width=10).pack(side="left", padx=5)
+        ttk.Button(button_frame, text=self.translation_service.get("dialog.yes", "Yes"), command=on_yes, width=10).pack(side="left", padx=5)
+        
+        # Wait for dialog to close
+        dialog.wait_window()
+        
+        return result["value"]
     
     def _change_language(self, language: str):
         self.config.language = language

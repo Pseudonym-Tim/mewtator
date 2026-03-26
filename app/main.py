@@ -7,6 +7,7 @@ from app.infrastructure.translation_repository import TranslationRepository
 from app.core.services.config_service import ConfigService
 from app.core.services.mod_service import ModService
 from app.core.services.game_launcher_service import GameLauncherService
+from app.core.services.dll_injection_service import DllInjectionService
 from app.core.services.translation_service import TranslationService
 from app.core.services.pack_service import PackService
 from app.core.services.modlist_io_service import ModListIOService
@@ -101,7 +102,8 @@ def main():
     
     mod_repo = ModRepository(config.mod_folder)
     mod_service = ModService(mod_repo)
-    launcher_service = GameLauncherService()
+    dll_injection_service = DllInjectionService()
+    launcher_service = GameLauncherService(dll_injection_service)
     pack_service = PackService()
     modlist_io_service = ModListIOService()
     
@@ -113,7 +115,8 @@ def main():
         translation_service,
         pack_service,
         modlist_io_service,
-        theme_service
+        theme_service,
+        dll_injection_service
     )
     
     controller.start()

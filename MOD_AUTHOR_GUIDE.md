@@ -61,6 +61,16 @@ Your mod's folder name identifies the mod. The `description.json` file contains 
   - See [MOD_REQUIREMENTS.md](MOD_REQUIREMENTS.md) for detailed information
   - Example: `["CoreMod>=1.0.0", "UIFramework"]`
 
+- **`dll_order`** (array, optional) - **For DLL mods only**
+  - Specifies the load order for multiple DLL files within your mod
+  - Default: Alphabetical order if not specified
+  - Only include the DLL filenames, not full paths
+  - Case-insensitive matching
+  - Any DLLs not listed will be loaded alphabetically after the specified ones
+  - Example: `["core.dll", "plugin.dll", "hooks.dll"]`
+  - **Use case:** When your mod has multiple DLLs with dependencies on each other
+  - **⚠️ Security Note:** DLL mods execute with full system privileges. Users should only install DLL mods from trusted sources.
+
 **Preview Images:**
 Preview images are auto-detected (not specified in JSON). Place a file named `preview.png`, `preview.jpg`, `preview.jpeg`, or `preview.webp` in your mod folder and Mewtator will find it automatically.
 
@@ -88,6 +98,10 @@ mods/
   "requirements": [
     "CoreFramework>=1.5.0",
     "UIEnhancements>=2.0.0"
+  ],
+  "dll_order": [
+    "core.dll",
+    "plugin.dll"
   ]
 }
 ```
@@ -149,6 +163,37 @@ Make your mod easy to identify:
 - Recommended size: 800x600 or similar
 - Shows in Mewtator's preview panel
 
+### 7. DLL Mod Security (For DLL mod authors)
+
+**⚠️ IMPORTANT SECURITY CONSIDERATIONS:**
+
+If your mod contains DLL files, be aware that:
+- DLL files execute with full system privileges
+- Malicious DLLs can compromise the user's system
+- Users are warned about security risks when enabling DLL mods
+- **Users need Mewjector (DLL chainloader)** to load DLL mods: https://www.nexusmods.com/mewgenics/mods/218
+
+**Best practices for DLL mod authors:**
+- **Build trust:** Publish your mod on reputable platforms (Nexus Mods, GitHub, etc.)
+- **Open source when possible:** Share your source code to allow security review
+- **Sign your DLLs:** Use code signing certificates to prove authenticity
+- **Document functionality:** Clearly explain what your DLL does
+- **Use `dll_order`:** If you have multiple DLLs with dependencies, specify load order in metadata
+- **Test thoroughly:** Ensure your DLLs don't cause crashes or conflicts
+- **Mention the Mewjector requirement:** Let users know they need Mewjector installed
+
+**Example for DLL mods:**
+```json
+{
+  "title": "Advanced Hooks",
+  "author": "TrustedModder",
+  "version": "1.0.0",
+  "description": "Game hooks for extended functionality.\n\nRequires Mewjector (DLL Chainloader): https://www.nexusmods.com/mewgenics/mods/218\n\nSource code: https://github.com/...",
+  "url": "https://www.nexusmods.com/mewgenics/mods/123",
+  "dll_order": ["core.dll", "hooks.dll"]
+}
+```
+
 ## Quick Reference
 
 ### Minimal mod (recommended fields)
@@ -188,7 +233,6 @@ Make your mod easy to identify:
 {
   "requirements": [
     "Mod",                    // Any version
-    "Mod>=1.0.0",            // At least 1.0.0
     "Mod>=1.0.0",            // At least 1.0.0 (most common)
     "Mod>1.2.0",             // Greater than 1.2.0 (skip buggy version)
     "Mod<=2.9.9",            // Up to 2.9.9 (before breaking change)
