@@ -86,7 +86,7 @@ class DllInjectionService:
             mod: Mod object with path attribute
             
         Returns:
-            List of absolute paths to .dll files
+            List of absolute paths to .dll files, ordered by dll_order in metadata or alphabetically
         """
         dll_files = []
         mod_path = Path(mod.path)
@@ -100,7 +100,27 @@ class DllInjectionService:
                 # Use forward slashes for cross-platform compatibility (Windows/Proton)
                 dll_files.append(dll_file.absolute().as_posix())
         
-        return dll_files
+        # Sort DLLs: use dll_order from metadata if available, otherwise alphabetical
+        if mod.dll_order:
+            # Create a map of filename -> full path
+            dll_map = {Path(dll).name.lower(): dll for dll in dll_files}
+            
+            # Build ordered list based on dll_order
+            ordered_dlls = []
+            for dll_name in mod.dll_order:
+                dll_name_lower = dll_name.lower()
+                if dll_name_lower in dll_map:
+                    ordered_dlls.append(dll_map[dll_name_lower])
+                    del dll_map[dll_name_lower]  # Remove from map
+            
+            # Append any remaining DLLs not in dll_order (alphabetically)
+            remaining = sorted(dll_map.values(), key=lambda p: Path(p).name.lower())
+            ordered_dlls.extend(remaining)
+            
+            return ordered_dlls
+        else:
+            # No dll_order specified, sort alphabetically by filename
+            return sorted(dll_files, key=lambda p: Path(p).name.lower())
     
     def update_chainloader_manifest(self, game_dir: str, mod_folder: str, dll_mods: List[Tuple[str, List[str]]]) -> bool:
         """Create manifest file and update chainloader.ini to point to it.

@@ -34,6 +34,13 @@
         "launch_game": "ゲームを起動",
         "no_preview": "プレビュー画像なし"
     },
+    "mod_list": {
+        "auto_sort": "自動ソート"
+    },
+    "preview": {
+        "url": "URL：{url}",
+        "contains_dlls": "⚠ DLL ファイルが含まれています - 信頼できるソースからのみインストールしてください！"
+    },
     "context_menu": {
         "move_top": "一番上に移動",
         "move_bottom": "一番下に移動",
@@ -50,7 +57,23 @@
         "save": "設定を保存",
         "select_language_title": "言語を選択",
         "select_language_text": "お好みの言語を選択してください：",
-        "confirm": "確認"
+        "confirm": "確認",
+        "launch_options": "起動オプション",
+        "custom_launch_options": "カスタム起動オプション",
+        "dev_mode": "開発モードを有効化 (-dev_mode true)",
+        "debug_console": "デバッグコンソールを有効化 (-enable_debugconsole true)",
+        "mod_overrides": "Mod 起動設定の上書き",
+        "savefile_suffix_override": "セーブファイル接尾辞の上書き",
+        "inherit_save_override": "セーブ継承の上書き",
+        "advanced": "高度な設定",
+        "use_original_load_order": "元の読み込み順序を使用（最高優先度）",
+        "close_on_launch": "ゲーム起動時にランチャーを閉じる",
+        "dll_injection": "DLL Mod サポートを有効化",
+        "dll_injection_hint": "Mewjector チェーンローダー用のマニフェストを作成（.dll Mod に必要）",
+        "dll_injection_warning": "⚠ セキュリティ：信頼できるソースの DLL Mod のみインストールしてください",
+        "mewjector_link_text": "Mewjector を入手：",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "ショートカット：Enter=保存 • Esc=キャンセル • Tab=移動"
     },
     "messages": {
         "setup_required_title": "設定が必要です",
@@ -77,7 +100,46 @@
         "close": "閉じる",
         "success": "成功",
         "unpack_complete": "展開完了！",
-        "repack_complete": "再パック完了！"
+        "repack_complete": "再パック完了！",
+        "launch_options_title": "Steam 起動オプション",
+        "launch_options_instructions": "これらの起動オプションをコピーして Steam に貼り付けてください：\nゲームを右クリック → プロパティ → 起動オプション\n\n注意：Linux/Proton/Steam Deck では、最高の互換性のために Mod をゲームディレクトリに保管してください。",
+        "copy_to_clipboard": "クリップボードにコピー",
+        "export_bat": ".BAT ファイルにエクスポート",
+        "export_bat_title": "起動スクリプトのエクスポート",
+        "export_bat_success_title": "エクスポート成功",
+        "export_bat_success": "エクスポート成功！",
+        "export_bat_instructions": "起動スクリプトが保存されました。Steam で使用するには：\n\n1. Steam ライブラリで Mewgenics を右クリック\n2. プロパティ → 起動オプションを選択\n3. 次の行を貼り付け：",
+        "export_bat_note": "注意：バッチファイルには現在のすべての Mod 設定が含まれています。Mod または設定を変更した場合は、再エクスポートしてください。",
+        "no_mods_to_sort": "ソートする有効な Mod がありません。",
+        "auto_sort_success": "Mod のソートが成功しました！",
+        "auto_sort_warnings": "Mod は警告付きでソートされました：\n\n{warnings}",
+        "requirement_warnings_title": "未充足の要件",
+        "requirement_warnings_text": "一部の Mod には未充足の要件があります：\n\n{errors}\n\nそれでも起動しますか？",
+        "conflict_warnings_title": "設定の競合",
+        "conflict_warnings_text": "次の競合が検出されました：\n\n{warnings}\n\nそれでも起動しますか？",
+        "import_modlist": "Mod リストのインポート",
+        "export_modlist": "Mod リストのエクスポート",
+        "modlist_name_prompt": "Mod リスト名を入力：",
+        "dll_injection_title": "DLL Mod サポートを有効化しますか？",
+        "dll_injection_prompt": "⚠ セキュリティ警告：DLL ファイルはフルシステム権限で任意のコードを実行できます。信頼できるソースからの DLL Mod のみを有効にしてください！\n\nこの Mod には DLL ファイルが含まれています。DLL Mod サポートを有効にしますか？\n\nMewtator は Mewjector（外部 DLL チェーンローダー）が読み取れるマニフェストファイルを作成します。この設定は後で設定 > 起動オプションで変更できます。",
+        "dll_injection_chainloader_warning": "\n\n⚠ 警告：chainloader.ini がゲームディレクトリに見つかりませんでした。DLL Mod を動作させるには Mewjector（DLL チェーンローダー）をインストールする必要があります。",
+        "mewjector_link_text": "Mewjector をここで入手：",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "DLL クリーンアップ",
+        "dll_cleanup_nothing": "チェーンローダー設定に DLL マニフェストが見つかりません。",
+        "dll_cleanup_confirm": "これにより、チェーンローダー設定から DLL マニフェストがクリアされます。\n\n続けますか？",
+        "dll_cleanup_success": "DLL マニフェストがチェーンローダー設定からクリアされました。",
+        "warning": "警告",
+        "game_dir_not_set": "ゲームディレクトリが設定されていません。"
+    },
+    "dialog": {
+        "yes": "はい",
+        "no": "いいえ"
+    },
+    "alerts": {
+        "requirement_conflict": "要件の競合",
+        "requirement_conflict_text": "次の要件の競合が見つかりました：\n\n{errors}\n\nそれでも起動しますか？",
+        "savefile_conflict": "起動設定情報"
     },
     "progress": {
         "unpacking": "リソースを展開中",

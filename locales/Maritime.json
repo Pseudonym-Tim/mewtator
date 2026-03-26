@@ -34,6 +34,13 @@
         "launch_game": "Set Sail!",
         "no_preview": "No Portrait Available"
     },
+    "mod_list": {
+        "auto_sort": "Auto-Arrange Crew"
+    },
+    "preview": {
+        "url": "Port: {url}",
+        "contains_dlls": "⚠ Contains DLL cargo - Only load from trusted ports!"
+    },
     "context_menu": {
         "move_top": "Hoist to th' Crow's Nest",
         "move_bottom": "Send to th' Bilge",
@@ -50,7 +57,23 @@
         "save": "Weigh Anchor",
         "select_language_title": "Choose Yer Tongue",
         "select_language_text": "Pick yer preferred tongue, matey:",
-        "confirm": "Aye!"
+        "confirm": "Aye!",
+        "launch_options": "Launch Orders",
+        "custom_launch_options": "Custom Launch Orders",
+        "dev_mode": "Enable Cap'n Mode (-dev_mode true)",
+        "debug_console": "Enable Debug Spyglass (-enable_debugconsole true)",
+        "mod_overrides": "Mod Launch Overrides",
+        "savefile_suffix_override": "Savefile Suffix Override",
+        "inherit_save_override": "Inherit Save Override",
+        "advanced": "Advanced Riggin'",
+        "use_original_load_order": "Use Original Load Order (Top Priority)",
+        "close_on_launch": "Close Launcher When Game Sets Sail",
+        "dll_injection": "Enable DLL Mod Cargo",
+        "dll_injection_hint": "Creates manifest fer Mewjector chainloader (required fer .dll cargo)",
+        "dll_injection_warning": "⚠ Security: Only load DLL cargo from trusted ports",
+        "mewjector_link_text": "Get Mewjector: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "shortcuts": "Commands: Enter=Weigh Anchor • Esc=Belay • Tab=Navigate"
     },
     "messages": {
         "setup_required_title": "Riggin' Required",
@@ -77,7 +100,46 @@
         "close": "Shove Off",
         "success": "Aye, Success!",
         "unpack_complete": "Plunderin' complete!",
-        "repack_complete": "Stowin' complete!"
+        "repack_complete": "Stowin' complete!",
+        "launch_options_title": "Steam Launch Orders",
+        "launch_options_instructions": "Copy these launch orders and paste 'em in Steam:\nRight-click game → Properties → Launch Options\n\nNote: On Linux/Proton/Steam Deck, keep mods in th' game bay fer best sailin'.",
+        "copy_to_clipboard": "Copy to Logbook",
+        "export_bat": "Export to .BAT Scroll",
+        "export_bat_title": "Export Launch Orders",
+        "export_bat_success_title": "Export Successful",
+        "export_bat_success": "Aye, Success!",
+        "export_bat_instructions": "Th' launch orders have been scribed. To use with Steam:\n\n1. Right-click Mewgenics in yer Steam fleet\n2. Select Properties → Launch Options\n3. Paste th' followin' orders:",
+        "export_bat_note": "Note: Th' scroll contains all yer current mod cargo. Re-export if ye change cargo or riggin'.",
+        "no_mods_to_sort": "No crew to arrange, cap'n.",
+        "auto_sort_success": "Crew arranged successfully!",
+        "auto_sort_warnings": "Crew arranged with warnings:\n\n{warnings}",
+        "requirement_warnings_title": "Unmet Provisions",
+        "requirement_warnings_text": "Some cargo has unmet provisions:\n\n{errors}\n\nSet sail anyway?",
+        "conflict_warnings_title": "Riggin' Conflicts",
+        "conflict_warnings_text": "Th' followin' conflicts be found:\n\n{warnings}\n\nSet sail anyway?",
+        "import_modlist": "Import Cargo Manifest",
+        "export_modlist": "Export Cargo Manifest",
+        "modlist_name_prompt": "Enter manifest name:",
+        "dll_injection_title": "Enable DLL Mod Cargo?",
+        "dll_injection_prompt": "⚠ SECURITY WARNIN': DLL cargo can execute any orders with full ship authority. Only enable DLL cargo from trusted ports!\n\nThis cargo contains DLL files. Would ye like to enable DLL mod cargo?\n\nMewtator will create a manifest that Mewjector (external DLL chainloader) can read. Ye can change this in Riggin' & Sails > Launch Orders later.",
+        "dll_injection_chainloader_warning": "\n\n⚠ WARNIN': chainloader.ini not spotted in yer game bay. Ye need to install Mewjector (DLL chainloader) fer DLL cargo to work.",
+        "mewjector_link_text": "Get Mewjector here: ",
+        "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+        "dll_cleanup_title": "DLL Cargo Cleanup",
+        "dll_cleanup_nothing": "No DLL manifest found in chainloader riggin'.",
+        "dll_cleanup_confirm": "This'll clear th' DLL manifest from chainloader riggin'.\n\nContinue?",
+        "dll_cleanup_success": "DLL manifest has been cleared from chainloader riggin'.",
+        "warning": "Warnin'",
+        "game_dir_not_set": "Game port ain't been charted."
+    },
+    "dialog": {
+        "yes": "Aye!",
+        "no": "Nay!"
+    },
+    "alerts": {
+        "requirement_conflict": "Provision Conflicts",
+        "requirement_conflict_text": "Th' followin' provision conflicts be found:\n\n{errors}\n\nSet sail anyway?",
+        "savefile_conflict": "Launch Riggin' Info"
     },
     "progress": {
         "unpacking": "Plunderin' Cargo",

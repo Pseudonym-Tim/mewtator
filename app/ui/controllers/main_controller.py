@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import messagebox, Toplevel, Label, Text, Button, WORD, BOTH, filedialog, simpledialog
 from tkinter import ttk
+import webbrowser
 from app.core.models.mod_list import ModList
 from app.core.services.mod_service import ModService
 from app.core.services.config_service import ConfigService
@@ -279,20 +280,29 @@ class MainController:
         if not self.config.dll_injection_enabled:
             # Check if chainloader.ini exists in game directory
             chainloader_exists = False
-            chainloader_warning = ""
+            show_link = False
+            warning_message = (
+                "⚠ SECURITY WARNING: DLL files can execute arbitrary code with full system privileges. "
+                "Only enable DLL mods from trusted sources!\n\n"
+                "This mod contains DLL files. Would you like to enable DLL mod support?\n\n"
+                "Mewtator will create a manifest file that Mewjector (external DLL chainloader) can read. "
+                "You can change this setting later in Settings > Launch Options."
+            )
+            
             if self.config.game_install_dir:
                 chainloader_exists = self.dll_injection_service.chainloader_exists(self.config.game_install_dir)
                 if not chainloader_exists:
-                    chainloader_warning = "\n\nWARNING: chainloader.ini was not found in your game directory. You need to install a DLL chainloader for DLL mods to work."
+                    chainloader_warning = self.translation_service.get(
+                        "messages.dll_injection_chainloader_warning",
+                        "\n\n⚠ WARNING: chainloader.ini was not found in your game directory. You need to install Mewjector (DLL chainloader) for DLL mods to work."
+                    )
+                    warning_message += chainloader_warning
+                    show_link = True
             
-            result = messagebox.askyesno(
+            result = self._show_dll_prompt_dialog(
                 self.translation_service.get("messages.dll_injection_title", "Enable DLL Mod Support?"),
-                self.translation_service.get(
-                    "messages.dll_injection_prompt",
-                    "This mod contains DLL files. Would you like to enable DLL mod support?\n\n"
-                    "Mewtator will create a manifest file that a chainloader (external DLL loader) can read. "
-                    "You can change this setting later in Settings > Launch Options."
-                ) + chainloader_warning
+                self.translation_service.get("messages.dll_injection_prompt", warning_message),
+                show_link=show_link
             )
             
             self.config.dll_injection_enabled = result
@@ -956,6 +966,75 @@ class MainController:
         ttk.Label(container, text=message, wraplength=460, justify="left").pack(anchor="w", pady=(0, 12))
 
         ttk.Button(container, text=self.translation_service.get("settings.confirm", "OK"), command=dialog.destroy).pack(anchor="e")
+    
+    def _show_dll_prompt_dialog(self, title: str, message: str, show_link: bool = True):
+        """Show a custom yes/no dialog with optional clickable Mewjector link. Returns True if user clicks Yes."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title(title)
+        dialog.geometry("600x400" if show_link else "600x350")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        theme_name = self.theme_service.normalize_theme_name(self.config.theme)
+        colors = self.theme_service.get_color_scheme(theme_name)
+        dialog.configure(bg=colors["bg"])
+        self.theme_service.apply_titlebar(dialog, theme_name)
+        
+        container = ttk.Frame(dialog)
+        container.pack(fill="both", expand=True, padx=20, pady=20)
+        
+        # Title
+        ttk.Label(container, text=title, font=("Arial", 14, "bold")).pack(anchor="w", pady=(0, 12))
+        
+        # Message
+        ttk.Label(container, text=message, wraplength=560, justify="left").pack(anchor="w", pady=(0, 12))
+        
+        # Clickable link if requested
+        if show_link:
+            link_frame = ttk.Frame(container)
+            link_frame.pack(anchor="w", pady=(0, 12))
+            
+            ttk.Label(
+                link_frame,
+                text=self.translation_service.get("messages.mewjector_link_text", "Get Mewjector here: "),
+                font=("Arial", 10)
+            ).pack(side="left")
+            
+            mewjector_url = "https://www.nexusmods.com/mewgenics/mods/218"
+            link_color = "#5DADE2" if theme_name == "dark" else "#2E7DBE"
+            link_label = tk.Label(
+                link_frame,
+                text=self.translation_service.get("messages.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
+                font=("Arial", 10, "underline"),
+                fg=link_color,
+                bg=colors["bg"],
+                cursor="hand2"
+            )
+            link_label.pack(side="left")
+            link_label.bind("<Button-1>", lambda e: webbrowser.open(mewjector_url))
+        
+        # Button frame
+        button_frame = ttk.Frame(container)
+        button_frame.pack(anchor="e", pady=(20, 0))
+        
+        result = {"value": False}
+        
+        def on_yes():
+            result["value"] = True
+            dialog.destroy()
+        
+        def on_no():
+            result["value"] = False
+            dialog.destroy()
+        
+        ttk.Button(button_frame, text=self.translation_service.get("dialog.no", "No"), command=on_no, width=10).pack(side="left", padx=5)
+        ttk.Button(button_frame, text=self.translation_service.get("dialog.yes", "Yes"), command=on_yes, width=10).pack(side="left", padx=5)
+        
+        # Wait for dialog to close
+        dialog.wait_window()
+        
+        return result["value"]
     
     def _change_language(self, language: str):
         self.config.language = language
