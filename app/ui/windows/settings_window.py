@@ -176,14 +176,6 @@ class SettingsWindow:
         advanced_frame = ttk.Frame(self.win)
         advanced_frame.pack(fill="x", padx=30, pady=5)
         
-        self.use_original_order_var = BooleanVar(value=self.config.use_original_load_order)
-        use_original_order_check = ttk.Checkbutton(
-            advanced_frame,
-            text=t.get("settings.use_original_load_order", "Use Original Load Order (Top Priority)"),
-            variable=self.use_original_order_var
-        )
-        use_original_order_check.pack(anchor="w")
-        
         self.close_on_launch_var = BooleanVar(value=self.config.close_on_launch)
         close_on_launch_check = ttk.Checkbutton(
             advanced_frame,
@@ -330,7 +322,6 @@ class SettingsWindow:
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()
-        self.config.use_original_load_order = self.use_original_order_var.get()
         self.config.close_on_launch = self.close_on_launch_var.get()
         
         self.win.destroy()

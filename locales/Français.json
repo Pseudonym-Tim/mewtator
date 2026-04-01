@@ -69,7 +69,6 @@
         "savefile_suffix_override": "Remplacer le Suffixe du Fichier de Sauvegarde",
         "inherit_save_override": "Remplacer l'Héritage de Sauvegarde",
         "advanced": "Avancé",
-        "use_original_load_order": "Utiliser l'Ordre de Chargement Original (Priorité Maximale)",
         "close_on_launch": "Fermer le Lanceur au Démarrage du Jeu",
         "dll_injection": "Activer le Support des Mods DLL",
         "dll_injection_hint": "Crée un manifeste pour le chargeur Mewjector (requis pour les mods .dll)",
@@ -106,6 +105,7 @@
         "export_bat_success": "Exportation Réussie !",
         "export_bat_instructions": "Le script de lancement a été enregistré. Pour l'utiliser avec Steam :\n\n1. Clic droit sur Mewgenics dans votre bibliothèque Steam\n2. Sélectionnez Propriétés → Options de Lancement\n3. Collez la ligne suivante :",
         "export_bat_note": "Note : Le fichier batch contient tous vos paramètres de mods actuels. Réexportez si vous modifiez les mods ou les paramètres.",
+        "close": "Fermer",
         "no_mods_to_sort": "Aucun mod activé à trier.",
         "auto_sort_success": "Mods triés avec succès !",
         "auto_sort_warnings": "Mods triés avec des avertissements :\n\n{warnings}",
@@ -127,7 +127,6 @@
         "dll_cleanup_success": "Le manifeste DLL a été effacé de la configuration du chargeur.",
         "warning": "Avertissement",
         "game_dir_not_set": "Le répertoire du jeu n'est pas configuré.",
-        "close": "Fermer",
         "success": "Succès",
         "unpack_complete": "Décompression terminée !",
         "repack_complete": "Recompression terminée !"

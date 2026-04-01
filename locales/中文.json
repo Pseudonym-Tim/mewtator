@@ -69,7 +69,6 @@
         "savefile_suffix_override": "存档后缀覆盖",
         "inherit_save_override": "继承存档覆盖",
         "advanced": "高级",
-        "use_original_load_order": "使用原始加载顺序（最高优先级）",
         "close_on_launch": "游戏启动时关闭启动器",
         "dll_injection": "启用 DLL 模组支持",
         "dll_injection_hint": "为 Mewjector 链加载器创建清单（.dll 模组需要）",
@@ -98,13 +97,7 @@
         "no_mods_title": "未启用模组",
         "no_mods_text": "未启用任何模组。请先启用一些模组。",
         "launch_options_title": "Steam 启动选项",
-        "launch_options_instructions": "复制这些启动选项并粘贴到 Steam 中：\n右键点击游戏 → 属性 → 启动选项\n\n注意：在 Linux/Proton/Steam Deck 上，将模组保存在游戏目录中以获得最佳兼容性。",
-        "copy_to_clipboard": "复制到剪贴板",
-        "close": "关闭",
-        "success": "成功",
-        "unpack_complete": "解包完成！",
-        "repack_complete": "重新打包完成！",
-        "launch_options_title": "Steam 启动选项",
+
         "launch_options_instructions": "复制这些启动选项并粘贴到 Steam 中：\n右键点击游戏 → 属性 → 启动选项\n\n注意：在 Linux/Proton/Steam Deck 上，请将模组保存在游戏目录中以获得最佳兼容性。",
         "copy_to_clipboard": "复制到剪贴板",
         "export_bat": "导出为 .BAT 文件",
@@ -113,6 +106,7 @@
         "export_bat_success": "导出成功！",
         "export_bat_instructions": "启动脚本已保存。要在 Steam 中使用它：\n\n1. 在 Steam 库中右键点击 Mewgenics\n2. 选择属性 → 启动选项\n3. 粘贴以下行：",
         "export_bat_note": "注意：批处理文件包含您当前的所有模组设置。如果您更改了模组或设置，请重新导出。",
+        "close": "关闭",
         "no_mods_to_sort": "没有启用的模组可以排序。",
         "auto_sort_success": "模组排序成功！",
         "auto_sort_warnings": "模组排序完成，但有警告：\n\n{warnings}",
@@ -133,7 +127,10 @@
         "dll_cleanup_confirm": "这将从链加载器配置中清除 DLL 清单。\n\n继续吗？",
         "dll_cleanup_success": "DLL 清单已从链加载器配置中清除。",
         "warning": "警告",
-        "game_dir_not_set": "游戏目录未配置。"
+        "game_dir_not_set": "游戏目录未配置。",
+        "success": "成功",
+        "unpack_complete": "解包完成！",
+        "repack_complete": "重新打包完成！"
     },
     "dialog": {
         "yes": "是",

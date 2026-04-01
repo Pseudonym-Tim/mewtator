@@ -64,7 +64,6 @@
         "savefile_suffix_override": "Nadpisanie sufiksu zapisu (Savefile Suffix)",
         "inherit_save_override": "Dziedziczenie nadpisania zapisu",
         "advanced": "Zaawansowane",
-        "use_original_load_order": "Użyj oryginalnej kolejności wczytywania (Priorytet góra)",
         "close_on_launch": "Zamknij launcher po uruchomieniu gry"
     },
     "messages": {

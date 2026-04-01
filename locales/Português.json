@@ -69,7 +69,6 @@
         "savefile_suffix_override": "Sobrescrever Sufixo de Arquivo de Salvamento",
         "inherit_save_override": "Sobrescrever Herdar Salvamento",
         "advanced": "Avançado",
-        "use_original_load_order": "Usar Ordem de Carregamento Original (Prioridade Máxima)",
         "close_on_launch": "Fechar Launcher ao Iniciar Jogo",
         "dll_injection": "Ativar Suporte a Mods DLL",
         "dll_injection_hint": "Cria manifesto para o carregador Mewjector (necessário para mods .dll)",

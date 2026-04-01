@@ -69,7 +69,6 @@
         "savefile_suffix_override": "Sovrascrivi Suffisso File di Salvataggio",
         "inherit_save_override": "Sovrascrivi Eredita Salvataggio",
         "advanced": "Avanzate",
-        "use_original_load_order": "Usa Ordine di Caricamento Originale (Priorità Massima)",
         "close_on_launch": "Chiudi Launcher all'Avvio del Gioco",
         "dll_injection": "Abilita Supporto Mod DLL",
         "dll_injection_hint": "Crea manifesto per il caricatore Mewjector (richiesto per mod .dll)",
@@ -106,6 +105,7 @@
         "export_bat_success": "Esportazione Riuscita!",
         "export_bat_instructions": "Lo script di avvio è stato salvato. Per usarlo con Steam:\n\n1. Clic destro su Mewgenics nella tua libreria Steam\n2. Seleziona Proprietà → Opzioni di Avvio\n3. Incolla la seguente riga:",
         "export_bat_note": "Nota: Il file batch contiene tutte le impostazioni mod correnti. Riesporta se modifichi i mod o le impostazioni.",
+        "close": "Chiudi",
         "no_mods_to_sort": "Nessun mod abilitato da ordinare.",
         "auto_sort_success": "Mod ordinati con successo!",
         "auto_sort_warnings": "Mod ordinati con avvisi:\n\n{warnings}",
@@ -127,7 +127,6 @@
         "dll_cleanup_success": "Il manifesto DLL è stato cancellato dalla configurazione del caricatore.",
         "warning": "Avviso",
         "game_dir_not_set": "La directory del gioco non è configurata.",
-        "close": "Chiudi",
         "success": "Successo",
         "unpack_complete": "Estrazione completata!",
         "repack_complete": "Ricompressione completata!"

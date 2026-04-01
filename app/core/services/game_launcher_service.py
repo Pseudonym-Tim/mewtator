@@ -46,9 +46,7 @@ class GameLauncherService:
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # savefile_suffix = config.savefile_suffix_override
         # if not savefile_suffix and mod_list:
-        #     enabled_mods = mod_list.enabled_mods
-        #     mod_iter = enabled_mods if config.use_original_load_order else reversed(enabled_mods)
-        #     for mod in mod_iter:
+        #     for mod in mod_list.enabled_mods:
         #         if mod.savefile_suffix:
         #             savefile_suffix = mod.savefile_suffix
         #             break
@@ -57,9 +55,7 @@ class GameLauncherService:
         # 
         # inherit_save = config.inherit_save_override
         # if not inherit_save and mod_list:
-        #     enabled_mods = mod_list.enabled_mods
-        #     mod_iter = enabled_mods if config.use_original_load_order else reversed(enabled_mods)
-        #     for mod in mod_iter:
+        #     for mod in mod_list.enabled_mods:
         #         if mod.inherit_save:
         #             inherit_save = mod.inherit_save
         #             break
@@ -67,13 +63,6 @@ class GameLauncherService:
         #     extra_args.extend(["-inheritsave", inherit_save])
         
         return extra_args
-    
-    def _apply_load_order(self, mod_paths: List[str], config) -> List[str]:
-        """Apply load order logic to mod paths."""
-        if config and config.use_original_load_order:
-            return mod_paths
-        else:
-            return list(reversed(mod_paths))
     
     def launch_game(self, game_dir: str, mod_paths: List[str], config=None, mod_list=None):
         exe_path = self.find_executable(game_dir)
@@ -104,8 +93,7 @@ class GameLauncherService:
         path_strategy = PathStrategyFactory.create(game_dir)
         
         extra_args = self._build_extra_args(config, mod_list)
-        final_paths = self._apply_load_order(mod_paths, config)
-        converted_paths = path_strategy.convert_mod_paths(final_paths, game_dir)
+        converted_paths = path_strategy.convert_mod_paths(mod_paths, game_dir)
         
         logger = get_logger()
         logger.info("Launch executable: %s", exe_path)
@@ -121,8 +109,7 @@ class GameLauncherService:
         path_strategy = PathStrategyFactory.create(game_dir)
         
         extra_args = self._build_extra_args(config, mod_list)
-        final_paths = self._apply_load_order(mod_paths, config)
-        converted_paths = path_strategy.convert_mod_paths(final_paths, game_dir)
+        converted_paths = path_strategy.convert_mod_paths(mod_paths, game_dir)
         
         return launch_strategy.get_launch_options(converted_paths, extra_args)
     
@@ -144,8 +131,7 @@ class GameLauncherService:
         path_strategy = PathStrategyFactory.create(game_dir)
         
         extra_args = self._build_extra_args(config, mod_list)
-        final_paths = self._apply_load_order(mod_paths, config)
-        converted_paths = path_strategy.convert_mod_paths(final_paths, game_dir)
+        converted_paths = path_strategy.convert_mod_paths(mod_paths, game_dir)
         
         bat_content = "@echo off\n"
         bat_content += "REM Mewtator Auto-Generated Launch Script\n"

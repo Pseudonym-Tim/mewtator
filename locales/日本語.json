@@ -66,7 +66,6 @@
         "savefile_suffix_override": "セーブファイル接尾辞の上書き",
         "inherit_save_override": "セーブ継承の上書き",
         "advanced": "高度な設定",
-        "use_original_load_order": "元の読み込み順序を使用（最高優先度）",
         "close_on_launch": "ゲーム起動時にランチャーを閉じる",
         "dll_injection": "DLL Mod サポートを有効化",
         "dll_injection_hint": "Mewjector チェーンローダー用のマニフェストを作成（.dll Mod に必要）",
@@ -95,13 +94,7 @@
         "no_mods_title": "有効な Mod がありません",
         "no_mods_text": "有効な Mod がありません。まず Mod を有効にしてください。",
         "launch_options_title": "Steam 起動オプション",
-        "launch_options_instructions": "これらの起動オプションをコピーして Steam に貼り付けてください：\nゲームを右クリック → プロパティ → 起動オプション\n\n注：Linux/Proton/Steam Deck では、最高の互換性のために Mod をゲームディレクトリに保存してください。",
-        "copy_to_clipboard": "クリップボードにコピー",
-        "close": "閉じる",
-        "success": "成功",
-        "unpack_complete": "展開完了！",
-        "repack_complete": "再パック完了！",
-        "launch_options_title": "Steam 起動オプション",
+
         "launch_options_instructions": "これらの起動オプションをコピーして Steam に貼り付けてください：\nゲームを右クリック → プロパティ → 起動オプション\n\n注意：Linux/Proton/Steam Deck では、最高の互換性のために Mod をゲームディレクトリに保管してください。",
         "copy_to_clipboard": "クリップボードにコピー",
         "export_bat": ".BAT ファイルにエクスポート",
@@ -110,6 +103,7 @@
         "export_bat_success": "エクスポート成功！",
         "export_bat_instructions": "起動スクリプトが保存されました。Steam で使用するには：\n\n1. Steam ライブラリで Mewgenics を右クリック\n2. プロパティ → 起動オプションを選択\n3. 次の行を貼り付け：",
         "export_bat_note": "注意：バッチファイルには現在のすべての Mod 設定が含まれています。Mod または設定を変更した場合は、再エクスポートしてください。",
+        "close": "閃じる",
         "no_mods_to_sort": "ソートする有効な Mod がありません。",
         "auto_sort_success": "Mod のソートが成功しました！",
         "auto_sort_warnings": "Mod は警告付きでソートされました：\n\n{warnings}",
@@ -130,7 +124,10 @@
         "dll_cleanup_confirm": "これにより、チェーンローダー設定から DLL マニフェストがクリアされます。\n\n続けますか？",
         "dll_cleanup_success": "DLL マニフェストがチェーンローダー設定からクリアされました。",
         "warning": "警告",
-        "game_dir_not_set": "ゲームディレクトリが設定されていません。"
+        "game_dir_not_set": "ゲームディレクトリが設定されていません。",
+        "success": "成功",
+        "unpack_complete": "展開完了！",
+        "repack_complete": "再パック完了！"
     },
     "dialog": {
         "yes": "はい",

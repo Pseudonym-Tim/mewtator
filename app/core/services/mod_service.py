@@ -136,7 +136,7 @@ class ModService:
         #     if config.savefile_suffix_override:
         #         warnings.append(f"Multiple mods specify savefile_suffix: {', '.join(mod_names)}. Using settings override: '{config.savefile_suffix_override}'")
         #     else:
-        #         winner = savefile_mods[0] if config.use_original_load_order else savefile_mods[-1]
+        #         winner = savefile_mods[-1]
         #         warnings.append(f"Multiple mods specify savefile_suffix: {', '.join(mod_names)}. Using '{winner.name}': '{winner.savefile_suffix}'")
         # 
         # inherit_mods = [mod for mod in enabled_mods if mod.inherit_save]
@@ -145,7 +145,7 @@ class ModService:
         #     if config.inherit_save_override:
         #         warnings.append(f"Multiple mods specify inherit_save: {', '.join(mod_names)}. Using settings override: '{config.inherit_save_override}'")
         #     else:
-        #         winner = inherit_mods[0] if config.use_original_load_order else inherit_mods[-1]
+        #         winner = inherit_mods[-1]
         #         warnings.append(f"Multiple mods specify inherit_save: {', '.join(mod_names)}. Using '{winner.name}': '{winner.inherit_save}'")
         
         return warnings
