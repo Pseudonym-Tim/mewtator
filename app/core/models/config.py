@@ -15,6 +15,7 @@ class Config:
     # TEMPORARILY DISABLED: inherit_save_override: str = ""
     close_on_launch: bool = False
     dll_injection_enabled: bool = False
+    use_generic_font: bool = False
     
     def is_valid(self) -> bool:
         return bool(
@@ -41,7 +42,8 @@ class Config:
             # TEMPORARILY DISABLED: "savefile_suffix_override": self.savefile_suffix_override,
             # TEMPORARILY DISABLED: "inherit_save_override": self.inherit_save_override,
             "close_on_launch": self.close_on_launch,
-            "dll_injection_enabled": self.dll_injection_enabled
+            "dll_injection_enabled": self.dll_injection_enabled,
+            "use_generic_font": self.use_generic_font
         }
     
     @classmethod
@@ -57,5 +59,6 @@ class Config:
             # TEMPORARILY DISABLED: savefile_suffix_override=data.get("savefile_suffix_override", ""),
             # TEMPORARILY DISABLED: inherit_save_override=data.get("inherit_save_override", ""),
             close_on_launch=data.get("close_on_launch", False),
-            dll_injection_enabled=data.get("dll_injection_enabled", False)
+            dll_injection_enabled=data.get("dll_injection_enabled", False),
+            use_generic_font=data.get("use_generic_font", False)
         )

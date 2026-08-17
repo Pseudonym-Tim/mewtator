@@ -7,27 +7,29 @@
   "window": {
     "app_title": "Mewtator: Gestor de Mods de Mewgenics",
     "please_wait": "Por favor espera",
-    "checking": "Verificando..."
+    "checking": "Verificando...",
+    "dont_panic": "No entres en pánico"
   },
   "menu": {
     "file": {
       "label": "Archivo",
       "settings": "Configuración",
       "import_modlist": "Importar Lista de Mods...",
-     "export_modlist": "Exportar Lista de Mods...",
+      "export_modlist": "Exportar Lista de Mods...",
       "unpack": "Desempaquetar Recursos Base",
       "repack": "Reempaquetar Recursos",
       "open_mods": "Abrir Carpeta de Mods",
       "open_game": "Abrir Carpeta del Juego",
       "launch_game": "Lanzar Juego",
-      "copy_launch_options": "Opciones de Lanzamiento y Exportar",
+      "copy_launch_options": "Opciones de lanzamiento y exportación",
       "cleanup_dlls": "Limpiar Inyección de DLL",
       "exit": "Salir"
     },
     "language": "Idioma",
     "theme": "Tema",
     "theme_light": "Claro",
-    "theme_dark": "Oscuro"
+    "theme_dark": "Oscuro",
+    "about": "Acerca de"
   },
   "ui": {
     "disabled_mods": "Mods Deshabilitados",
@@ -35,20 +37,39 @@
     "disable_all": "Deshabilitar Todo",
     "enable_all": "Habilitar Todo",
     "launch_game": "Lanzar Juego",
-    "no_preview": "Sin Imagen de Vista Previa"
+    "no_preview": "Sin Imagen de Vista Previa",
+    "app_name": "Mewtator",
+    "app_subtitle": "Gestor de mods de Mewgenics",
+    "move_selected": "Mover",
+    "mod_summary": "{enabled} activados / {total} instalados",
+    "select_mod": "Selecciona un mod para ver su vista previa",
+    "mods": "Mods",
+    "name": "Nombre",
+    "author": "Autor",
+    "version": "Versión",
+    "import_mod": "Importar mod",
+    "no_mods_installed": "¡No hay mods instalados!",
+    "shared_list_hint": "Activa/desactiva mods, haz clic en un mod para ver detalles y haz clic derecho para ver opciones. Usa los botones de flecha arriba/abajo para reordenar (los de arriba se cargan primero).",
+    "refresh_mods": "Actualizar mods"
   },
   "mod_list": {
     "auto_sort": "Auto-Organizar"
   },
   "preview": {
+    "mod_info": "Información del mod",
     "url": "URL: {url}",
-    "contains_dlls": "⚠ Contiene archivos DLL - ¡Solo instale de fuentes confiables!"
+    "contains_dlls": "⚠ Contiene archivos DLL - ¡Solo instale de fuentes confiables!",
+    "author": "Por {author}",
+    "version": "Versión {version}",
+    "description": "Descripción"
   },
   "context_menu": {
     "move_top": "Mover al Inicio",
     "move_bottom": "Mover al Final",
     "disable": "Deshabilitar",
-    "enable": "Habilitar"
+    "enable": "Habilitar",
+    "delete": "Eliminar mod...",
+    "open_mod_folder": "Abrir carpeta del mod"
   },
   "settings": {
     "title": "Configuración",
@@ -69,13 +90,15 @@
     "savefile_suffix_override": "Anular Sufijo de Archivo de Guardado",
     "inherit_save_override": "Anular Heredar Guardado",
     "advanced": "Avanzado",
+    "appearance": "Apariencia",
+    "use_generic_font": "Usar la fuente estándar del sistema",
+    "use_generic_font_hint": "Improves readability",
     "close_on_launch": "Cerrar Lanzador al Iniciar Juego",
     "dll_injection": "Activar Soporte de Mods DLL",
     "dll_injection_hint": "Crea manifiesto para el cargador Mewjector (requerido para mods .dll)",
     "dll_injection_warning": "⚠ Seguridad: Solo instale mods DLL de fuentes confiables",
     "mewjector_link_text": "Obtener Mewjector: ",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
-    "shortcuts": "Atajos: Enter=Guardar • Esc=Cancelar • Tab=Navegar"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
   },
   "messages": {
     "setup_required_title": "Configuración Requerida",
@@ -104,7 +127,7 @@
     "export_bat_success_title": "Exportación Exitosa",
     "export_bat_success": "¡Exportación Exitosa!",
     "export_bat_instructions": "El script de lanzamiento ha sido guardado. Para usarlo con Steam:\n\n1. Clic derecho en Mewgenics en tu biblioteca de Steam\n2. Selecciona Propiedades → Opciones de Lanzamiento\n3. Pega la siguiente línea:",
-    "export_bat_note": "Nota: El archivo por lotes contiene todos tus ajustes de mods actuales. Vuelve a exportar si cambias los mods o configuración.",
+    "export_bat_note": "Nota: El archivo por lotes contiene toda tu configuración actual de mods. Vuelve a exportarlo si cambias los mods o la configuración.\n\nSi la inyección de DLL está habilitada, se incluyen Mewtator.exe y los archivos de configuración para el funcionamiento independiente.",
     "close": "Cerrar",
     "no_mods_to_sort": "No hay mods habilitados para organizar.",
     "auto_sort_success": "¡Mods organizados exitosamente!",
@@ -129,7 +152,29 @@
     "game_dir_not_set": "El directorio del juego no está configurado.",
     "success": "Éxito",
     "unpack_complete": "¡Desempaquetado completo!",
-    "repack_complete": "¡Reempaquetado completo!"
+    "repack_complete": "¡Reempaquetado completo!",
+    "delete_mod_title": "¿Eliminar mod?",
+    "delete_mod_confirm": "¿Eliminar '{name}' y borrar permanentemente toda su carpeta de mod?\n\n{path}\n\nEsta acción no se puede deshacer.",
+    "delete_mod_failed": "No se pudo eliminar el mod: {error}",
+    "import_mod": "Importar mod",
+    "zip_files": "Archivos ZIP",
+    "batch_files": "Archivos por lotes",
+    "json_files": "Archivos JSON",
+    "text_files": "Archivos de texto",
+    "all_files": "Todos los archivos",
+    "mod_already_exists": "Ya existe una carpeta de mod llamada '{name}'. ¿Reemplazarla con el contenido de este ZIP?",
+    "import_mod_success": "Se importó '{name}' correctamente.",
+    "invalid_mod_zip": "El archivo seleccionado no es un archivo ZIP válido.",
+    "import_mod_failed": "No se pudo importar el mod: {error}",
+    "export_launch_failed": "No se pudo exportar el script de inicio:\n{error}",
+    "dll_cleanup_failed": "Error durante la limpieza de DLL:\n{error}",
+    "import_modlist_missing": "Se importaron correctamente {imported} mods.\nNo se encontraron {missing} mods en tu carpeta de mods.",
+    "import_modlist_success": "¡Se importaron {count} mods!",
+    "import_modlist_failed": "No se pudo importar la lista de mods: {error}",
+    "export_modlist_success": "¡Se exportaron {count} mods!",
+    "export_modlist_failed": "No se pudo exportar la lista de mods: {error}",
+    "theme_change_failed": "No se pudo cambiar el tema: {error}",
+    "open_mod_folder_failed": "No se pudo abrir la carpeta del mod: {error}"
   },
   "dialog": {
     "yes": "Sí",
@@ -147,5 +192,19 @@
   "auto": {
     "string": " ",
     "___": "<--->"
+  },
+  "common": {
+    "ok": "Aceptar"
+  },
+  "about": {
+    "title": "Acerca de",
+    "subtitle": "Gestor de mods de Mewgenics",
+    "description": "Mewtator es un gestor de mods para Mewgenics creado por la comunidad, diseñado para que instalar, gestionar, organizar y usar mods sea sencillo y cómodo.",
+    "disclaimer": "Mewtator NO es una herramienta oficial y, por lo tanto, no está afiliado con los desarrolladores del juego ni cuenta con su respaldo. ¡Los mods siguen siendo obra de sus respectivos autores!",
+    "credits": "Créditos:",
+    "credit_project": "animeowdan - Desarrollador principal/creador, Programador",
+    "credit_community": "Pseudonym_Tim - UI/UX, Programador",
+    "credit_icons": "CVS - Logotipo de Mewtator",
+    "credit_game": "¡Agradecimientos especiales a Edmund McMillen y Tyler Glaiel por crear un juego tan increíble!"
   }
 }

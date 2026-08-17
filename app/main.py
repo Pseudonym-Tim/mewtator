@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import messagebox
 
 from app.infrastructure.config_repository import ConfigRepository
 from app.infrastructure.mod_repository import ModRepository
@@ -14,6 +13,7 @@ from app.core.services.modlist_io_service import ModListIOService
 from app.core.services.theme_service import ThemeService
 from app.ui.controllers.main_controller import MainController
 from app.ui.windows.settings_window import SettingsWindow
+from app.utils.resource_utils import apply_app_icon
 
 
 def show_language_selection_dialog(root, translation_service, theme_service, theme_name: str):
@@ -22,9 +22,12 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     
     win = Toplevel(root)
     win.title(translation_service.get("window.dont_panic", "Don't Panic"))
-    win.geometry("400x200")
+    win.geometry("440x260")
     win.resizable(False, False)
-    win.transient(root)
+
+    if root.state() != "withdrawn":
+        win.transient(root)
+
     win.grab_set()
     
     def on_closing():
@@ -40,7 +43,7 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     ttk.Label(
         win,
         text=translation_service.get("settings.select_language_title", "Select Language"),
-        font=("Arial", 14, "bold")
+        font="MewtatorHeading"
     ).pack(pady=15)
     ttk.Label(
         win,
@@ -53,20 +56,40 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     
     lang_var = StringVar(value=available_langs[0])
     
-    lang_menu = ttk.Combobox(win, textvariable=lang_var, values=available_langs, state="readonly", width=30, height=15)
+    lang_menu = ttk.Combobox(
+        win,
+        textvariable=lang_var,
+        values=available_langs,
+        state="readonly",
+        width=30,
+        height=15,
+        cursor="hand2",
+    )
+
     lang_menu.pack(pady=10)
     
     def confirm():
         result[0] = lang_var.get()
         win.destroy()
     
-    confirm_btn = ttk.Button(win, text=translation_service.get("settings.confirm", "Confirm"), command=confirm, width=20)
+    confirm_btn = ttk.Button(
+        win,
+        text=translation_service.get("settings.confirm", "Confirm"),
+        command=confirm,
+        style="Primary.TButton",
+        width=20,
+        cursor="hand2",
+    )
+    
     confirm_btn.pack(pady=15)
     
     win.bind("<Return>", lambda e: confirm())
     win.bind("<KP_Enter>", lambda e: confirm())
     
     lang_menu.focus_set()
+    win.deiconify()
+    win.lift()
+    win.focus_force()
     
     win.wait_window()
     return result[0]
@@ -74,6 +97,8 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
 
 def main():
     root = tk.Tk()
+    root.withdraw()
+    apply_app_icon(root)
     
     config_repo = ConfigRepository("config.json")
     translation_repo = TranslationRepository()
@@ -84,6 +109,7 @@ def main():
     config = config_service.load_config()
 
     theme_service = ThemeService(root)
+    theme_service.configure_fonts(config.use_generic_font)
     normalized_theme = theme_service.normalize_theme_name(config.theme)
     config.theme = normalized_theme
     config_service.save_config(config)

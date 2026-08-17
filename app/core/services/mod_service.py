@@ -56,6 +56,37 @@ class ModService:
         enabled_names = mod_list.enabled_mod_names
         self.repository.save_enabled_mod_names(enabled_names)
     
+    def delete_mod(self, mod_list: ModList, mod_name: str):
+        """Delete a mod folder and remove it..."""
+
+        mod = mod_list.get_mod_by_name(mod_name)
+
+        if mod is None:
+            raise ValueError(f"Unknown mod: {mod_name}")
+        if mod.missing or not self.repository.mod_exists(mod_name):
+            raise FileNotFoundError(f"Mod folder not found: {mod_name}")
+
+        original_enabled_names = mod_list.enabled_mod_names
+
+        updated_enabled_names = [
+            name for name in original_enabled_names if name != mod_name
+        ]
+
+        # Write the order first, so a permissions error cannot destroy the mod
+        # while leaving enabled stale entry behind. If folder deletion then
+        # fails, restore the previous order as best-effort rollback... - Tim
+        if updated_enabled_names != original_enabled_names:
+            self.repository.save_enabled_mod_names(updated_enabled_names)
+        try:
+            self.repository.delete_mod_folder(mod_name)
+        except Exception:
+            if updated_enabled_names != original_enabled_names:
+                try:
+                    self.repository.save_enabled_mod_names(original_enabled_names)
+                except Exception:
+                    pass
+            raise
+    
     def get_enabled_mod_paths(self, mod_list: ModList) -> List[str]:
         return [mod.path for mod in mod_list.enabled_mods]
     
@@ -69,15 +100,20 @@ class ModService:
         Returns:
             List of error messages for mods with unmet requirements.
         """
+
         errors = []
+
+        # Clear stale validation state first. (A mod that was previously enabled
+        # with a conflict should stop looking invalid as soon as it is disabled)... - Tim
+        for mod in mod_list.all_mods:
+            mod.has_unmet_requirements = False
+
         enabled_mods = mod_list.enabled_mods
         
         mod_positions = {mod.name: idx for idx, mod in enumerate(enabled_mods)}
         mod_versions = {mod.name: mod.version for mod in enabled_mods}
         
         for idx, mod in enumerate(enabled_mods):
-            mod.has_unmet_requirements = False
-            
             if not mod.requirements:
                 continue
             
@@ -92,6 +128,7 @@ class ModService:
                     continue
                 
                 parsed = parse_requirement(req_string)
+
                 if not parsed:
                     errors.append(f"{mod.name}: Invalid requirement format '{req_string}'")
                     mod.has_unmet_requirements = True
@@ -105,6 +142,7 @@ class ModService:
                     continue
                 
                 req_position = mod_positions[req_mod_name]
+
                 if req_position > idx:
                     errors.append(f"{mod.name}: Required mod '{req_mod_name}' must be loaded before this mod (move it up in the list)")
                     mod.has_unmet_requirements = True

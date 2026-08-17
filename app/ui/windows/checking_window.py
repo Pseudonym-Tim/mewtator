@@ -11,7 +11,7 @@ class CheckingWindow:
         # Prevent closing
         self.win.protocol("WM_DELETE_WINDOW", lambda: None)
 
-        label = tk.Label(self.win, text=message, font=("Arial", 13))
+        label = tk.Label(self.win, text=message, font="TkHeadingFont")
         label.pack(expand=True, pady=20)
 
         # Force draw

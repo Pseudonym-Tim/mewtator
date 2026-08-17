@@ -1,27 +1,88 @@
-from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog, messagebox
+from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog
 from tkinter import ttk
-from typing import Callable
+from typing import Callable, Optional
 import os
 import webbrowser
 
+from app.ui.windows.notification_window import NotificationWindow
 
 class SettingsWindow:
-    def __init__(self, parent, config, translation_service, theme_service, on_save: Callable):
+    def __init__(
+        self,
+        parent,
+        config,
+        translation_service,
+        theme_service,
+        on_save: Callable,
+        on_cancel: Optional[Callable] = None,
+    ):
+        self.parent = parent
         self.config = config
         self.translation_service = translation_service
         self.theme_service = theme_service
         self.on_save = on_save
-        
+        self.on_cancel = on_cancel
+
         self.win = Toplevel(parent)
+        self.win.withdraw()
         self.win.title(translation_service.get("settings.title", "Settings"))
-        self.win.geometry("700x700")
         self.win.resizable(False, False)
-        self.win.grab_set()
-        self.win.transient(parent)
+        if parent.state() != "withdrawn":
+            self.win.transient(parent)
+        self.win.protocol("WM_DELETE_WINDOW", self._cancel)
 
         self._apply_theme()
-        
         self._build_ui()
+        self._position_dialog()
+
+        self.win.deiconify()
+        self.win.lift()
+        self.win.grab_set()
+        self.win.focus_set()
+
+
+    def _position_dialog(self):
+        """Center Settings over its parent without changing the parent geometry..."""
+
+        width = 760
+        height = 790
+
+        # Make sure parent geometry is current before reading it...
+        try:
+            self.parent.update_idletasks()
+        except Exception:
+            pass
+
+        try:
+            parent_visible = self.parent.state() != "withdrawn"
+        except Exception:
+            parent_visible = False
+
+        if parent_visible:
+            try:
+                parent_x = self.parent.winfo_rootx()
+                parent_y = self.parent.winfo_rooty()
+                parent_width = self.parent.winfo_width()
+                parent_height = self.parent.winfo_height()
+                x = parent_x + max(0, (parent_width - width) // 2)
+                y = parent_y + max(0, (parent_height - height) // 2)
+            except Exception:
+                parent_visible = False
+
+        if not parent_visible:
+            screen_width = self.win.winfo_screenwidth()
+            screen_height = self.win.winfo_screenheight()
+            x = max(0, (screen_width - width) // 2)
+            y = max(0, (screen_height - height) // 2)
+
+        # Clamp to visible desktop so centering a large dialog over a
+        # partially off-screen parent can't push it farther off-screen... - Tim
+        screen_width = self.win.winfo_screenwidth()
+        screen_height = self.win.winfo_screenheight()
+        x = max(0, min(x, max(0, screen_width - width)))
+        y = max(0, min(y, max(0, screen_height - height)))
+
+        self.win.geometry(f"{width}x{height}+{x}+{y}")
 
     def _apply_theme(self):
         theme_name = self.theme_service.normalize_theme_name(self.config.theme)
@@ -31,11 +92,11 @@ class SettingsWindow:
 
         style = ttk.Style(self.win)
         hint_color = "#9a9a9a" if theme_name == "dark" else "#666666"
-        style.configure("Hint.TLabel", foreground=hint_color, background=colors["bg"])
+        style.configure("Settings.Hint.TLabel", foreground=hint_color, background=colors["bg"])
         
         # Configure link style
         link_color = "#5DADE2" if theme_name == "dark" else "#2E7DBE"
-        style.configure("Link.TLabel", foreground=link_color, background=colors["bg"])
+        style.configure("Settings.Link.TLabel", foreground=link_color, background=colors["bg"])
         
 
     def _build_ui(self):
@@ -45,7 +106,9 @@ class SettingsWindow:
             self.win,
             text=t.get("settings.auto_detect"),
             command=self._auto_detect,
-            width=25
+            style="Primary.TButton",
+            width=25,
+            cursor="hand2",
         )
         auto_detect_btn.pack(pady=10)
         
@@ -75,9 +138,17 @@ class SettingsWindow:
             values=available_langs,
             state="readonly",
             width=25,
-            height=15
+            height=15,
+            cursor="hand2",
+            style="Settings.Language.TCombobox",
         )
         lang_menu.pack(side="left", padx=5)
+
+        def clear_language_text_selection(_event=None):
+            self.win.after_idle(lang_menu.selection_clear)
+
+        lang_menu.bind("<<ComboboxSelected>>", clear_language_text_selection, add="+")
+        lang_menu.bind("<FocusIn>", clear_language_text_selection, add="+")
         
         self._add_separator(t.get("settings.launch_options", "Launch Options"))
         
@@ -92,7 +163,8 @@ class SettingsWindow:
         dev_mode_check = ttk.Checkbutton(
             checkbox_frame,
             text=t.get("settings.dev_mode", "Enable Dev Mode (-dev_mode true)"),
-            variable=self.dev_mode_var
+            variable=self.dev_mode_var,
+            cursor="hand2"
         )
         dev_mode_check.pack(anchor="w")
         
@@ -100,7 +172,8 @@ class SettingsWindow:
         debug_console_check = ttk.Checkbutton(
             checkbox_frame,
             text=t.get("settings.debug_console", "Enable Debug Console (-enable_debugconsole true)"),
-            variable=self.debug_console_var
+            variable=self.debug_console_var,
+            cursor="hand2"
         )
         debug_console_check.pack(anchor="w")
         
@@ -108,7 +181,8 @@ class SettingsWindow:
         dll_injection_check = ttk.Checkbutton(
             checkbox_frame,
             text=t.get("settings.dll_injection", "Enable DLL Mod Support"),
-            variable=self.dll_injection_var
+            variable=self.dll_injection_var,
+            cursor="hand2"
         )
         dll_injection_check.pack(anchor="w")
         
@@ -119,8 +193,8 @@ class SettingsWindow:
         dll_hint_label = ttk.Label(
             checkbox_frame,
             text=lines[0],
-            font=("Arial", 9),
-            style="Hint.TLabel"
+            font="MewtatorSmall",
+            style="Settings.Hint.TLabel"
         )
         dll_hint_label.pack(anchor="w", padx=(20, 0))
         
@@ -132,8 +206,8 @@ class SettingsWindow:
         get_text_label = ttk.Label(
             link_frame,
             text=t.get("settings.mewjector_link_text", "Get Mewjector: "),
-            font=("Arial", 9),
-            style="Hint.TLabel"
+            font="MewtatorSmall",
+            style="Settings.Hint.TLabel"
         )
         get_text_label.pack(side="left")
         
@@ -142,8 +216,8 @@ class SettingsWindow:
         link_label = ttk.Label(
             link_frame,
             text=t.get("settings.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
-            font=("Arial", 9, "underline"),
-            style="Link.TLabel",
+            font="MewtatorSmallUnderline",
+            style="Settings.Link.TLabel",
             cursor="hand2"
         )
         link_label.pack(side="left")
@@ -153,7 +227,7 @@ class SettingsWindow:
         dll_warning_label = ttk.Label(
             checkbox_frame,
             text=t.get("settings.dll_injection_warning", "\u26a0 Security: Only install DLL mods from trusted sources"),
-            font=("Arial", 9, "bold"),
+            font="MewtatorSmallBold",
             foreground="#FF6B6B"
         )
         dll_warning_label.pack(anchor="w", padx=(20, 0))
@@ -170,6 +244,29 @@ class SettingsWindow:
         # if self.config.inherit_save_override:
         #     self.inherit_save_entry.insert(0, self.config.inherit_save_override)
         
+        self._add_separator(t.get("settings.appearance", "Appearance"))
+
+        appearance_frame = ttk.Frame(self.win)
+        appearance_frame.pack(fill="x", padx=30, pady=5)
+
+        self.use_generic_font_var = BooleanVar(value=self.config.use_generic_font)
+        generic_font_check = ttk.Checkbutton(
+            appearance_frame,
+            text=t.get("settings.use_generic_font", "Use standard system font"),
+            variable=self.use_generic_font_var,
+            cursor="hand2"
+        )
+        generic_font_check.pack(anchor="w")
+        ttk.Label(
+            appearance_frame,
+            text=t.get(
+                "settings.use_generic_font_hint",
+                "Improves readability",
+            ),
+            style="Settings.Hint.TLabel",
+            wraplength=670,
+        ).pack(anchor="w", padx=(20, 0), pady=(2, 0))
+
         # Advanced Section
         self._add_separator(t.get("settings.advanced", "Advanced"))
         
@@ -180,7 +277,8 @@ class SettingsWindow:
         close_on_launch_check = ttk.Checkbutton(
             advanced_frame,
             text=t.get("settings.close_on_launch", "Close Launcher When Game Launches"),
-            variable=self.close_on_launch_var
+            variable=self.close_on_launch_var,
+            cursor="hand2"
         )
         close_on_launch_check.pack(anchor="w")
         
@@ -188,23 +286,22 @@ class SettingsWindow:
             self.win,
             text=t.get("settings.save", "Save Settings"),
             command=self._save_settings,
-            width=25
+            style="Primary.TButton",
+            width=25,
+            cursor="hand2",
         )
         save_btn.pack(pady=15)
         
-        hint_label = ttk.Label(
-            self.win,
-            text=t.get("settings.shortcuts", "Shortcuts: Enter=Save • Esc=Cancel • Tab=Navigate"),
-            font=("Arial", 9),
-            style="Hint.TLabel"
-        )
-        hint_label.pack(pady=(0, 5))
-        
         self.win.bind("<Return>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
         self.win.bind("<KP_Enter>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
-        self.win.bind("<Escape>", lambda e: self.win.destroy())
+        self.win.bind("<Escape>", lambda e: self._cancel())
         
         self.game_entry.focus_set()
+
+    def _cancel(self):
+        self.win.destroy()
+        if self.on_cancel is not None:
+            self.on_cancel()
     
     def _add_separator(self, text: str):
         """Add a section separator with label."""
@@ -214,7 +311,7 @@ class SettingsWindow:
         ttk.Label(
             frame,
             text=text,
-            font=("Arial", 10, "bold")
+            font="MewtatorBodyBold"
         ).pack(anchor="w")
         
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=(2, 0))
@@ -226,12 +323,18 @@ class SettingsWindow:
         lbl = ttk.Label(row, text=label_text, width=20, anchor="w")
         lbl.pack(side="left")
         
-        entry = ttk.Entry(row, width=50, font=("Arial", 10))
+        entry = ttk.Entry(row, width=50, font="MewtatorBody")
         entry.pack(side="left", fill="x", expand=True, padx=5)
         
         btn = None
         if has_button:
-            btn = ttk.Button(row, text=self.translation_service.get("settings.browse"), width=12)
+            btn = ttk.Button(
+                row,
+                text=self.translation_service.get("settings.browse"),
+                style="Compact.TButton",
+                width=11,
+                cursor="hand2",
+            )
             btn.pack(side="right", padx=2)
         
         return entry, btn
@@ -249,9 +352,10 @@ class SettingsWindow:
             self.mod_entry.delete(0, END)
             self.mod_entry.insert(0, os.path.join(exe_dir, "mods"))
         else:
-            messagebox.showwarning(
+            self._show_notification(
                 self.translation_service.get("messages.game_dir_not_found"),
-                self.translation_service.get("messages.game_dir_not_detected")
+                self.translation_service.get("messages.game_dir_not_detected"),
+                kind="warning",
             )
     
     def _browse_game(self):
@@ -275,6 +379,21 @@ class SettingsWindow:
         if path:
             self.mod_entry.delete(0, END)
             self.mod_entry.insert(0, path)
+
+    def _show_notification(
+        self,
+        title: str,
+        message: str,
+        kind: str = "info",
+    ):
+        NotificationWindow(
+            self.win,
+            title,
+            message,
+            self.theme_service,
+            button_text=self.translation_service.get("common.ok", "OK"),
+            kind=kind,
+        ).show()
     
     def _save_settings(self):
         from app.utils.platform_utils import get_executable_dir
@@ -284,18 +403,20 @@ class SettingsWindow:
         language = self.lang_var.get()
         
         if not game:
-            messagebox.showerror(
+            self._show_notification(
                 self.translation_service.get("messages.error"),
-                self.translation_service.get("messages.game_dir_required")
+                self.translation_service.get("messages.game_dir_required"),
+                kind="error",
             )
             return
         
         game = os.path.normpath(game)
         
         if not os.path.isdir(game):
-            messagebox.showerror(
+            self._show_notification(
                 self.translation_service.get("messages.error"),
-                self.translation_service.get("messages.game_dir_invalid")
+                self.translation_service.get("messages.game_dir_invalid"),
+                kind="error",
             )
             return
         
@@ -319,6 +440,7 @@ class SettingsWindow:
         self.config.dev_mode_enabled = self.dev_mode_var.get()
         self.config.debug_console_enabled = self.debug_console_var.get()
         self.config.dll_injection_enabled = self.dll_injection_var.get()
+        self.config.use_generic_font = self.use_generic_font_var.get()
         # TEMPORARILY DISABLED: These features are not yet functional in the game
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()

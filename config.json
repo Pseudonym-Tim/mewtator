@@ -6,5 +6,7 @@
     "custom_launch_options": "",
     "dev_mode_enabled": false,
     "debug_console_enabled": false,
-    "close_on_launch": true
+    "close_on_launch": false,
+    "dll_injection_enabled": true,
+    "use_generic_font": false
 }

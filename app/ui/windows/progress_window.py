@@ -13,7 +13,7 @@ class ProgressWindow:
         self.win.protocol("WM_DELETE_WINDOW", lambda: None)
 
         # Title label
-        self.label = tk.Label(self.win, text=title, font=("Arial", 13))
+        self.label = tk.Label(self.win, text=title, font="TkHeadingFont")
         self.label.pack(pady=10)
 
         # Progress bar
@@ -27,7 +27,7 @@ class ProgressWindow:
         self.pb.pack(pady=10)
 
         # Percentage label
-        self.percent_label = tk.Label(self.win, text="0%", font=("Arial", 11))
+        self.percent_label = tk.Label(self.win, text="0%", font="TkDefaultFont")
         self.percent_label.pack()
 
         # Force initial draw

@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 from typing import List, Tuple, Optional, Dict, Any
 from pathlib import Path
 
@@ -81,6 +82,27 @@ class ModRepository:
     
     def get_mod_path(self, mod_name: str) -> str:
         return os.path.join(self.mod_folder, mod_name)
+    
+    def delete_mod_folder(self, mod_name: str):
+        """Permanently delete a mod folder!"""
+
+        if (not mod_name or os.path.basename(mod_name) != mod_name or mod_name in (".", "..")):
+            raise ValueError("Invalid mod folder name!")
+
+        root = os.path.realpath(self.mod_folder)
+        target = os.path.join(root, mod_name)
+
+        # Never follow directory symlinks or allow crafted modlist entry 
+        # to escape the configured mods directory... - Tim
+        if os.path.islink(target):
+            raise ValueError("Refusing to delete a symbolic-link mod folder!")
+        resolved_target = os.path.realpath(target)
+        if os.path.dirname(resolved_target) != root:
+            raise ValueError("Mod folder is outside the configured mods directory!")
+        if not os.path.isdir(target):
+            raise FileNotFoundError(f"Mod folder not found: {mod_name}!")
+
+        shutil.rmtree(target)
     
     def get_modlist_mtime(self) -> float:
         if os.path.exists(self.modlist_path):
