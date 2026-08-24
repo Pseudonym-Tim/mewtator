@@ -29,7 +29,8 @@
     "theme": "Motyw",
     "theme_light": "Jasny",
     "theme_dark": "Ciemny",
-    "about": "O programie"
+    "about": "O programie",
+    "controls": "Sterowanie"
   },
   "ui": {
     "disabled_mods": "Wyłączone mody",
@@ -209,5 +210,34 @@
     "credit_icons": "CVS - Logo Mewtator",
     "credit_polish": "JerrYisDeaD666 - Polskie tłumaczenie",
     "credit_game": "Specjalne podziękowania dla Edmunda McMillena i Tylera Glaiela za stworzenie tak niesamowitej gry!"
+  },
+  "controls": {
+    "title": "Sterowanie i skróty",
+    "subtitle": "Szybka lista skrótów klawiaturowych i sterowania myszą w Mewtatorze.",
+    "global": "Globalne skróty",
+    "open_controls": "Otwórz ten panel Sterowanie i skróty.",
+    "open_settings": "Otwórz Ustawienia.",
+    "launch_options": "Otwórz Opcje uruchamiania i eksport.",
+    "launch_game": "Uruchom Mewgenics z aktualnie włączonymi modami.",
+    "exit": "Zamknij Mewtator.",
+    "mod_list_keyboard": "Lista Modów: Klawiatura",
+    "toggle_selected": "Włącz lub wyłącz zaznaczony mod.",
+    "move_up": "Przesuń zaznaczony włączony mod o jedną pozycję w górę w kolejności ładowania.",
+    "move_down": "Przesuń zaznaczony włączony mod o jedną pozycję w dół w kolejności ładowania.",
+    "move_top": "Przesuń zaznaczony włączony mod na początek kolejności ładowania.",
+    "move_bottom": "Przesuń zaznaczony włączony mod na koniec kolejności ładowania.",
+    "delete_mod": "Usuń zaznaczony mod po potwierdzeniu.",
+    "mouse": "Lista Modów: Mysz",
+    "click": "Kliknięcie",
+    "select_mod": "Zaznacz mod i pokaż jego szczegóły w panelu podglądu.",
+    "checkbox_click": "Kliknięcie pola wyboru",
+    "toggle_checkbox": "Włącz lub wyłącz ten mod.",
+    "double_click": "Podwójne kliknięcie",
+    "toggle_row": "Włącz lub wyłącz kliknięty wiersz moda.",
+    "right_click": "Kliknięcie prawym przyciskiem",
+    "context_menu": "Otwórz menu kontekstowe moda.",
+    "arrow_buttons": "Przyciski Góra / Dół",
+    "reorder_buttons": "Przesuń zaznaczony włączony mod o jedną pozycję w kolejności ładowania.",
+    "focus_hint": "Skróty klawiaturowe listy modów działają, gdy lista modów ma fokus klawiatury. Sterowanie kolejnością ładowania dotyczy tylko włączonych modów."
   }
 }

@@ -25,6 +25,7 @@ class MenuBarComponent:
         self._lang_button = None
         self._theme_button = None
         self._settings_button = None
+        self._controls_button = None
         self._about_button = None
         self._settings_command = None
         self._theme_var = None
@@ -366,6 +367,24 @@ class MenuBarComponent:
                 command=lambda: self._invoke_menu_command(self._settings_command)
             )
 
+    def create_controls_button(self, on_controls: Callable):
+        """Add Controls button in the primary navigation row..."""
+
+        label = self.t.get("menu.controls", "Controls")
+
+        if self._controls_button is None:
+            self._controls_button = self._create_nav_button(
+                label,
+                lambda: self._invoke_menu_command(on_controls),
+            )
+            self._controls_button.pack(side="left", padx=4, pady=4)
+        else:
+            self._controls_button.configure(
+                text=label,
+                width=self._nav_button_width(label),
+                command=lambda: self._invoke_menu_command(on_controls),
+            )
+
     def create_about_button(self, on_about: Callable):
         """Add About button in the primary navigation row..."""
 
@@ -468,6 +487,7 @@ class MenuBarComponent:
             self._lang_button,
             self._theme_button,
             self._settings_button,
+            self._controls_button,
             self._about_button,
         ):
             if button is not None:
@@ -490,6 +510,8 @@ class MenuBarComponent:
             )
         if self._settings_button is not None:
             self._settings_button.configure(image=self.icons.get("gear", theme_name))
+        if self._controls_button is not None:
+            self._controls_button.configure(image=self.icons.get("sliders", theme_name))
         if self._about_button is not None:
             self._about_button.configure(image=self.icons.get("info-circle", theme_name))
 

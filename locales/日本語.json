@@ -29,7 +29,8 @@
     "theme": "テーマ",
     "theme_light": "ライト",
     "theme_dark": "ダーク",
-    "about": "このアプリについて"
+    "about": "このアプリについて",
+    "controls": "操作"
   },
   "ui": {
     "disabled_mods": "無効な Mod",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - リード開発者／制作者、プログラマー",
     "credit_community": "Pseudonym_Tim - UI/UX、プログラマー",
     "credit_icons": "CVS - Mewtator ロゴ",
+    "credit_polish": "JerrYisDeaD666 - ポーランド語翻訳",
     "credit_game": "この素晴らしいゲームを制作した Edmund McMillen と Tyler Glaiel に心より感謝します！"
+  },
+  "controls": {
+    "title": "操作とショートカット",
+    "subtitle": "Mewtator のキーボードとマウス操作のクイックリファレンスです。",
+    "global": "グローバルショートカット",
+    "open_controls": "この「操作とショートカット」パネルを開きます。",
+    "open_settings": "設定を開きます。",
+    "launch_options": "「起動オプションとエクスポート」を開きます。",
+    "launch_game": "現在有効になっている Mod で Mewgenics を起動します。",
+    "exit": "Mewtator を終了します。",
+    "mod_list_keyboard": "Mod リスト: キーボード",
+    "toggle_selected": "選択した Mod を有効または無効にします。",
+    "move_up": "選択した有効な Mod をロード順で 1 つ上に移動します。",
+    "move_down": "選択した有効な Mod をロード順で 1 つ下に移動します。",
+    "move_top": "選択した有効な Mod をロード順の先頭に移動します。",
+    "move_bottom": "選択した有効な Mod をロード順の末尾に移動します。",
+    "delete_mod": "確認後、選択した Mod を削除します。",
+    "mouse": "Mod リスト: マウス",
+    "click": "クリック",
+    "select_mod": "Mod を選択し、プレビューパネルに詳細を表示します。",
+    "checkbox_click": "チェックボックスをクリック",
+    "toggle_checkbox": "その Mod を有効または無効にします。",
+    "double_click": "ダブルクリック",
+    "toggle_row": "クリックした Mod の行を有効または無効にします。",
+    "right_click": "右クリック",
+    "context_menu": "Mod のコンテキストメニューを開きます。",
+    "arrow_buttons": "上 / 下ボタン",
+    "reorder_buttons": "選択した有効な Mod をロード順で 1 つ移動します。",
+    "focus_hint": "Mod リストのキーボード操作は、Mod リストにキーボードフォーカスがあるときに有効です。ロード順の操作は有効な Mod のみに影響します。"
   }
 }

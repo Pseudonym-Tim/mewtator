@@ -29,7 +29,8 @@
     "theme": "Ship's Colors",
     "theme_light": "Daylight",
     "theme_dark": "Moonless Night",
-    "about": "About This Vessel"
+    "about": "About This Vessel",
+    "controls": "Helm & Orders"
   },
   "ui": {
     "disabled_mods": "Landlubber Mods",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - Lead developer/captain o’ creation, Code swabbie",
     "credit_community": "Pseudonym_Tim - UI/UX, Code swabbie",
     "credit_icons": "CVS - Mewtator crest",
+    "credit_polish": "JerrYisDeaD666 - Polish translation",
     "credit_game": "Special thanks be to Edmund McMillen and Tyler Glaiel fer creatin’ such an amazin’ game!"
+  },
+  "controls": {
+    "title": "Helm & Shortcuts",
+    "subtitle": "A quick chart fer Mewtator's keyboard an' mouse orders.",
+    "global": "Shipwide shortcuts",
+    "open_controls": "Open this Helm & Shortcuts chart.",
+    "open_settings": "Open Riggin' & Sails.",
+    "launch_options": "Open Launch Orders & Export.",
+    "launch_game": "Set sail with the currently enabled mods.",
+    "exit": "Abandon Mewtator.",
+    "mod_list_keyboard": "Mod Manifest: Keyboard",
+    "toggle_selected": "Enable or disable the chosen mod.",
+    "move_up": "Move the chosen enabled mod up one berth in the load order.",
+    "move_down": "Move the chosen enabled mod down one berth in the load order.",
+    "move_top": "Move the chosen enabled mod to the bow of the load order.",
+    "move_bottom": "Move the chosen enabled mod to the stern of the load order.",
+    "delete_mod": "Send the chosen mod overboard after confirmatin'.",
+    "mouse": "Mod Manifest: Mouse",
+    "click": "Click",
+    "select_mod": "Choose a mod an' show its particulars in the preview pane.",
+    "checkbox_click": "Checkbox click",
+    "toggle_checkbox": "Enable or disable that mod.",
+    "double_click": "Double-click",
+    "toggle_row": "Enable or disable the clicked mod row.",
+    "right_click": "Right-click",
+    "context_menu": "Open the mod's context menu.",
+    "arrow_buttons": "Up / Down buttons",
+    "reorder_buttons": "Move the chosen enabled mod one berth in the load order.",
+    "focus_hint": "Mod-manifest keyboard orders work while the mod list has keyboard focus. Load-order orders affect enabled mods only."
   }
 }

@@ -29,7 +29,8 @@
     "theme": "Tema",
     "theme_light": "Chiaro",
     "theme_dark": "Scuro",
-    "about": "Informazioni"
+    "about": "Informazioni",
+    "controls": "Controlli"
   },
   "ui": {
     "disabled_mods": "Mod Disabilitati",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - Sviluppatore principale/creatore, Programmatore",
     "credit_community": "Pseudonym_Tim - UI/UX, Programmatore",
     "credit_icons": "CVS - Logo di Mewtator",
+    "credit_polish": "JerrYisDeaD666 - Traduzione in polacco",
     "credit_game": "Un ringraziamento speciale a Edmund McMillen e Tyler Glaiel per aver creato un gioco così fantastico!"
+  },
+  "controls": {
+    "title": "Controlli e scorciatoie",
+    "subtitle": "Riferimento rapido per i controlli da tastiera e mouse di Mewtator.",
+    "global": "Scorciatoie globali",
+    "open_controls": "Apri questo pannello Controlli e scorciatoie.",
+    "open_settings": "Apri Impostazioni.",
+    "launch_options": "Apri Opzioni di avvio ed esportazione.",
+    "launch_game": "Avvia Mewgenics con le mod attualmente abilitate.",
+    "exit": "Esci da Mewtator.",
+    "mod_list_keyboard": "Elenco Mod: Tastiera",
+    "toggle_selected": "Abilita o disabilita la mod selezionata.",
+    "move_up": "Sposta la mod abilitata selezionata di una posizione verso l'alto nell'ordine di caricamento.",
+    "move_down": "Sposta la mod abilitata selezionata di una posizione verso il basso nell'ordine di caricamento.",
+    "move_top": "Sposta la mod abilitata selezionata all'inizio dell'ordine di caricamento.",
+    "move_bottom": "Sposta la mod abilitata selezionata alla fine dell'ordine di caricamento.",
+    "delete_mod": "Elimina la mod selezionata dopo la conferma.",
+    "mouse": "Elenco Mod: Mouse",
+    "click": "Clic",
+    "select_mod": "Seleziona una mod e mostra i dettagli nel pannello di anteprima.",
+    "checkbox_click": "Clic sulla casella di controllo",
+    "toggle_checkbox": "Abilita o disabilita quella mod.",
+    "double_click": "Doppio clic",
+    "toggle_row": "Abilita o disabilita la riga della mod cliccata.",
+    "right_click": "Clic destro",
+    "context_menu": "Apri il menu contestuale della mod.",
+    "arrow_buttons": "Pulsanti Su / Giù",
+    "reorder_buttons": "Sposta la mod abilitata selezionata di una posizione nell'ordine di caricamento.",
+    "focus_hint": "I controlli da tastiera dell'elenco mod si applicano quando l'elenco mod ha il focus della tastiera. I controlli dell'ordine di caricamento interessano solo le mod abilitate."
   }
 }

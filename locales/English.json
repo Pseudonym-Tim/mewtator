@@ -29,7 +29,8 @@
     "theme": "Theme",
     "theme_light": "Light",
     "theme_dark": "Dark",
-    "about": "About"
+    "about": "About",
+    "controls": "Controls"
   },
   "ui": {
     "disabled_mods": "Disabled Mods",
@@ -209,5 +210,34 @@
     "credit_icons": "CVS - Mewtator logo",
     "credit_polish": "JerrYisDeaD666 - Polish translation",
     "credit_game": "Special thanks to Edmund McMillen and Tyler Glaiel for creating such an amazing game!"
+  },
+  "controls": {
+    "title": "Controls & Shortcuts",
+    "subtitle": "A quick reference for Mewtator's keyboard and mouse controls.",
+    "global": "Global shortcuts",
+    "open_controls": "Open this Controls & Shortcuts panel.",
+    "open_settings": "Open Settings.",
+    "launch_options": "Open Launch Options & Export.",
+    "launch_game": "Launch Mewgenics with the currently enabled mods.",
+    "exit": "Exit Mewtator.",
+    "mod_list_keyboard": "Mod List: Keyboard",
+    "toggle_selected": "Enable or disable the selected mod.",
+    "move_up": "Move the selected enabled mod up one position in the load order.",
+    "move_down": "Move the selected enabled mod down one position in the load order.",
+    "move_top": "Move the selected enabled mod to the top of the load order.",
+    "move_bottom": "Move the selected enabled mod to the bottom of the load order.",
+    "delete_mod": "Delete the selected mod after confirmation.",
+    "mouse": "Mod List: Mouse",
+    "click": "Click",
+    "select_mod": "Select a mod and show its details in the preview panel.",
+    "checkbox_click": "Checkbox click",
+    "toggle_checkbox": "Enable or disable that mod.",
+    "double_click": "Double-click",
+    "toggle_row": "Enable or disable the clicked mod row.",
+    "right_click": "Right-click",
+    "context_menu": "Open the mod context menu.",
+    "arrow_buttons": "Up / Down buttons",
+    "reorder_buttons": "Move the selected enabled mod one position in the load order.",
+    "focus_hint": "Mod-list keyboard controls apply while the mod list has keyboard focus. Load-order controls affect enabled mods only."
   }
 }

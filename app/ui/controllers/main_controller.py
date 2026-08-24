@@ -18,6 +18,7 @@ from app.ui.windows.main_window import MainWindow
 from app.ui.windows.notification_window import NotificationWindow
 from app.ui.windows.settings_window import SettingsWindow
 from app.ui.windows.about_window import AboutWindow
+from app.ui.windows.controls_window import ControlsWindow
 from app.ui.windows.progress_window import ProgressWindow
 from app.ui.windows.launch_options_window import LaunchOptionsWindow, ExportSuccessWindow
 from app.ui.components.pointer_menu import PointerMenu
@@ -128,6 +129,7 @@ class MainController:
         )
         
         self.window.menu_bar.create_settings_button(self._show_settings)
+        self.window.menu_bar.create_controls_button(self._show_controls)
         self.window.menu_bar.create_about_button(self._show_about)
     
     def _setup_list_bindings(self):
@@ -148,6 +150,7 @@ class MainController:
 
     def _setup_keyboard_shortcuts(self):
         shortcuts = {
+            "<F1>": lambda e: self._show_controls(),
             "<F2>": lambda e: self._show_settings(),
             "<F3>": lambda e: self._copy_launch_options(),
             "<F5>": lambda e: self._launch_game(),
@@ -1058,6 +1061,14 @@ class MainController:
                 kind="error",
             )
     
+    def _show_controls(self):
+        ControlsWindow(
+            self.root,
+            self.translation_service,
+            self.theme_service,
+            self.config.theme,
+        )
+
     def _show_about(self):
         AboutWindow(
             self.root,

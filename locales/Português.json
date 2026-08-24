@@ -29,7 +29,8 @@
     "theme": "Tema",
     "theme_light": "Claro",
     "theme_dark": "Escuro",
-    "about": "Sobre"
+    "about": "Sobre",
+    "controls": "Controles"
   },
   "ui": {
     "disabled_mods": "Mods Desativados",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - Desenvolvedor principal/criador, Programador",
     "credit_community": "Pseudonym_Tim - UI/UX, Programador",
     "credit_icons": "CVS - Logo do Mewtator",
+    "credit_polish": "JerrYisDeaD666 - Tradução para polonês",
     "credit_game": "Agradecimentos especiais a Edmund McMillen e Tyler Glaiel por criarem um jogo tão incrível!"
+  },
+  "controls": {
+    "title": "Controles e atalhos",
+    "subtitle": "Referência rápida dos controles de teclado e mouse do Mewtator.",
+    "global": "Atalhos globais",
+    "open_controls": "Abra este painel Controles e atalhos.",
+    "open_settings": "Abra Configurações.",
+    "launch_options": "Abra Opções de inicialização e exportação.",
+    "launch_game": "Inicie Mewgenics com os mods atualmente ativados.",
+    "exit": "Sair do Mewtator.",
+    "mod_list_keyboard": "Lista de Mods: Teclado",
+    "toggle_selected": "Ative ou desative o mod selecionado.",
+    "move_up": "Mova o mod ativado selecionado uma posição para cima na ordem de carregamento.",
+    "move_down": "Mova o mod ativado selecionado uma posição para baixo na ordem de carregamento.",
+    "move_top": "Mova o mod ativado selecionado para o início da ordem de carregamento.",
+    "move_bottom": "Mova o mod ativado selecionado para o final da ordem de carregamento.",
+    "delete_mod": "Exclua o mod selecionado após a confirmação.",
+    "mouse": "Lista de Mods: Mouse",
+    "click": "Clique",
+    "select_mod": "Selecione um mod e mostre seus detalhes no painel de pré-visualização.",
+    "checkbox_click": "Clique na caixa de seleção",
+    "toggle_checkbox": "Ative ou desative esse mod.",
+    "double_click": "Clique duplo",
+    "toggle_row": "Ative ou desative a linha do mod clicada.",
+    "right_click": "Clique com o botão direito",
+    "context_menu": "Abra o menu de contexto do mod.",
+    "arrow_buttons": "Botões Cima / Baixo",
+    "reorder_buttons": "Mova o mod ativado selecionado uma posição na ordem de carregamento.",
+    "focus_hint": "Os controles de teclado da lista de mods se aplicam enquanto a lista de mods estiver com o foco do teclado. Os controles de ordem de carregamento afetam somente mods ativados."
   }
 }

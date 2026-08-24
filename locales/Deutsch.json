@@ -29,7 +29,8 @@
     "theme": "Thema",
     "theme_light": "Hell",
     "theme_dark": "Dunkel",
-    "about": "Über"
+    "about": "Über",
+    "controls": "Steuerung"
   },
   "ui": {
     "disabled_mods": "Deaktivierte Mods",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - Leitender Entwickler/Ersteller, Programmierer",
     "credit_community": "Pseudonym_Tim - UI/UX, Programmierer",
     "credit_icons": "CVS - Mewtator-Logo",
+    "credit_polish": "JerrYisDeaD666 - Polnische Übersetzung",
     "credit_game": "Besonderer Dank an Edmund McMillen und Tyler Glaiel für die Entwicklung dieses großartigen Spiels!"
+  },
+  "controls": {
+    "title": "Steuerung & Tastenkürzel",
+    "subtitle": "Kurzübersicht über die Tastatur- und Maussteuerung von Mewtator.",
+    "global": "Globale Tastenkürzel",
+    "open_controls": "Dieses Fenster Steuerung & Tastenkürzel öffnen.",
+    "open_settings": "Einstellungen öffnen.",
+    "launch_options": "Startoptionen & Export öffnen.",
+    "launch_game": "Mewgenics mit den aktuell aktivierten Mods starten.",
+    "exit": "Mewtator beenden.",
+    "mod_list_keyboard": "Mod-Liste: Tastatur",
+    "toggle_selected": "Ausgewählten Mod aktivieren oder deaktivieren.",
+    "move_up": "Den ausgewählten aktivierten Mod in der Ladereihenfolge um eine Position nach oben verschieben.",
+    "move_down": "Den ausgewählten aktivierten Mod in der Ladereihenfolge um eine Position nach unten verschieben.",
+    "move_top": "Den ausgewählten aktivierten Mod an den Anfang der Ladereihenfolge verschieben.",
+    "move_bottom": "Den ausgewählten aktivierten Mod an das Ende der Ladereihenfolge verschieben.",
+    "delete_mod": "Ausgewählten Mod nach Bestätigung löschen.",
+    "mouse": "Mod-Liste: Maus",
+    "click": "Klick",
+    "select_mod": "Einen Mod auswählen und seine Details im Vorschaufenster anzeigen.",
+    "checkbox_click": "Klick auf Kontrollkästchen",
+    "toggle_checkbox": "Diesen Mod aktivieren oder deaktivieren.",
+    "double_click": "Doppelklick",
+    "toggle_row": "Die angeklickte Mod-Zeile aktivieren oder deaktivieren.",
+    "right_click": "Rechtsklick",
+    "context_menu": "Kontextmenü des Mods öffnen.",
+    "arrow_buttons": "Auf / Ab-Schaltflächen",
+    "reorder_buttons": "Den ausgewählten aktivierten Mod in der Ladereihenfolge um eine Position verschieben.",
+    "focus_hint": "Die Tastatursteuerung der Mod-Liste gilt, wenn die Mod-Liste den Tastaturfokus hat. Die Ladereihenfolge-Steuerung betrifft nur aktivierte Mods."
   }
 }

@@ -29,7 +29,8 @@
     "theme": "Eme-Thay",
     "theme_light": "Ight-Lay",
     "theme_dark": "Ark-Day",
-    "about": "About-ay"
+    "about": "About-ay",
+    "controls": "Ontrols-Cay"
   },
   "ui": {
     "disabled_mods": "Isabled-Day Ods-May",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - Eadlay eveloperday/eatorcray, Ogrammerpray",
     "credit_community": "Pseudonym_Tim - UI/UX, Ogrammerpray",
     "credit_icons": "CVS - Ewtatormay ogolay",
+    "credit_polish": "JerrYisDeaD666 - Olishpay anslationtray",
     "credit_game": "Ecialspay anksthay otay Edmund McMillen andway Tyler Glaiel orfay eatingcray uchsay anway amazingway amegay!"
+  },
+  "controls": {
+    "title": "Ontrols-Cay & Ortcuts-Shay",
+    "subtitle": "A-ay uick-qay eference-ray or-fay Ewtator-May's eyboard-kay and-ay ouse-may ontrols-cay.",
+    "global": "Obal-Glay ortcuts-shay",
+    "open_controls": "Open-ay is-thay Ontrols-Cay & Ortcuts-Shay anel-pay.",
+    "open_settings": "Open-ay Ettings-Say.",
+    "launch_options": "Open-ay Aunch-Lay Options-ay & Export-ay.",
+    "launch_game": "Aunch-Lay Ewgenics-May ith-way e-thay urrently-cay enabled-ay ods-may.",
+    "exit": "Exit-ay Ewtator-May.",
+    "mod_list_keyboard": "Od-May Ist-Lay: Eyboard-Kay",
+    "toggle_selected": "Enable-ay or-ay isable-day e-thay elected-say od-may.",
+    "move_up": "Ove-May e-thay elected-say enabled-ay od-may up-ay one-ay osition-pay in-ay e-thay oad-lay order-ay.",
+    "move_down": "Ove-May e-thay elected-say enabled-ay od-may own-day one-ay osition-pay in-ay e-thay oad-lay order-ay.",
+    "move_top": "Ove-May e-thay elected-say enabled-ay od-may otay e-thay op-tay of-ay e-thay oad-lay order-ay.",
+    "move_bottom": "Ove-May e-thay elected-say enabled-ay od-may otay e-thay ottom-bay of-ay e-thay oad-lay order-ay.",
+    "delete_mod": "Elete-Day e-thay elected-say od-may after-ay onfirmation-cay.",
+    "mouse": "Od-May Ist-Lay: Ouse-May",
+    "click": "Ick-Clay",
+    "select_mod": "Elect-Say a-ay od-may and-ay ow-shay its-ay etails-day in-ay e-thay eview-pray anel-pay.",
+    "checkbox_click": "Eckbox-Chay ick-clay",
+    "toggle_checkbox": "Enable-ay or-ay isable-day at-thay od-may.",
+    "double_click": "Ouble-Day ick-clay",
+    "toggle_row": "Enable-ay or-ay isable-day e-thay icked-clay od-may ow-ray.",
+    "right_click": "Ight-Ray ick-clay",
+    "context_menu": "Open-ay e-thay od-may ontext-cay enu-may.",
+    "arrow_buttons": "Up-ay / Own-Day uttons-bay",
+    "reorder_buttons": "Ove-May e-thay elected-say enabled-ay od-may one-ay osition-pay in-ay e-thay oad-lay order-ay.",
+    "focus_hint": "Od-May-ist-lay eyboard-kay ontrols-cay apply-ay ile-whay e-thay od-may ist-lay as-hay eyboard-kay ocus-fay. Oad-Lay-order-ay ontrols-cay affect-ay enabled-ay ods-may only-ay."
   }
 }

@@ -29,7 +29,8 @@
     "theme": "主题",
     "theme_light": "浅色",
     "theme_dark": "深色",
-    "about": "关于"
+    "about": "关于",
+    "controls": "控制"
   },
   "ui": {
     "disabled_mods": "已禁用的模组",
@@ -207,6 +208,36 @@
     "credit_project": "animeowdan - 首席开发者/创作者、程序员",
     "credit_community": "Pseudonym_Tim - UI/UX、程序开发",
     "credit_icons": "CVS - Mewtator 标志",
+    "credit_polish": "JerrYisDeaD666 - 波兰语翻译",
     "credit_game": "特别感谢 Edmund McMillen 和 Tyler Glaiel 创作了如此精彩的游戏！"
+  },
+  "controls": {
+    "title": "控制与快捷键",
+    "subtitle": "Mewtator 键盘和鼠标控制的快速参考。",
+    "global": "全局快捷键",
+    "open_controls": "打开此“控制与快捷键”面板。",
+    "open_settings": "打开设置。",
+    "launch_options": "打开“启动选项与导出”。",
+    "launch_game": "使用当前已启用的模组启动 Mewgenics。",
+    "exit": "退出 Mewtator。",
+    "mod_list_keyboard": "模组列表: 键盘",
+    "toggle_selected": "启用或禁用所选模组。",
+    "move_up": "在加载顺序中将所选的已启用模组向上移动一个位置。",
+    "move_down": "在加载顺序中将所选的已启用模组向下移动一个位置。",
+    "move_top": "将所选的已启用模组移动到加载顺序的最前面。",
+    "move_bottom": "将所选的已启用模组移动到加载顺序的最后面。",
+    "delete_mod": "确认后删除所选模组。",
+    "mouse": "模组列表: 鼠标",
+    "click": "单击",
+    "select_mod": "选择模组并在预览面板中显示其详细信息。",
+    "checkbox_click": "单击复选框",
+    "toggle_checkbox": "启用或禁用该模组。",
+    "double_click": "双击",
+    "toggle_row": "启用或禁用所点击的模组行。",
+    "right_click": "右键单击",
+    "context_menu": "打开模组上下文菜单。",
+    "arrow_buttons": "上 / 下按钮",
+    "reorder_buttons": "在加载顺序中将所选的已启用模组移动一个位置。",
+    "focus_hint": "仅当模组列表具有键盘焦点时，模组列表键盘控制才生效。加载顺序控制只影响已启用的模组。"
   }
 }
