@@ -942,16 +942,26 @@ class MainController:
             return
         
         try:
-            if filepath.endswith(".json"):
-                imported_names = self.modlist_io_service.import_modlist(filepath)
-            else:
-                imported_names = self.modlist_io_service.import_modlist_text(filepath)
+            imported_names = self.modlist_io_service.import_modlist_file(filepath)
             
-            available_mod_names = {mod.name for mod in self.mod_list.all_mods}
-            valid_names = [name for name in imported_names if name in available_mod_names]
-            
-            if len(valid_names) < len(imported_names):
-                missing_count = len(imported_names) - len(valid_names)
+            available_mod_names = {
+                mod.name for mod in self.mod_list.all_mods if not mod.missing
+            }
+
+            valid_names = []
+            seen_names = set()
+            missing_count = 0
+
+            for name in imported_names:
+                if name not in available_mod_names:
+                    missing_count += 1
+                    continue
+                if name in seen_names:
+                    continue
+                seen_names.add(name)
+                valid_names.append(name)
+
+            if missing_count:
                 self._show_notification(
                     self.translation_service.get("messages.warning"),
                     self.translation_service.get(
@@ -962,8 +972,10 @@ class MainController:
                     ),
                     kind="warning",
                 )
-            
-            self.mod_list.set_order(valid_names)
+
+            # Importing a modlist must reproduce its enabled state, not merely
+            # reorder mods that happened to already be enabled... - Tim
+            self.mod_list.apply_enabled_names(valid_names)
             self._show_notification(
                 self.translation_service.get("messages.success"),
                 self.translation_service.get(
@@ -982,25 +994,39 @@ class MainController:
             )
     
     def _export_modlist(self):
+        json_files_label = self.translation_service.get("messages.json_files")
+        text_files_label = self.translation_service.get("messages.text_files")
+        selected_filetype = tk.StringVar(master=self.root, value=json_files_label)
+
         with self.theme_service.file_dialog_safe_theme():
             filepath = filedialog.asksaveasfilename(
                 parent=self.root,
                 title=self.translation_service.get("messages.export_modlist"),
-                defaultextension=".json",
+                # Leave this empty so the selected file filter can determine
+                # the extension instead of always forcing .json... - Tim
+                defaultextension="",
+                typevariable=selected_filetype,
                 filetypes=[
-                    (self.translation_service.get("messages.json_files"), "*.json"),
-                    (self.translation_service.get("messages.text_files"), "*.txt"),
+                    (json_files_label, "*.json"),
+                    (text_files_label, "*.txt"),
                     (self.translation_service.get("messages.all_files"), "*.*"),
                 ]
             )
         
         if not filepath:
             return
+
+        # Some native dialogs do not append the selected filter extension.
+        # Add it ourselves only when the user did not type an extension... - Tim
+        if not os.path.splitext(filepath)[1]:
+            extension = ".txt" if selected_filetype.get() == text_files_label else ".json"
+            filepath += extension
         
         try:
             enabled_names = self.mod_list.enabled_mod_names
             
-            if filepath.endswith(".json"):
+            modlist_name = None
+            if self.modlist_io_service.get_format(filepath) == "json":
                 default_name = os.path.splitext(os.path.basename(filepath))[0]
                 modlist_name = simpledialog.askstring(
                     self.translation_service.get("messages.export_modlist"),
@@ -1011,9 +1037,9 @@ class MainController:
                 if modlist_name is None:
                     return
 
-                self.modlist_io_service.export_modlist(enabled_names, filepath, modlist_name)
-            else:
-                self.modlist_io_service.export_modlist_text(enabled_names, filepath)
+            self.modlist_io_service.export_modlist_file(
+                enabled_names, filepath, modlist_name
+            )
             
             self._show_notification(
                 self.translation_service.get("messages.success"),
