@@ -132,6 +132,8 @@
     "no_mods_to_sort": "ソートする有効な Mod がありません。",
     "auto_sort_success": "Mod のソートが成功しました！",
     "auto_sort_warnings": "Mod は警告付きでソートされました：\n\n{warnings}",
+    "circular_dependency_auto_sort": "循環依存関係が検出されました。一部の要件を満たせない可能性があります。",
+    "circular_dependency_requirement": "有効なMod間で循環依存関係が検出されました: {mods}。これらの要件をすべて満たす有効な読み込み順序はありません。",
     "requirement_warnings_title": "未充足の要件",
     "requirement_warnings_text": "一部の Mod には未充足の要件があります：\n\n{errors}\n\nそれでも起動しますか？",
     "conflict_warnings_title": "設定の競合",

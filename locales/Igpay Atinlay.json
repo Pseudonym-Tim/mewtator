@@ -132,6 +132,8 @@
     "no_mods_to_sort": "O-Nay ods-may are-ay enabled-ay o-tay ort-say.",
     "auto_sort_success": "Ods-May orted-say uccessfully-say!",
     "auto_sort_warnings": "Ods-May orted-say ith-way arnings-way:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Ircular-Cay ependencies-day etected-day. Ome-Say equirements-ray ay-may ot-nay e-bay atisfied-say.",
+    "circular_dependency_requirement": "Ircular-Cay ependency-day etected-day etween-bay enabled-way ods-may: {mods}. O-Nay alid-vay oad-lay order-way an-cay atisfy-say ese-thay equirements-ray.",
     "requirement_warnings_title": "Unmet-ay Equirements-Ray",
     "requirement_warnings_text": "Ome-Say ods-may ave-hay unmet-ay equirements-ray:\n\n{errors}\n\nOntinue-Cay aunching-lay?",
     "conflict_warnings_title": "Onfiguration-Cay Onflicts-Cay",

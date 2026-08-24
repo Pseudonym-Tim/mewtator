@@ -132,6 +132,8 @@
     "no_mods_to_sort": "没有启用的模组可以排序。",
     "auto_sort_success": "模组排序成功！",
     "auto_sort_warnings": "模组排序完成，但有警告：\n\n{warnings}",
+    "circular_dependency_auto_sort": "检测到循环依赖。某些需求可能无法满足。",
+    "circular_dependency_requirement": "在已启用的模组之间检测到循环依赖：{mods}。不存在能够满足这些需求的有效加载顺序。",
     "requirement_warnings_title": "未满足的要求",
     "requirement_warnings_text": "一些模组有未满足的要求：\n\n{errors}\n\n仍要继续启动吗？",
     "conflict_warnings_title": "配置冲突",

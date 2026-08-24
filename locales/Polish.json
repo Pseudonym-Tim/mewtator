@@ -132,6 +132,8 @@
     "no_mods_to_sort": "Brak włączonych modów do posortowania.",
     "auto_sort_success": "Mody posortowane pomyślnie!",
     "auto_sort_warnings": "Mody posortowane z ostrzeżeniami:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Wykryto zależności cykliczne. Niektóre wymagania mogą nie zostać spełnione.",
+    "circular_dependency_requirement": "Wykryto zależność cykliczną między włączonymi modami: {mods}. Nie istnieje prawidłowa kolejność ładowania, która spełni te wymagania.",
     "requirement_warnings_title": "Niespełnione wymagania",
     "requirement_warnings_text": "Niektóre mody mają niespełnione wymagania:\n\n{errors}\n\nUruchomić grę mimo to?",
     "conflict_warnings_title": "Konflikty konfiguracji",

@@ -132,6 +132,8 @@
     "no_mods_to_sort": "Keine Mods zum Sortieren aktiviert.",
     "auto_sort_success": "Mods erfolgreich sortiert!",
     "auto_sort_warnings": "Mods mit Warnungen sortiert:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Zirkuläre Abhängigkeiten wurden erkannt. Einige Anforderungen können möglicherweise nicht erfüllt werden.",
+    "circular_dependency_requirement": "Zwischen aktivierten Mods wurde eine zirkuläre Abhängigkeit erkannt: {mods}. Es gibt keine gültige Ladereihenfolge, die diese Anforderungen erfüllen kann.",
     "requirement_warnings_title": "Unerfüllte Anforderungen",
     "requirement_warnings_text": "Einige Mods haben unerfüllte Anforderungen:\n\n{errors}\n\nTrotzdem starten?",
     "conflict_warnings_title": "Konfigurationskonflikte",

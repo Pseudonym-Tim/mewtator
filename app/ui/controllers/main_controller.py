@@ -99,7 +99,7 @@ class MainController:
         self._setup_keyboard_shortcuts()
 
         # Validate requirements before first refresh
-        self.mod_service.validate_requirements(self.mod_list)
+        self._validate_requirements()
         self._refresh_lists()
         self.window.apply_theme(self.theme_service, self.config.theme)
         self._auto_configure_chainloader()
@@ -155,6 +155,17 @@ class MainController:
         }
         self.window.bind_keyboard_shortcuts(shortcuts)
     
+    def _validate_requirements(self):
+        """Validate requirements using UI-localized circular dependency text."""
+        return self.mod_service.validate_requirements(
+            self.mod_list,
+            circular_dependency_template=self.translation_service.get(
+                "messages.circular_dependency_requirement",
+                "Circular dependency detected between enabled mods: {mods}. "
+                "No valid load order can satisfy these requirements.",
+            ),
+        )
+
     def _refresh_lists(self, preserve_selection=None):
         mod_widget = self.window.mod_list_widget
 
@@ -204,7 +215,7 @@ class MainController:
             mod_widget.select_name(preserve_selection)
 
     def _on_mod_list_changed(self):
-        self.mod_service.validate_requirements(self.mod_list)
+        self._validate_requirements()
         self.mod_service.save_mod_order(self.mod_list)
         # This write came from the UI itself, advance watcher
         # and avoid unnecessary disk reload on next poll... - Tim
@@ -422,7 +433,7 @@ class MainController:
             # Reload immediately after deleting the folder...
             self.mod_list = self.mod_service.load_mods()
             self.mod_list.add_observer(self._on_mod_list_changed)
-            self.mod_service.validate_requirements(self.mod_list)
+            self._validate_requirements()
             self._refresh_lists()
 
             remaining = self.window.mod_list_widget.get_items()
@@ -743,7 +754,13 @@ class MainController:
             )
             return
         
-        sorted_names, warnings = self.mod_service.auto_sort(self.mod_list)
+        sorted_names, warnings = self.mod_service.auto_sort(
+            self.mod_list,
+            circular_dependency_warning=self.translation_service.get(
+                "messages.circular_dependency_auto_sort",
+                "Circular dependencies detected. Some requirements may not be satisfied.",
+            ),
+        )
         
         if sorted_names:
             self.mod_list.set_order(sorted_names)
@@ -882,7 +899,7 @@ class MainController:
             # remain disabled until the user checks them... - Tim
             self.mod_list = self.mod_service.load_mods()
             self.mod_list.add_observer(self._on_mod_list_changed)
-            self.mod_service.validate_requirements(self.mod_list)
+            self._validate_requirements()
             self._refresh_lists(preserve_selection=mod_name)
             self._record_mod_filesystem_state()
 
@@ -1222,7 +1239,7 @@ class MainController:
 
         self.mod_list = self.mod_service.load_mods()
         self.mod_list.add_observer(self._on_mod_list_changed)
-        requirement_errors = self.mod_service.validate_requirements(self.mod_list)
+        requirement_errors = self._validate_requirements()
         self._refresh_lists(preserve_selection=preserve_selection)
 
         # Repaint Mod Info immediately...

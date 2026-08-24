@@ -132,6 +132,8 @@
     "no_mods_to_sort": "No crew to arrange, cap'n.",
     "auto_sort_success": "Crew arranged successfully!",
     "auto_sort_warnings": "Crew arranged with warnings:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Arrr, circular dependencies be detected. Some provisions may not be satisfied.",
+    "circular_dependency_requirement": "A circular dependency be tangled among enabled crew: {mods}. No valid load order can satisfy these provisions.",
     "requirement_warnings_title": "Unmet Provisions",
     "requirement_warnings_text": "Some cargo has unmet provisions:\n\n{errors}\n\nSet sail anyway?",
     "conflict_warnings_title": "Riggin' Conflicts",

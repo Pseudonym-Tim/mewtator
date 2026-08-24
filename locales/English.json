@@ -132,6 +132,8 @@
     "no_mods_to_sort": "No mods are enabled to sort.",
     "auto_sort_success": "Mods sorted successfully!",
     "auto_sort_warnings": "Mods sorted with warnings:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Circular dependencies detected. Some requirements may not be satisfied.",
+    "circular_dependency_requirement": "Circular dependency detected between enabled mods: {mods}. No valid load order can satisfy these requirements.",
     "requirement_warnings_title": "Unmet Requirements",
     "requirement_warnings_text": "Some mods have unmet requirements:\n\n{errors}\n\nContinue launching?",
     "conflict_warnings_title": "Configuration Conflicts",

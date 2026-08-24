@@ -132,6 +132,8 @@
     "no_mods_to_sort": "Nenhum mod ativado para organizar.",
     "auto_sort_success": "Mods organizados com sucesso!",
     "auto_sort_warnings": "Mods organizados com avisos:\n\n{warnings}",
+    "circular_dependency_auto_sort": "Foram detectadas dependências circulares. Alguns requisitos podem não ser satisfeitos.",
+    "circular_dependency_requirement": "Foi detectada uma dependência circular entre os mods ativados: {mods}. Não existe uma ordem de carregamento válida que possa satisfazer esses requisitos.",
     "requirement_warnings_title": "Requisitos Não Atendidos",
     "requirement_warnings_text": "Alguns mods têm requisitos não atendidos:\n\n{errors}\n\nIniciar mesmo assim?",
     "conflict_warnings_title": "Conflitos de Configuração",

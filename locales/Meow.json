@@ -132,6 +132,8 @@
     "no_mods_to_sort": "Meow",
     "auto_sort_success": "Meow",
     "auto_sort_warnings": "Meow",
+    "circular_dependency_auto_sort": "Meow.",
+    "circular_dependency_requirement": "Meow: {mods}. Meow.",
     "requirement_warnings_title": "Meow",
     "requirement_warnings_text": "Meow",
     "conflict_warnings_title": "Meow",

@@ -132,6 +132,8 @@
     "no_mods_to_sort": "Aucun mod activé à trier.",
     "auto_sort_success": "Mods triés avec succès !",
     "auto_sort_warnings": "Mods triés avec des avertissements :\n\n{warnings}",
+    "circular_dependency_auto_sort": "Des dépendances circulaires ont été détectées. Certaines exigences risquent de ne pas pouvoir être satisfaites.",
+    "circular_dependency_requirement": "Une dépendance circulaire a été détectée entre les mods activés : {mods}. Aucun ordre de chargement valide ne peut satisfaire ces exigences.",
     "requirement_warnings_title": "Exigences Non Satisfaites",
     "requirement_warnings_text": "Certains mods ont des exigences non satisfaites :\n\n{errors}\n\nLancer quand même ?",
     "conflict_warnings_title": "Conflits de Configuration",
