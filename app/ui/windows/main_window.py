@@ -6,6 +6,7 @@ from app.ui.components.mod_list_widget import ModListWidget
 from app.ui.components.preview_panel import PreviewPanel
 from app.ui.components.rounded_button import RoundedButton
 from app.ui.icon_set import IconSet
+from app.version import versioned_title
 
 
 class MainWindow:
@@ -14,7 +15,7 @@ class MainWindow:
         self.translation_service = translation_service
         self.icons = IconSet(root)
 
-        self.root.title(translation_service.get("window.app_title"))
+        self.root.title(versioned_title(translation_service.get("window.app_title", "Mewtator")))
         self.root.geometry("1380x820")
         self.root.minsize(1040, 660)
 

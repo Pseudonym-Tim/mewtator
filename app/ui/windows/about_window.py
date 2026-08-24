@@ -2,6 +2,7 @@ from tkinter import Toplevel
 from tkinter import ttk
 
 from app.utils.resource_utils import apply_app_icon
+from app.version import APP_VERSION_DISPLAY
 
 class AboutWindow:
     """About information panel..."""
@@ -50,7 +51,13 @@ class AboutWindow:
             container,
             text=self.t.get("about.subtitle"),
             font="MewtatorSubheading",
-        ).pack(anchor="w", pady=(2, 18))
+        ).pack(anchor="w", pady=(2, 4))
+
+        ttk.Label(
+            container,
+            text=f"{self.t.get('ui.version', 'Version')} {APP_VERSION_DISPLAY}",
+            style="Hint.TLabel",
+        ).pack(anchor="w", pady=(0, 18))
 
         ttk.Label(
             container,

@@ -14,6 +14,7 @@ from app.core.services.theme_service import ThemeService
 from app.ui.controllers.main_controller import MainController
 from app.ui.windows.settings_window import SettingsWindow
 from app.utils.resource_utils import apply_app_icon
+from app.version import versioned_title
 
 
 def show_language_selection_dialog(root, translation_service, theme_service, theme_name: str):
@@ -124,7 +125,7 @@ def main():
         config_service.save_config(config)
     
     translation_service.load_language(config.language)
-    root.title(translation_service.get("window.app_title"))
+    root.title(versioned_title(translation_service.get("window.app_title", "Mewtator")))
     
     mod_repo = ModRepository(config.mod_folder)
     mod_service = ModService(mod_repo)
