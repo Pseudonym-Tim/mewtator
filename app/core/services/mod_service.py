@@ -107,6 +107,14 @@ class ModService:
         # with a conflict should stop looking invalid as soon as it is disabled)... - Tim
         for mod in mod_list.all_mods:
             mod.has_unmet_requirements = False
+            mod.requirement_status = None
+
+        def mark_unmet(mod: Mod, status: str):
+            mod.has_unmet_requirements = True
+            # Error always wins so a missing/invalid requirement can never be
+            # downgraded to yellow by a separate version mismatch... - Tim
+            if status == "error" or mod.requirement_status is None:
+                mod.requirement_status = status
 
         enabled_mods = mod_list.enabled_mods
         
@@ -131,28 +139,28 @@ class ModService:
 
                 if not parsed:
                     errors.append(f"{mod.name}: Invalid requirement format '{req_string}'")
-                    mod.has_unmet_requirements = True
+                    mark_unmet(mod, "error")
                     continue
                 
                 req_mod_name, operator, req_version = parsed
                 
                 if req_mod_name not in mod_positions:
                     errors.append(f"{mod.name}: Required mod '{req_mod_name}' is not enabled")
-                    mod.has_unmet_requirements = True
+                    mark_unmet(mod, "error")
                     continue
                 
                 req_position = mod_positions[req_mod_name]
 
                 if req_position > idx:
                     errors.append(f"{mod.name}: Required mod '{req_mod_name}' must be loaded before this mod (move it up in the list)")
-                    mod.has_unmet_requirements = True
+                    mark_unmet(mod, "error")
                     continue
                 
                 if operator and req_version:
                     req_mod_version = mod_versions.get(req_mod_name, '')
                     if not check_requirement(req_mod_version, operator, req_version):
                         errors.append(f"{mod.name}: Required mod '{req_mod_name}' version {req_mod_version} does not satisfy {operator}{req_version}")
-                        mod.has_unmet_requirements = True
+                        mark_unmet(mod, "warning")
         
         return errors
     

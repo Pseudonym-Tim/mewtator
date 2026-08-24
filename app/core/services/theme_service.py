@@ -414,6 +414,7 @@ class ThemeService:
             "card_bg": "#1c1c1c",
             "muted_fg": "#b5b5b5",
             "warning_fg": "#f2c94c",
+            "error_fg": "#ff6b6b",
             "disabled_fg": "#858585",
             "nav_bg": "#5a5a5a",
             "nav_active_bg": "#6a6a6a",

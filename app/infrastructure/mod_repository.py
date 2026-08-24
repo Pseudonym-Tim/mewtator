@@ -108,3 +108,41 @@ class ModRepository:
         if os.path.exists(self.modlist_path):
             return os.path.getmtime(self.modlist_path)
         return 0
+
+    def get_filesystem_state(self):
+        """Return the externally observable mod state used by the UI watcher...
+        """
+        try:
+            with open(self.modlist_path, "rb") as f:
+                modlist_contents = f.read()
+        except OSError:
+            modlist_contents = None
+
+        try:
+            folder_names = tuple(sorted(
+                d for d in os.listdir(self.mod_folder)
+                if os.path.isdir(os.path.join(self.mod_folder, d))
+            ))
+        except OSError:
+            folder_names = ()
+
+        metadata_filenames = ("description.json", "info.json", "modinfo.json")
+        metadata_state = []
+
+        for folder_name in folder_names:
+            mod_path = os.path.join(self.mod_folder, folder_name)
+            file_state = []
+
+            for filename in metadata_filenames:
+                metadata_path = os.path.join(mod_path, filename)
+                try:
+                    with open(metadata_path, "rb") as f:
+                        contents = f.read()
+                except (OSError, IsADirectoryError):
+                    contents = None
+
+                file_state.append((filename, contents))
+
+            metadata_state.append((folder_name, tuple(file_state)))
+
+        return modlist_contents, folder_names, tuple(metadata_state)

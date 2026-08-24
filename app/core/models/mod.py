@@ -11,6 +11,7 @@ class Mod:
     metadata: Optional[Dict[str, Any]] = None
     preview_path: Optional[str] = None
     has_unmet_requirements: bool = False
+    requirement_status: Optional[str] = None
     
     def __post_init__(self):
         if self.metadata is None:

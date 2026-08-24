@@ -55,6 +55,11 @@ class MainController:
         
         self.drag_data = {"source": None, "index": None, "changed": False}
         self.drag_indicator = None
+
+        # Poll for edits made outside Mewtator... - Tim
+        self._mod_filesystem_watch_job = None
+        self._mod_filesystem_watch_interval_ms = 750
+        self._last_mod_filesystem_state = None
     
     def start(self):
         if not self.config_service.validate_config(self.config):
@@ -98,6 +103,7 @@ class MainController:
         self._refresh_lists()
         self.window.apply_theme(self.theme_service, self.config.theme)
         self._auto_configure_chainloader()
+        self._start_mod_filesystem_watch()
 
     def _setup_menu_bar(self):
         self.window.menu_bar.create_file_menu(
@@ -179,9 +185,10 @@ class MainController:
 
             status = None
             if mod.missing:
+                # Enabled modlist entry without a matching folder is always red... - Tim
                 status = "error"
             elif mod.has_unmet_requirements:
-                status = "warning"
+                status = mod.requirement_status or "error"
 
             mod_widget.add_item(
                 mod.name,
@@ -199,7 +206,9 @@ class MainController:
     def _on_mod_list_changed(self):
         self.mod_service.validate_requirements(self.mod_list)
         self.mod_service.save_mod_order(self.mod_list)
-
+        # This write came from the UI itself, advance watcher
+        # and avoid unnecessary disk reload on next poll... - Tim
+        self._record_mod_filesystem_state()
 
         self._refresh_lists()
         self.root.update_idletasks()
@@ -427,6 +436,7 @@ class MainController:
                 self.window.preview_panel.clear()
 
             self._update_dll_manifest()
+            self._record_mod_filesystem_state()
         except Exception as e:
             self._show_notification(
                 self.translation_service.get("messages.error"),
@@ -874,6 +884,7 @@ class MainController:
             self.mod_list.add_observer(self._on_mod_list_changed)
             self.mod_service.validate_requirements(self.mod_list)
             self._refresh_lists(preserve_selection=mod_name)
+            self._record_mod_filesystem_state()
 
             self._show_notification(
                 self.translation_service.get("messages.success"),
@@ -1153,6 +1164,54 @@ class MainController:
         )
         new_controller.start()
     
+    def _record_mod_filesystem_state(self):
+        """Capture the current disk state as the watcher's baseline..."""
+        try:
+            self._last_mod_filesystem_state = (
+                self.mod_service.repository.get_filesystem_state()
+            )
+        except OSError:
+            # Transient filesystem failure should not stop future polling... - Tim
+            pass
+
+    def _start_mod_filesystem_watch(self):
+        """Start polling for external modlist, folder, and metadata changes..."""
+        self._record_mod_filesystem_state()
+        self._schedule_mod_filesystem_watch()
+
+    def _schedule_mod_filesystem_watch(self):
+        try:
+            self._mod_filesystem_watch_job = self.root.after(
+                self._mod_filesystem_watch_interval_ms,
+                self._poll_mod_filesystem,
+            )
+        except tk.TclError:
+            self._mod_filesystem_watch_job = None
+
+    def _poll_mod_filesystem(self):
+        """Reload mods when modlist.txt, folders, or mod metadata changes..."""
+        self._mod_filesystem_watch_job = None
+
+        try:
+            current_state = self.mod_service.repository.get_filesystem_state()
+
+            if self._last_mod_filesystem_state is None:
+                self._last_mod_filesystem_state = current_state
+            elif current_state != self._last_mod_filesystem_state:
+                # Record the state that caused this reload. If another external
+                # edit lands while we're reloading, the next poll will still
+                # see it as a new change instead of accidentally swallowing... - Tim
+                self._last_mod_filesystem_state = current_state
+                self._reload_mods_from_disk()
+        except tk.TclError:
+            return
+        except Exception as exc:
+            get_logger().warning(
+                "Failed to refresh mods after filesystem change: %s", exc
+            )
+        finally:
+            self._schedule_mod_filesystem_watch()
+
     def _reload_mods_from_disk(self, preserve_selection=None):
         """Fully re-read mod folders, metadata, and requirement state..."""
 
@@ -1176,4 +1235,5 @@ class MainController:
 
     def _force_refresh_mods(self):
         self._reload_mods_from_disk()
+        self._record_mod_filesystem_state()
 

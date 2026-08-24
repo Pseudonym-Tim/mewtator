@@ -415,10 +415,11 @@ class ModListWidget(ttk.Frame):
             ],
         )
         style.configure("ModList.Treeview.Item", padding=(0, 0, 0, 0))
+        # Keep selection as a background-only highlight... - Tim
         style.map(
             "ModList.Treeview",
             background=[("selected", colors["select_bg"])],
-            foreground=[("selected", colors["select_fg"])],
+            foreground=[],
         )
         style.configure(
             "ModList.Treeview.Heading",
@@ -433,7 +434,7 @@ class ModListWidget(ttk.Frame):
 
         self.tree.tag_configure("disabled", foreground=colors["muted_fg"])
         self.tree.tag_configure("warning", foreground=colors["warning_fg"])
-        self.tree.tag_configure("error", foreground=colors["fg"])
+        self.tree.tag_configure("error", foreground=colors["error_fg"])
 
         self._checkbox_images = {
             False: self._make_checkbox_image(False, colors),
