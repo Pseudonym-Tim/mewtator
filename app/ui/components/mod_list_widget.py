@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import font as tkfont
 from typing import Callable, Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageTk
 
 from app.ui.components.wide_scrollbar import WideScrollbar
 from app.ui.components.rounded_button import RoundedButton
+from app.utils.resource_utils import resource_path
 
 
 class ModListWidget(ttk.Frame):
@@ -16,14 +18,16 @@ class ModListWidget(ttk.Frame):
     def __init__(self, parent, title: str):
         super().__init__(parent, padding=(16, 14))
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(2, weight=1)
+        self.rowconfigure(3, weight=1)
 
         self._toggle_command: Optional[Callable[[str], None]] = None
         self._name_by_iid: Dict[str, str] = {}
         self._iid_by_name: Dict[str, str] = {}
         self._enabled_by_name: Dict[str, bool] = {}
+        self._row_order: List[str] = []
         self._current_colors: Dict[str, str] = {}
         self._checkbox_images: Dict[bool, tk.PhotoImage] = {}
+        self._search_icon: Optional[tk.PhotoImage] = None
         self._row_fit_job = None
         self._horizontal_scroll_required = False
 
@@ -96,8 +100,30 @@ class ModListWidget(ttk.Frame):
         
         self.refresh_button.grid(row=0, column=4, sticky="w")
 
+        self.search_frame = ttk.Frame(self)
+        self.search_frame.grid(row=2, column=0, sticky="w", pady=(0, 10))
+
+        self.search_label = ttk.Label(
+            self.search_frame,
+            text="",
+        )
+
+        self.search_label.grid(row=0, column=0, sticky="w", padx=(0, 8))
+
+        self.search_var = tk.StringVar()
+
+        self.search_entry = ttk.Entry(
+            self.search_frame,
+            textvariable=self.search_var,
+            font="MewtatorBody",
+            width=60,
+        )
+
+        self.search_entry.grid(row=0, column=1, sticky="w")
+        self.search_var.trace_add("write", self._on_search_changed)
+
         table_area = ttk.Frame(self)
-        table_area.grid(row=2, column=0, sticky="nsew")
+        table_area.grid(row=3, column=0, sticky="nsew")
         table_area.rowconfigure(0, weight=1)
         table_area.columnconfigure(0, weight=1)
 
@@ -151,9 +177,10 @@ class ModListWidget(ttk.Frame):
         self.tree.column("version", width=110, minwidth=90, stretch=False, anchor="center")
 
         self.order_frame = ttk.Frame(table_area, padding=(8, 0, 0, 0))
-        self.order_frame.grid(row=0, column=1, sticky="ns")
-        self.order_frame.rowconfigure(0, weight=1)
-        self.order_frame.rowconfigure(3, weight=1)
+
+        # Keep load-order controls anchored to the top of the mod list instead
+        # of vertically centering them beside the table... - Tim
+        self.order_frame.grid(row=0, column=1, sticky="n")
 
         self.move_up_button = RoundedButton(
             self.order_frame,
@@ -164,7 +191,7 @@ class ModListWidget(ttk.Frame):
             radius=7,
         )
 
-        self.move_up_button.grid(row=1, column=0, pady=(0, 5))
+        self.move_up_button.grid(row=0, column=0, pady=(0, 14))
 
         self.move_down_button = RoundedButton(
             self.order_frame,
@@ -175,7 +202,7 @@ class ModListWidget(ttk.Frame):
             radius=7,
         )
 
-        self.move_down_button.grid(row=2, column=0)
+        self.move_down_button.grid(row=1, column=0)
 
         self.tree.bind("<Button-1>", self._on_left_click, add="+")
         self.tree.bind("<Motion>", self._on_pointer_motion, add="+")
@@ -188,6 +215,37 @@ class ModListWidget(ttk.Frame):
         self.tree.heading("author", text=author)
         self.tree.heading("version", text=version)
         self._fit_header_widths(name, author, version)
+
+    def _on_search_changed(self, *_args):
+        self._apply_name_filter()
+
+    def _apply_name_filter(self):
+        """Show only rows whose mod name contains the search text..."""
+        query = self.search_var.get().strip().casefold()
+        selected = self.tree.selection()
+        selected_iid = selected[0] if selected else None
+
+        visible_before = set(self.tree.get_children(""))
+
+        for iid in self._row_order:
+            if iid in visible_before:
+                self.tree.detach(iid)
+
+        for iid in self._row_order:
+            name = self._name_by_iid.get(iid, "")
+            if not query or query in name.casefold():
+                self.tree.reattach(iid, "", "end")
+
+        visible = set(self.tree.get_children(""))
+
+        if selected_iid and selected_iid in visible:
+            self.tree.selection_set(selected_iid)
+            self.tree.focus(selected_iid)
+        elif selected_iid:
+            self.tree.selection_remove(selected_iid)
+
+        self._update_order_button_state()
+        self._schedule_tree_row_fit()
 
     def _fit_header_widths(self, name: str, author: str, version: str):
         """Keep translated headings comfortably inside column cells..."""
@@ -264,23 +322,41 @@ class ModListWidget(ttk.Frame):
         self._update_order_button_state()
 
     def _update_order_button_state(self):
-        """Only enabled mods can use the load-order swap controls..."""
+        """Enable only load-order moves that are valid for the selection..."""
 
         selection = self.get_selection()
-        can_reorder = bool(
-            selection and self._enabled_by_name.get(selection[1], False)
+        selected_name = selection[1] if selection else None
+        selected_is_enabled = bool(
+            selected_name and self._enabled_by_name.get(selected_name, False)
         )
 
-        if can_reorder:
-            self.move_up_button.configure(state="normal")
-            self.move_down_button.configure(state="normal")
-            up_image = self._order_icons.get("up_enabled")
-            down_image = self._order_icons.get("down_enabled")
-        else:
-            self.move_up_button.configure(state="disabled")
-            self.move_down_button.configure(state="disabled")
-            up_image = self._order_icons.get("up_disabled")
-            down_image = self._order_icons.get("down_disabled")
+        enabled_names = [
+            self._name_by_iid[iid]
+            for iid in self._row_order
+            if iid in self._name_by_iid
+            and self._enabled_by_name.get(self._name_by_iid[iid], False)
+        ]
+
+        can_move_up = False
+        can_move_down = False
+        if selected_is_enabled and selected_name in enabled_names:
+            enabled_index = enabled_names.index(selected_name)
+            can_move_up = enabled_index > 0
+            can_move_down = enabled_index < len(enabled_names) - 1
+
+        self.move_up_button.configure(
+            state="normal" if can_move_up else "disabled"
+        )
+        self.move_down_button.configure(
+            state="normal" if can_move_down else "disabled"
+        )
+
+        up_image = self._order_icons.get(
+            "up_enabled" if can_move_up else "up_disabled"
+        )
+        down_image = self._order_icons.get(
+            "down_enabled" if can_move_down else "down_disabled"
+        )
 
         if up_image is not None:
             self.move_up_button.configure(image=up_image, compound="center")
@@ -386,6 +462,9 @@ class ModListWidget(ttk.Frame):
         self.move_up_button.apply_theme(order_button_colors)
         self.move_down_button.apply_theme(order_button_colors)
 
+        self._search_icon = self._make_search_icon(colors["fg"])
+        self.search_label.configure(image=self._search_icon, compound="left")
+
         style = ttk.Style(self)
 
         style.configure(
@@ -445,6 +524,31 @@ class ModListWidget(ttk.Frame):
             self.tree.item(iid, image=self._checkbox_images[enabled])
         self._schedule_tree_row_fit()
 
+    def _make_search_icon(self, color: str) -> tk.PhotoImage:
+        """Render the bundled Font Awesome magnifying glass..."""
+        source = Image.open(
+            resource_path(
+                "assets",
+                "icons",
+                "fontawesome",
+                "dark",
+                "magnifying-glass.png",
+            )
+        ).convert("RGBA")
+
+        alpha = source.getchannel("A")
+        tinted = Image.new("RGBA", source.size, color)
+        tinted.putalpha(alpha)
+
+        self.update_idletasks()
+        # Keep the Font Awesome glyph visually balanced beside the entry: 75%
+        # of the search box's requested height... - Tim
+        target_height = max(14, round(self.search_entry.winfo_reqheight() * 0.75))
+        target_width = max(1, round(tinted.width * target_height / tinted.height))
+        resampling = getattr(Image, "Resampling", Image).LANCZOS
+        tinted = tinted.resize((target_width, target_height), resampling)
+        return ImageTk.PhotoImage(tinted, master=self)
+
     def _make_checkbox_image(self, enabled: bool, colors: Dict[str, str]) -> tk.PhotoImage:
         """Render an anti-aliased checkbox instead of a pixel-stepped Tk glyph..."""
 
@@ -482,11 +586,14 @@ class ModListWidget(ttk.Frame):
         return ImageTk.PhotoImage(image, master=self)
 
     def clear(self):
-        for iid in self.tree.get_children(""):
-            self.tree.delete(iid)
+        # Delete filtered-out rows too, not only currently visible children... - Tim
+        for iid in list(self._name_by_iid):
+            if self.tree.exists(iid):
+                self.tree.delete(iid)
         self._name_by_iid.clear()
         self._iid_by_name.clear()
         self._enabled_by_name.clear()
+        self._row_order.clear()
         self._update_order_button_state()
         self._schedule_tree_row_fit()
 
@@ -517,6 +624,12 @@ class ModListWidget(ttk.Frame):
         self._name_by_iid[iid] = name
         self._iid_by_name[name] = iid
         self._enabled_by_name[name] = enabled
+        self._row_order.append(iid)
+
+        query = self.search_var.get().strip().casefold()
+        if query and query not in name.casefold():
+            self.tree.detach(iid)
+
         self._update_order_button_state()
         self._schedule_tree_row_fit()
 
