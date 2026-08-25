@@ -378,7 +378,9 @@ class ModListWidget(ttk.Frame):
             return "break"
 
     def _on_pointer_motion(self, event):
-        desired = "hand2" if self.is_checkbox_at(event.x, event.y) else ""
+        # Treat the full mod entry as interactive. (Pointer is shown only
+        # while hovering an actual row, not the header or empty table space)... - Tim
+        desired = "hand2" if self.tree.identify_row(event.y) else ""
         if self.tree.cget("cursor") != desired:
             self.tree.configure(cursor=desired)
 
