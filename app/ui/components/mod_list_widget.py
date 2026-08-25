@@ -22,6 +22,7 @@ class ModListWidget(ttk.Frame):
 
         self._toggle_command: Optional[Callable[[str], None]] = None
         self._name_by_iid: Dict[str, str] = {}
+        self._display_name_by_iid: Dict[str, str] = {}
         self._iid_by_name: Dict[str, str] = {}
         self._enabled_by_name: Dict[str, bool] = {}
         self._row_order: List[str] = []
@@ -232,8 +233,8 @@ class ModListWidget(ttk.Frame):
                 self.tree.detach(iid)
 
         for iid in self._row_order:
-            name = self._name_by_iid.get(iid, "")
-            if not query or query in name.casefold():
+            display_name = self._display_name_by_iid.get(iid, "")
+            if not query or query in display_name.casefold():
                 self.tree.reattach(iid, "", "end")
 
         visible = set(self.tree.get_children(""))
@@ -591,6 +592,7 @@ class ModListWidget(ttk.Frame):
             if self.tree.exists(iid):
                 self.tree.delete(iid)
         self._name_by_iid.clear()
+        self._display_name_by_iid.clear()
         self._iid_by_name.clear()
         self._enabled_by_name.clear()
         self._row_order.clear()
@@ -604,8 +606,10 @@ class ModListWidget(ttk.Frame):
         version: str,
         enabled: bool,
         status: Optional[str] = None,
+        display_name: Optional[str] = None,
     ):
         iid = f"mod_{len(self._name_by_iid)}"
+        visible_name = display_name or name
         tags = []
         if status in ("warning", "error"):
             tags.append(status)
@@ -617,17 +621,18 @@ class ModListWidget(ttk.Frame):
             "end",
             iid=iid,
             image=self._checkbox_images.get(enabled, ""),
-            text=name,
+            text=visible_name,
             values=(author, version),
             tags=tuple(tags),
         )
         self._name_by_iid[iid] = name
+        self._display_name_by_iid[iid] = visible_name
         self._iid_by_name[name] = iid
         self._enabled_by_name[name] = enabled
         self._row_order.append(iid)
 
         query = self.search_var.get().strip().casefold()
-        if query and query not in name.casefold():
+        if query and query not in visible_name.casefold():
             self.tree.detach(iid)
 
         self._update_order_button_state()

@@ -186,7 +186,7 @@ class MainController:
 
         disabled_mods = sorted(
             (mod for mod in all_mods if not mod.enabled),
-            key=lambda mod: mod.name.casefold(),
+            key=lambda mod: mod.title.casefold(),
         )
 
         ordered_mods = enabled_mods + disabled_mods
@@ -210,6 +210,7 @@ class MainController:
                 mod.version,
                 mod.enabled,
                 status,
+                display_name=mod.title,
             )
 
         self.window.set_mod_counts(disabled_count, enabled_count)
