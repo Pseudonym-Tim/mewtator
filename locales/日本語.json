@@ -99,7 +99,8 @@
     "dll_injection_hint": "Mewjector チェーンローダー用のマニフェストを作成（.dll Mod に必要）",
     "dll_injection_warning": "⚠ セキュリティ：信頼できるソースの DLL Mod のみインストールしてください",
     "mewjector_link_text": "Mewjector を入手：",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Mewtator カスタムゲームイントロを有効にする"
   },
   "messages": {
     "setup_required_title": "設定が必要です",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX、プログラマー",
     "credit_icons": "CVS - Mewtator ロゴ",
     "credit_polish": "JerrYisDeaD666 - ポーランド語翻訳",
-    "credit_game": "この素晴らしいゲームを制作した Edmund McMillen と Tyler Glaiel に心より感謝します！"
+    "credit_game": "この素晴らしいゲームを制作した Edmund McMillen と Tyler Glaiel に心より感謝します！",
+    "credit_intro": "カスタムゲームイントロ制作：Sham & CVS！"
   },
   "controls": {
     "title": "操作とショートカット",

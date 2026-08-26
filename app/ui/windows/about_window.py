@@ -1,6 +1,5 @@
 from tkinter import Toplevel
 from tkinter import ttk
-
 from app.utils.resource_utils import apply_app_icon
 from app.version import APP_VERSION_DISPLAY
 
@@ -87,6 +86,7 @@ class AboutWindow:
             self.t.get("about.credit_community"),
             self.t.get("about.credit_icons"),
             self.t.get("about.credit_polish"),
+            self.t.get("about.credit_intro"),
             self.t.get("about.credit_game"),
         ]
 

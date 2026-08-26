@@ -3,6 +3,7 @@ from app.core.models.mod import Mod
 from app.core.models.mod_list import ModList
 from app.infrastructure.mod_repository import ModRepository
 from app.utils.version_parser import parse_requirement, check_requirement
+from app.utils.resource_utils import resource_path
 
 
 class ModService:
@@ -90,6 +91,21 @@ class ModService:
     def get_enabled_mod_paths(self, mod_list: ModList) -> List[str]:
         return [mod.path for mod in mod_list.enabled_mods]
     
+    def get_launch_mod_paths(self, mod_list: ModList, config=None) -> List[str]:
+        """Return the effective mod paths used to launch the game...
+        """
+        mod_paths = self.get_enabled_mod_paths(mod_list)
+
+        intro_enabled = True if config is None else getattr(
+            config, "mewtator_intro_enabled", True
+        )
+        if intro_enabled and mod_paths:
+            intro_path = resource_path("bundled_mods", "MewtatorIntro")
+            if intro_path not in mod_paths:
+                mod_paths.append(intro_path)
+
+        return mod_paths
+
     def get_missing_mod_names(self, mod_list: ModList) -> List[str]:
         return [mod.name for mod in mod_list.missing_mods]
     

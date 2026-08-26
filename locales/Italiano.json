@@ -99,7 +99,8 @@
     "dll_injection_hint": "Crea manifesto per il caricatore Mewjector (richiesto per mod .dll)",
     "dll_injection_warning": "⚠ Sicurezza: Installa solo mod DLL da fonti attendibili",
     "mewjector_link_text": "Ottieni Mewjector: ",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Abilita l’introduzione di gioco personalizzata di Mewtator"
   },
   "messages": {
     "setup_required_title": "Configurazione Richiesta",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Programmatore",
     "credit_icons": "CVS - Logo di Mewtator",
     "credit_polish": "JerrYisDeaD666 - Traduzione in polacco",
-    "credit_game": "Un ringraziamento speciale a Edmund McMillen e Tyler Glaiel per aver creato un gioco così fantastico!"
+    "credit_game": "Un ringraziamento speciale a Edmund McMillen e Tyler Glaiel per aver creato un gioco così fantastico!",
+    "credit_intro": "Intro di gioco personalizzata creata da Sham & CVS!"
   },
   "controls": {
     "title": "Controlli e scorciatoie",

@@ -177,6 +177,20 @@ class SettingsWindow:
         )
         debug_console_check.pack(anchor="w")
         
+        self.mewtator_intro_var = BooleanVar(
+            value=getattr(self.config, "mewtator_intro_enabled", True)
+        )
+        mewtator_intro_check = ttk.Checkbutton(
+            checkbox_frame,
+            text=t.get(
+                "settings.mewtator_intro",
+                "Enable Mewtator custom game intro",
+            ),
+            variable=self.mewtator_intro_var,
+            cursor="hand2"
+        )
+        mewtator_intro_check.pack(anchor="w")
+
         self.dll_injection_var = BooleanVar(value=self.config.dll_injection_enabled)
         dll_injection_check = ttk.Checkbutton(
             checkbox_frame,
@@ -439,6 +453,7 @@ class SettingsWindow:
         self.config.custom_launch_options = self.custom_launch_entry.get().strip()
         self.config.dev_mode_enabled = self.dev_mode_var.get()
         self.config.debug_console_enabled = self.debug_console_var.get()
+        self.config.mewtator_intro_enabled = self.mewtator_intro_var.get()
         self.config.dll_injection_enabled = self.dll_injection_var.get()
         self.config.use_generic_font = self.use_generic_font_var.get()
         # TEMPORARILY DISABLED: These features are not yet functional in the game

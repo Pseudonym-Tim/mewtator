@@ -87,6 +87,7 @@
     "custom_launch_options": "Custom Launch Options",
     "dev_mode": "Enable Dev Mode (-dev_mode true)",
     "debug_console": "Enable Debug Console (-enable_debugconsole true)",
+    "mewtator_intro": "Enable Mewtator custom game intro",
     "mod_overrides": "Mod Launch Settings Overrides",
     "savefile_suffix_override": "Savefile Suffix Override",
     "inherit_save_override": "Inherit Save Override",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Programmer",
     "credit_icons": "CVS - Mewtator logo",
     "credit_polish": "JerrYisDeaD666 - Polish translation",
-    "credit_game": "Special thanks to Edmund McMillen and Tyler Glaiel for creating such an amazing game!"
+    "credit_game": "Special thanks to Edmund McMillen and Tyler Glaiel for creating such an amazing game!",
+    "credit_intro": "Custom game intro created by Sham & CVS!"
   },
   "controls": {
     "title": "Controls & Shortcuts",

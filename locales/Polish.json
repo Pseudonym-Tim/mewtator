@@ -99,7 +99,8 @@
     "dll_injection_hint": "Tworzy manifest dla chainloadera Mewjector (wymagany dla modów .dll)",
     "dll_injection_warning": "⚠ Bezpieczeństwo: instaluj mody DLL tylko z zaufanych źródeł",
     "mewjector_link_text": "Pobierz Mewjector: ",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Włącz niestandardowe intro gry Mewtator"
   },
   "messages": {
     "setup_required_title": "Wymagana konfiguracja",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Programista",
     "credit_icons": "CVS - Logo Mewtator",
     "credit_polish": "JerrYisDeaD666 - Polskie tłumaczenie",
-    "credit_game": "Specjalne podziękowania dla Edmunda McMillena i Tylera Glaiela za stworzenie tak niesamowitej gry!"
+    "credit_game": "Specjalne podziękowania dla Edmunda McMillena i Tylera Glaiela za stworzenie tak niesamowitej gry!",
+    "credit_intro": "Niestandardowe intro gry stworzone przez Sham & CVS!"
   },
   "controls": {
     "title": "Sterowanie i skróty",

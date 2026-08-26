@@ -15,6 +15,7 @@ class Config:
     # TEMPORARILY DISABLED: inherit_save_override: str = ""
     close_on_launch: bool = False
     dll_injection_enabled: bool = False
+    mewtator_intro_enabled: bool = True
     use_generic_font: bool = False
     
     def is_valid(self) -> bool:
@@ -43,6 +44,7 @@ class Config:
             # TEMPORARILY DISABLED: "inherit_save_override": self.inherit_save_override,
             "close_on_launch": self.close_on_launch,
             "dll_injection_enabled": self.dll_injection_enabled,
+            "mewtator_intro_enabled": self.mewtator_intro_enabled,
             "use_generic_font": self.use_generic_font
         }
     
@@ -60,5 +62,6 @@ class Config:
             # TEMPORARILY DISABLED: inherit_save_override=data.get("inherit_save_override", ""),
             close_on_launch=data.get("close_on_launch", False),
             dll_injection_enabled=data.get("dll_injection_enabled", False),
+            mewtator_intro_enabled=data.get("mewtator_intro_enabled", True),
             use_generic_font=data.get("use_generic_font", False)
         )

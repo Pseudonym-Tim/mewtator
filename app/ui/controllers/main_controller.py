@@ -578,14 +578,21 @@ class MainController:
                 conflict_msg
             )
         
-        enabled_paths = self.mod_service.get_enabled_mod_paths(self.mod_list)
+        user_enabled_paths = self.mod_service.get_enabled_mod_paths(self.mod_list)
+        enabled_paths = self.mod_service.get_launch_mod_paths(self.mod_list, self.config)
         logger = get_logger()
         enabled_mods = [(mod.name, mod.path) for mod in self.mod_list.enabled_mods]
-        logger.info("Launching game with %d enabled mods", len(enabled_mods))
+        logger.info("Launching game with %d user-enabled mods", len(enabled_mods))
         for name, path in enabled_mods:
             logger.info("Enabled mod: %s | %s", name, path)
+        if self.config.mewtator_intro_enabled and user_enabled_paths:
+            logger.info("Bundled Mewtator intro mod enabled: %s", enabled_paths[-1])
+        elif self.config.mewtator_intro_enabled:
+            logger.info("Bundled Mewtator intro mod skipped: no user mods enabled")
         
-        if self.launcher_service.should_warn_external_mods(self.config.game_install_dir, enabled_paths):
+        # The bundled intro lives with Mewtator by design, so Proton's external
+        # mod warning should only consider user-managed mods... - Tim
+        if self.launcher_service.should_warn_external_mods(self.config.game_install_dir, user_enabled_paths):
             result = self._ask_confirmation(
                 self.translation_service.get("messages.proton_warning_title"),
                 self.translation_service.get("messages.proton_warning_text")
@@ -630,7 +637,7 @@ class MainController:
             )
             return
 
-        enabled_paths = self.mod_service.get_enabled_mod_paths(self.mod_list)
+        enabled_paths = self.mod_service.get_launch_mod_paths(self.mod_list, self.config)
         launch_opts = self.launcher_service.get_launch_options(
             self.config.game_install_dir,
             enabled_paths,

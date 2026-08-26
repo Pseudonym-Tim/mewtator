@@ -99,7 +99,8 @@
     "dll_injection_hint": "Creates manifest fer Mewjector chainloader (required fer .dll cargo)",
     "dll_injection_warning": "⚠ Security: Only load DLL cargo from trusted ports",
     "mewjector_link_text": "Get Mewjector: ",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Hoist Mewtator's Custom Game Intro"
   },
   "messages": {
     "setup_required_title": "Riggin' Required",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Code swabbie",
     "credit_icons": "CVS - Mewtator crest",
     "credit_polish": "JerrYisDeaD666 - Polish translation",
-    "credit_game": "Special thanks be to Edmund McMillen and Tyler Glaiel fer creatin’ such an amazin’ game!"
+    "credit_game": "Special thanks be to Edmund McMillen and Tyler Glaiel fer creatin’ such an amazin’ game!",
+    "credit_intro": "Custom game intro crafted by Sham & CVS, arrr!"
   },
   "controls": {
     "title": "Helm & Shortcuts",

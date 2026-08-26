@@ -99,7 +99,8 @@
     "dll_injection_hint": "Erstellt Manifest für Mewjector-Chainloader (erforderlich für .dll-Mods)",
     "dll_injection_warning": "⚠ Sicherheit: Installieren Sie nur DLL-Mods aus vertrauenswürdigen Quellen",
     "mewjector_link_text": "Mewjector Herunterladen: ",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Benutzerdefiniertes Mewtator-Spielintro aktivieren"
   },
   "messages": {
     "setup_required_title": "Einrichtung Erforderlich",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Programmierer",
     "credit_icons": "CVS - Mewtator-Logo",
     "credit_polish": "JerrYisDeaD666 - Polnische Übersetzung",
-    "credit_game": "Besonderer Dank an Edmund McMillen und Tyler Glaiel für die Entwicklung dieses großartigen Spiels!"
+    "credit_game": "Besonderer Dank an Edmund McMillen und Tyler Glaiel für die Entwicklung dieses großartigen Spiels!",
+    "credit_intro": "Benutzerdefiniertes Spielintro erstellt von Sham & CVS!"
   },
   "controls": {
     "title": "Steuerung & Tastenkürzel",

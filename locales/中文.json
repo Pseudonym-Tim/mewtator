@@ -99,7 +99,8 @@
     "dll_injection_hint": "为 Mewjector 链加载器创建清单（.dll 模组需要）",
     "dll_injection_warning": "⚠ 安全：仅安装来自可信源的 DLL 模组",
     "mewjector_link_text": "获取 Mewjector：",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "启用 Mewtator 自定义游戏开场"
   },
   "messages": {
     "setup_required_title": "需要设置",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX、程序开发",
     "credit_icons": "CVS - Mewtator 标志",
     "credit_polish": "JerrYisDeaD666 - 波兰语翻译",
-    "credit_game": "特别感谢 Edmund McMillen 和 Tyler Glaiel 创作了如此精彩的游戏！"
+    "credit_game": "特别感谢 Edmund McMillen 和 Tyler Glaiel 创作了如此精彩的游戏！",
+    "credit_intro": "自定义游戏开场由 Sham & CVS 制作！"
   },
   "controls": {
     "title": "控制与快捷键",

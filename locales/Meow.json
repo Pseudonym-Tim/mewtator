@@ -99,7 +99,8 @@
     "dll_injection_hint": "Meow Mewjector meow .dll meow.",
     "dll_injection_warning": "⚠ Meow .dll meow meow meow.",
     "mewjector_link_text": "Mewjector",
-    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218"
+    "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
+    "mewtator_intro": "Meow Mewtator intro meow"
   },
   "messages": {
     "setup_required_title": "Meow",
@@ -209,7 +210,8 @@
     "credit_community": "Pseudonym_Tim - UI/UX, Programmer",
     "credit_icons": "CVS - Mewtator logo",
     "credit_polish": "JerrYisDeaD666 - Polish translation",
-    "credit_game": "Special thanks to Edmund McMillen and Tyler Glaiel for creating such an amazing game!"
+    "credit_game": "Special thanks to Edmund McMillen and Tyler Glaiel for creating such an amazing game!",
+    "credit_intro": "Custom game intro created by Sham & CVS!"
   },
   "controls": {
     "title": "Meow & Meow",
