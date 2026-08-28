@@ -100,7 +100,9 @@
     "dll_injection_warning": "⚠ Sicurezza: Installa solo mod DLL da fonti attendibili",
     "mewjector_link_text": "Ottieni Mewjector: ",
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
-    "mewtator_intro": "Abilita l’introduzione di gioco personalizzata di Mewtator"
+    "mewtator_intro": "Abilita l’introduzione di gioco personalizzata di Mewtator",
+    "linux_steam_runtime_path": "Steam Linux Runtime",
+    "linux_proton_path": "Proton"
   },
   "messages": {
     "setup_required_title": "Configurazione Richiesta",
@@ -166,6 +168,8 @@
     "json_files": "File JSON",
     "text_files": "File di testo",
     "all_files": "Tutti i file",
+    "steam_linux_runtime_launcher_file": "Lancer di Steam Linux Runtime",
+    "proton_launcher_file": "Lancer di Proton",
     "mod_already_exists": "Esiste già una cartella mod chiamata '{name}'. Sostituirla con il contenuto di questo ZIP?",
     "import_mod_success": "'{name}' importato correttamente.",
     "invalid_mod_zip": "Il file selezionato non è un archivio ZIP valido.",
@@ -178,7 +182,8 @@
     "export_modlist_success": "{count} mod esportati!",
     "export_modlist_failed": "Impossibile esportare l'elenco dei mod: {error}",
     "theme_change_failed": "Impossibile cambiare tema: {error}",
-    "open_mod_folder_failed": "Impossibile aprire la cartella del mod: {error}"
+    "open_mod_folder_failed": "Impossibile aprire la cartella del mod: {error}",
+    "proton_or_steam_linux_runtime_not_detected": "Impossibile rilevare Proton o Steam Linux Runtime."
   },
   "dialog": {
     "yes": "Sì",

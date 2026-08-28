@@ -100,7 +100,9 @@
     "dll_injection_warning": "⚠ Meow .dll meow meow meow.",
     "mewjector_link_text": "Mewjector",
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
-    "mewtator_intro": "Meow Mewtator intro meow"
+    "mewtator_intro": "Meow Mewtator intro meow",
+    "linux_steam_runtime_path": "Meow",
+    "linux_proton_path": "Meow"
   },
   "messages": {
     "setup_required_title": "Meow",
@@ -166,6 +168,8 @@
     "json_files": ".json",
     "text_files": ".txt",
     "all_files": "Meow",
+    "steam_linux_runtime_launcher_file": "Meow",
+    "proton_launcher_file": "Meow",
     "mod_already_exists": ".zip",
     "import_mod_success": "Meow",
     "invalid_mod_zip": ".zip",
@@ -178,7 +182,8 @@
     "export_modlist_success": "Meow",
     "export_modlist_failed": "Meow",
     "theme_change_failed": "Meow",
-    "open_mod_folder_failed": "Meow: {error}"
+    "open_mod_folder_failed": "Meow: {error}",
+    "proton_or_steam_linux_runtime_not_detected": "Meow"
   },
   "dialog": {
     "yes": "Meow",

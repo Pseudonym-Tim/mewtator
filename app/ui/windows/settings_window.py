@@ -3,6 +3,7 @@ from tkinter import ttk
 from typing import Callable, Optional
 import os
 import webbrowser
+import sys
 
 from app.ui.windows.notification_window import NotificationWindow
 
@@ -121,7 +122,18 @@ class SettingsWindow:
         if self.config.mod_folder:
             self.mod_entry.insert(0, self.config.mod_folder)
         mod_btn.config(command=self._browse_mod)
-        
+
+        if sys.platform.startswith("linux"):
+            self.linux_steam_runtime_path, mod_btn = self._make_row(t.get("settings.linux_steam_runtime_path"))
+            if self.config.linux_steam_runtime_path:
+                self.linux_steam_runtime_path.insert(0, self.config.linux_steam_runtime_path)
+            mod_btn.config(command=self._browse_linux_steam_runtime)
+
+            self.linux_proton_path, mod_btn = self._make_row(t.get("settings.linux_proton_path"))
+            if self.config.linux_proton_path:
+                self.linux_proton_path.insert(0, self.config.linux_proton_path)
+            mod_btn.config(command=self._browse_linux_proton)
+
         lang_row = ttk.Frame(self.win)
         lang_row.pack(fill="x", padx=10, pady=5)
         
@@ -356,22 +368,51 @@ class SettingsWindow:
     def _auto_detect(self):
         from app.utils.game_detector import auto_detect_game_install
         from app.utils.platform_utils import get_executable_dir
-        
-        detected = auto_detect_game_install()
+
+        detected = auto_detect_game_install("Mewgenics")
         if detected:
             self.game_entry.delete(0, END)
             self.game_entry.insert(0, detected)
-            
-            exe_dir = get_executable_dir()
-            self.mod_entry.delete(0, END)
-            self.mod_entry.insert(0, os.path.join(exe_dir, "mods"))
         else:
             self._show_notification(
                 self.translation_service.get("messages.game_dir_not_found"),
                 self.translation_service.get("messages.game_dir_not_detected"),
                 kind="warning",
             )
-    
+
+        exe_dir = get_executable_dir()
+        self.mod_entry.delete(0, END)
+        self.mod_entry.insert(0, os.path.join(exe_dir, "mods"))
+
+        if sys.platform.startswith("linux"):
+            # https://gitlab.steamos.cloud/steamrt/steam-runtime-tools/-/blob/main/docs/slr-for-game-developers.md#running-a-game-under-proton-in-the-steam-linux-runtime-environment
+            # Proton 8.0 and below fail to launch Mewgenics
+
+            proton_search_candidates = [
+                ('Proton 10.0', 'SteamLinuxRuntime_sniper'),
+                ('Proton 11.0', 'SteamLinuxRuntime_4'),
+                ('Proton - Experimental', 'SteamLinuxRuntime_4'),
+                ('Proton Hotfix', 'SteamLinuxRuntime_4'),
+                ('Proton 9.0 (Beta)', 'SteamLinuxRuntime_sniper'),
+            ]
+            pair_found = False
+            for proton_app_name, steam_linux_runtime_app_name in proton_search_candidates:
+                linux_steam_runtime_detected = auto_detect_game_install(steam_linux_runtime_app_name)
+                proton_detected = auto_detect_game_install(proton_app_name)
+                if linux_steam_runtime_detected and proton_detected:
+                    self.linux_steam_runtime_path.delete(0, END)
+                    self.linux_steam_runtime_path.insert(0, os.path.join(linux_steam_runtime_detected, "run"))
+                    self.linux_proton_path.delete(0, END)
+                    self.linux_proton_path.insert(0, os.path.join(proton_detected, "proton"))
+                    pair_found = True
+                    break
+            if not pair_found:
+                self._show_notification(
+                    self.translation_service.get("messages.game_dir_not_found"),
+                    self.translation_service.get("messages.proton_or_steam_linux_runtime_not_detected"),
+                    kind="warning",
+                )
+
     def _browse_game(self):
         from app.utils.platform_utils import get_executable_dir
         
@@ -393,6 +434,28 @@ class SettingsWindow:
         if path:
             self.mod_entry.delete(0, END)
             self.mod_entry.insert(0, path)
+
+    def _browse_linux_steam_runtime(self):
+        with self.theme_service.file_dialog_safe_theme():
+            path = filedialog.askopenfilename(
+                parent=self.win,
+                filetypes=[(self.translation_service.get("messages.steam_linux_runtime_launcher_file"), "run"), (self.translation_service.get("all_files"), "*")]
+            )
+        
+        if path:
+            self.linux_steam_runtime_path.delete(0, END)
+            self.linux_steam_runtime_path.insert(0, path)
+
+    def _browse_linux_proton(self):
+        with self.theme_service.file_dialog_safe_theme():
+            path = filedialog.askopenfilename(
+                parent=self.win,
+                filetypes=[(self.translation_service.get("messages.proton_launcher_file"), "proton"), (self.translation_service.get("all_files"), "*")]
+            )
+        
+        if path:
+            self.linux_proton_path.delete(0, END)
+            self.linux_proton_path.insert(0, path)
 
     def _show_notification(
         self,
@@ -447,6 +510,9 @@ class SettingsWindow:
             with open(modlist_path, "w", encoding="utf-8") as f:
                 f.write("")
         
+        linux_steam_runtime_path = self.linux_steam_runtime_path.get().strip()
+        linux_proton_path = self.linux_proton_path.get().strip()
+
         self.config.game_install_dir = game
         self.config.mod_folder = mod
         self.config.language = language
@@ -460,6 +526,8 @@ class SettingsWindow:
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()
         self.config.close_on_launch = self.close_on_launch_var.get()
+        self.config.linux_steam_runtime_path = os.path.normpath(linux_steam_runtime_path) if linux_steam_runtime_path else ""
+        self.config.linux_proton_path = os.path.normpath(linux_proton_path) if linux_proton_path else ""
         
         self.win.destroy()
         self.on_save(self.config)

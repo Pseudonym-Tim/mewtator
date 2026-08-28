@@ -8,5 +8,7 @@
     "debug_console_enabled": false,
     "close_on_launch": false,
     "dll_injection_enabled": true,
-    "use_generic_font": false
+    "use_generic_font": false,
+    "linux_steam_runtime_path": "",
+    "linux_proton_path": ""
 }

@@ -100,7 +100,9 @@
     "dll_injection_warning": "⚠ Ecurity-Say: Only-ay install-ay DLL ods-may om-fray usted-tray ources-say",
     "mewjector_link_text": "Et-Gay Ewjector-May: ",
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
-    "mewtator_intro": "Enable-ay Ewtator-May Ustom-Cay Ame-Gay Intro-ay"
+    "mewtator_intro": "Enable-ay Ewtator-May Ustom-Cay Ame-Gay Intro-ay",
+    "linux_steam_runtime_path": "Eam-stay Inux-lay Untime-ray",
+    "linux_proton_path": "Oton-pray"
   },
   "messages": {
     "setup_required_title": "Etup-Say Equired-Ray",
@@ -166,6 +168,8 @@
     "json_files": "JSON-ay iles-fay",
     "text_files": "Ext-Tay iles-fay",
     "all_files": "All-ay iles-fay",
+    "steam_linux_runtime_launcher_file": "Eam-stay Inux-lay Untime-ray Auncher-lay",
+    "proton_launcher_file": "Oton-pray Auncher-lay",
     "mod_already_exists": "A-ay od-may older-fay amed-nay '{name}' already-ay exists-ay. Eplace-Ray it-ay ith-way e-thay ontents-cay of-ay is-thay ZIP-ay?",
     "import_mod_success": "Imported-ay '{name}' uccessfully-say.",
     "invalid_mod_zip": "E-Thay elected-say ile-fay is-ay ot-nay a-ay alid-vay ZIP-ay archive-ay.",
@@ -178,7 +182,8 @@
     "export_modlist_success": "Exported-ay {count} ods-may!",
     "export_modlist_failed": "Ailed-Fay o-tay export-ay odlist-may: {error}",
     "theme_change_failed": "Ailed-Fay o-tay ange-chay eme-thay: {error}",
-    "open_mod_folder_failed": "Ailed-Fay o-tay open-ay od-may older-fay: {error}"
+    "open_mod_folder_failed": "Ailed-Fay o-tay open-ay od-may older-fay: {error}",
+    "proton_or_steam_linux_runtime_not_detected": "Unable-way o-tay etect-day Oton-pray or-way Eam-stay Inux-lay Untime-ray."
   },
   "dialog": {
     "yes": "Es-Yay",

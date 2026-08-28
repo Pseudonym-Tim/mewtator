@@ -100,7 +100,9 @@
     "dll_injection_warning": "⚠ セキュリティ：信頼できるソースの DLL Mod のみインストールしてください",
     "mewjector_link_text": "Mewjector を入手：",
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
-    "mewtator_intro": "Mewtator カスタムゲームイントロを有効にする"
+    "mewtator_intro": "Mewtator カスタムゲームイントロを有効にする",
+    "linux_steam_runtime_path": "Steam Linux Runtime",
+    "linux_proton_path": "Proton"
   },
   "messages": {
     "setup_required_title": "設定が必要です",
@@ -166,6 +168,8 @@
     "json_files": "JSON ファイル",
     "text_files": "テキストファイル",
     "all_files": "すべてのファイル",
+    "steam_linux_runtime_launcher_file": "Steam Linux Runtime ランチャー",
+    "proton_launcher_file": "Proton ランチャー",
     "mod_already_exists": "'{name}' という名前の Mod フォルダは既に存在します。この ZIP の内容で置き換えますか？",
     "import_mod_success": "'{name}' を正常にインポートしました。",
     "invalid_mod_zip": "選択したファイルは有効な ZIP アーカイブではありません。",
@@ -178,7 +182,8 @@
     "export_modlist_success": "{count} 個の Mod をエクスポートしました！",
     "export_modlist_failed": "Mod リストのエクスポートに失敗しました: {error}",
     "theme_change_failed": "テーマの変更に失敗しました: {error}",
-    "open_mod_folder_failed": "Mod フォルダーを開けませんでした: {error}"
+    "open_mod_folder_failed": "Mod フォルダーを開けませんでした: {error}",
+    "proton_or_steam_linux_runtime_not_detected": "Proton または Steam Linux Runtime を検出できませんでした。"
   },
   "dialog": {
     "yes": "はい",

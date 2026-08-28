@@ -17,6 +17,8 @@ class Config:
     dll_injection_enabled: bool = False
     mewtator_intro_enabled: bool = True
     use_generic_font: bool = False
+    linux_steam_runtime_path: str = ""
+    linux_proton_path: str = ""
     
     def is_valid(self) -> bool:
         return bool(
@@ -30,7 +32,11 @@ class Config:
             self.game_install_dir = os.path.normpath(self.game_install_dir)
         if self.mod_folder:
             self.mod_folder = os.path.normpath(self.mod_folder)
-    
+        if self.linux_steam_runtime_path:
+            self.linux_steam_runtime_path = os.path.normpath(self.linux_steam_runtime_path)
+        if self.linux_proton_path:
+            self.linux_proton_path = os.path.normpath(self.linux_proton_path)
+ 
     def to_dict(self):
         return {
             "game_install_dir": self.game_install_dir,
@@ -45,7 +51,9 @@ class Config:
             "close_on_launch": self.close_on_launch,
             "dll_injection_enabled": self.dll_injection_enabled,
             "mewtator_intro_enabled": self.mewtator_intro_enabled,
-            "use_generic_font": self.use_generic_font
+            "use_generic_font": self.use_generic_font,
+            "linux_steam_runtime_path": self.linux_steam_runtime_path,
+            "linux_proton_path": self.linux_proton_path
         }
     
     @classmethod
@@ -63,5 +71,7 @@ class Config:
             close_on_launch=data.get("close_on_launch", False),
             dll_injection_enabled=data.get("dll_injection_enabled", False),
             mewtator_intro_enabled=data.get("mewtator_intro_enabled", True),
-            use_generic_font=data.get("use_generic_font", False)
+            use_generic_font=data.get("use_generic_font", False),
+            linux_steam_runtime_path=data.get("linux_steam_runtime_path", ""),
+            linux_proton_path=data.get("linux_proton_path", "")
         )
