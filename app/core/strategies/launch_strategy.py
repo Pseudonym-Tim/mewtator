@@ -50,8 +50,7 @@ class DirectLaunchStrategy(LaunchStrategy):
 
 
 class ProtonLaunchStrategy(LaunchStrategy):
-    def __init__(self, path_converter, game_dir: str):
-        self.path_converter = path_converter
+    def __init__(self, game_dir: str):
         self.game_dir = game_dir
 
     def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, extra_args: List[str] = None):
@@ -88,6 +87,6 @@ class LaunchStrategyFactory:
         path_strategy = PathStrategyFactory.create(game_dir)
         
         if isinstance(path_strategy, ProtonPathStrategy):
-            return ProtonLaunchStrategy(ProtonPathStrategy._convert_to_proton_path, game_dir)
+            return ProtonLaunchStrategy(game_dir)
         
         return DirectLaunchStrategy()
