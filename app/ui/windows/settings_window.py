@@ -385,16 +385,20 @@ class SettingsWindow:
         self.mod_entry.insert(0, os.path.join(exe_dir, "mods"))
 
         if sys.platform.startswith("linux"):
+            # Proton is paired with a Steam Linux Runtime version
             # https://gitlab.steamos.cloud/steamrt/steam-runtime-tools/-/blob/main/docs/slr-for-game-developers.md#running-a-game-under-proton-in-the-steam-linux-runtime-environment
-            # Proton 8.0 and below fail to launch Mewgenics
 
             proton_search_candidates = [
+                # Proton 8.0 and below fail to launch Mewgenics
+                # There is good coverage of Mewgenics running successfully with Proton 10.0 and 9.0 on ProtonDB
                 ('Proton 10.0', 'SteamLinuxRuntime_sniper'),
+                ('Proton 9.0 (Beta)', 'SteamLinuxRuntime_sniper'),
                 ('Proton 11.0', 'SteamLinuxRuntime_4'),
+                # Floating branches were tied to SteamLinuxRuntime_4 in 2026
                 ('Proton - Experimental', 'SteamLinuxRuntime_4'),
                 ('Proton Hotfix', 'SteamLinuxRuntime_4'),
-                ('Proton 9.0 (Beta)', 'SteamLinuxRuntime_sniper'),
             ]
+
             pair_found = False
             for proton_app_name, steam_linux_runtime_app_name in proton_search_candidates:
                 linux_steam_runtime_detected = auto_detect_game_install(steam_linux_runtime_app_name)

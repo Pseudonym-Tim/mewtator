@@ -102,7 +102,7 @@ class GameLauncherService:
         for path in converted_paths:
             logger.info("Launch mod path: %s", path)
         
-        launch_strategy.launch(exe_path, converted_paths, game_dir, extra_args)
+        launch_strategy.launch(exe_path, converted_paths, game_dir, config, extra_args)
     
     def get_launch_options(self, game_dir: str, mod_paths: List[str], config=None, mod_list=None) -> str:
         launch_strategy = LaunchStrategyFactory.create(game_dir)
@@ -111,7 +111,7 @@ class GameLauncherService:
         extra_args = self._build_extra_args(config, mod_list)
         converted_paths = path_strategy.convert_mod_paths(mod_paths, game_dir)
         
-        return launch_strategy.get_launch_options(converted_paths, extra_args)
+        return launch_strategy.get_launch_options(converted_paths, game_dir, config, extra_args)
     
     def export_bat_file(self, game_dir: str, mod_paths: List[str], output_path: str, config=None, mod_list=None) -> str:
         """

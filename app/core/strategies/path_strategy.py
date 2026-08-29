@@ -25,7 +25,7 @@ class NativePathStrategy(PathStrategy):
 
 class ProtonPathStrategy(PathStrategy):
     def convert_mod_paths(self, paths: List[str], game_dir: str) -> List[str]:
-        return [self._convert_to_proton_path(Path(p)) for p in paths]
+        return [str(self._convert_to_proton_path(Path(p))) for p in paths]
     
     def should_warn_about_external_mods(self, mod_paths: List[str], game_dir: str) -> bool:
         return any(not p.startswith(game_dir) for p in mod_paths)
