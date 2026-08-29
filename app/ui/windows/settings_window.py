@@ -133,6 +133,9 @@ class SettingsWindow:
             if self.config.linux_proton_path:
                 self.linux_proton_path.insert(0, self.config.linux_proton_path)
             mod_btn.config(command=self._browse_linux_proton)
+        else:
+            self.linux_steam_runtime_path = None
+            self.linux_proton_path = None
 
         lang_row = ttk.Frame(self.win)
         lang_row.pack(fill="x", padx=10, pady=5)
@@ -514,8 +517,8 @@ class SettingsWindow:
             with open(modlist_path, "w", encoding="utf-8") as f:
                 f.write("")
         
-        linux_steam_runtime_path = self.linux_steam_runtime_path.get().strip()
-        linux_proton_path = self.linux_proton_path.get().strip()
+        linux_steam_runtime_path = os.path.normpath(self.linux_steam_runtime_path.get().strip()) if self.linux_steam_runtime_path else ""
+        linux_proton_path = os.path.normpath(self.linux_proton_path.get().strip()) if self.linux_proton_path else ""
 
         self.config.game_install_dir = game
         self.config.mod_folder = mod
@@ -530,8 +533,8 @@ class SettingsWindow:
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()
         self.config.close_on_launch = self.close_on_launch_var.get()
-        self.config.linux_steam_runtime_path = os.path.normpath(linux_steam_runtime_path) if linux_steam_runtime_path else ""
-        self.config.linux_proton_path = os.path.normpath(linux_proton_path) if linux_proton_path else ""
+        self.config.linux_steam_runtime_path = linux_steam_runtime_path
+        self.config.linux_proton_path = linux_proton_path
         
         self.win.destroy()
         self.on_save(self.config)
