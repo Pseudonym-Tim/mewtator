@@ -1,6 +1,7 @@
 import os
 import shlex
 from typing import List
+from app.core.models.config import Config
 from app.core.models.mod_list import ModList
 from app.core.strategies.platform_strategy import PlatformFactory
 from app.core.strategies.launch_strategy import LaunchStrategyFactory
