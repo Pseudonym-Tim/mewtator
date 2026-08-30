@@ -183,7 +183,11 @@
     "export_modlist_failed": "Nie udało się wyeksportować listy modów: {error}",
     "theme_change_failed": "Nie udało się zmienić motywu: {error}",
     "open_mod_folder_failed": "Nie udało się otworzyć folderu moda: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Nie udało się wykryć środowiska uruchomieniowego Proton lub Steam Linux Runtime."
+    "proton_or_steam_linux_runtime_not_detected": "Nie udało się wykryć środowiska uruchomieniowego Proton lub Steam Linux Runtime.",
+    "path_required": "Wymagana jest ścieżka do {name}.",
+    "path_invalid": "Ścieżka do {name} jest nieprawidłowa.",
+    "proton_missing_compatdata_error": "Nie udało się wykryć danych zapisu Mewgenics (Proton compatdata).\n\nUpewnij się, że gra została wcześniej uruchomiona przez Steam, aby zainicjować te dane.",
+    "copy_launch_options_advice": "Jeśli masz problemy z przyciskiem uruchamiania w Mewtatorze, spróbuj alternatywnej procedury uruchamiania:\n1. Użyj opcji „Kopiuj opcje uruchamiania” z menu Plik\n2. Wklej je w Steamie: kliknij prawym przyciskiem myszy Mewgenics → Właściwości → Opcje uruchamiania\n3. Uruchom grę z poziomu Steam"
   },
   "dialog": {
     "yes": "Tak",

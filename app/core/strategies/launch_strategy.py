@@ -7,6 +7,7 @@ import shlex
 from app.core.models.config import Config
 from app.utils.logging_utils import get_logger
 from app.utils.resource_utils import resource_path
+from app.core.services.translation_service import TranslationService
 
 MEWGENICS_STEAM_APP_ID = "686060"
 
@@ -20,16 +21,16 @@ def _steam_game_env():
 
 class LaunchStrategy(ABC):
     @abstractmethod
-    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None):
+    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str], translation_service: TranslationService):
         pass
     
     @abstractmethod
-    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None) -> str:
+    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str]) -> str:
         pass
 
 
 class DirectLaunchStrategy(LaunchStrategy):
-    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None):
+    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str], translation_service: TranslationService):
         args = [executable_path]
         
         if extra_args:
@@ -41,7 +42,7 @@ class DirectLaunchStrategy(LaunchStrategy):
         
         subprocess.Popen(args, cwd=game_dir, env=_steam_game_env())
     
-    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None) -> str:
+    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str]) -> str:
         parts = []
         
         if extra_args:
@@ -58,15 +59,11 @@ class ProtonLaunchStrategy(LaunchStrategy):
     def __init__(self, game_dir: str):
         self.game_dir = game_dir
 
-    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None):
+    def launch(self, executable_path: str, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str], translation_service: TranslationService):
         # Launch Mewgenics.exe directly rather than through the Steam client...
         env = _steam_game_env()
 
-        # Can possibly be made into a config flag
-        opt_preload_steam_gameoverlayrenderer = True
-
         path_steam_client_root = Path.home() / '.steam/root'
-        path_steam_gameoverlayrenderer32 = path_steam_client_root / 'ubuntu12_32/gameoverlayrenderer.so'
         path_steam_gameoverlayrenderer64 = path_steam_client_root / 'ubuntu12_64/gameoverlayrenderer.so'
 
         path_game_dir = Path(game_dir)
@@ -79,33 +76,29 @@ class ProtonLaunchStrategy(LaunchStrategy):
         path_library_steam_linux_runtime = Path(config.linux_steam_runtime_path).parent.parent.parent if path_steam_linux_runtime else None
         path_library_proton = Path(config.linux_proton_path).parent.parent.parent if path_proton else None
 
-        path_compat_data = path_library_game / 'compatdata' / MEWGENICS_STEAM_APP_ID
+        path_compat_data = (
+            Path(config.linux_compatdata_override_dir)
+            if config.linux_compatdata_override_dir
+            else path_library_game / 'compatdata' / MEWGENICS_STEAM_APP_ID
+        )
 
         mod_folder_in_game_dir = path_mod_folder.resolve().is_relative_to(path_game_dir.resolve())
         bundled_mods_dir_in_game_dir = path_bundled_mods_dir.resolve().is_relative_to(path_game_dir.resolve())
 
-        steam_gameoverlayrenderers_exist = path_steam_gameoverlayrenderer32.is_file() and path_steam_gameoverlayrenderer64.is_file()
+        steam_gameoverlayrenderer64_exists = path_steam_gameoverlayrenderer64.is_file()
         steam_linux_runtime_exists = path_steam_linux_runtime is not None and path_steam_linux_runtime.is_file()
         proton_exists = path_proton is not None and path_proton.is_file()
+        path_compat_data_exists = path_compat_data.is_dir()
 
-        # Some potentially useful diagnostics
-        logger = get_logger()
-        logger.info(f"~/.steam/root exists?: {path_steam_client_root.is_dir()}")
-        logger.info(f"~/.steam/root/ubuntu12_{{32,64}}/gameoverlayrenderer.so exist?: {steam_gameoverlayrenderers_exist}")
-        logger.info(f"Mewgenics.exe exists?: {Path(executable_path).is_file()}")
-        logger.info(f"Mod folder exists?: {path_mod_folder.is_dir()}")
-        logger.info(f"Steam Linux Runtime executable exists?: {steam_linux_runtime_exists}")
-        logger.info(f"Proton executable exists?: {proton_exists}")
-        logger.info(f"Mewgenics is located in steamapps?: {path_library_game.name == 'steamapps'}")
-        logger.info(f"Steam Linux Runtime is located in steamapps?: {path_library_steam_linux_runtime.name == 'steamapps' if path_library_steam_linux_runtime else 'N/A'}")
-        logger.info(f"Proton is located in steamapps?: {path_library_proton.name == 'steamapps' if path_library_steam_linux_runtime else 'N/A'}")
-        logger.info(f"Mewgenics Proton compat data exists?: {path_compat_data.is_dir()}")
-        logger.info(f"Mod folder is in Mewgenics folder?: {mod_folder_in_game_dir}")
-        logger.info(f"Mewtator folder is in Mewgenics folder?: {bundled_mods_dir_in_game_dir}")
-        logger.info(f"---")
-        logger.info(f"Will load Steam game overlay?: {opt_preload_steam_gameoverlayrenderer and steam_gameoverlayrenderers_exist}")
-        logger.info(f"Will use Steam Linux Runtime?: {steam_linux_runtime_exists}")
-        logger.info(f"Will use Proton?: {proton_exists}")
+        # We avoid blindly initializing Steam-managed compatdata (by making a directory that does not
+        # already exist under steamapps/compatdata), because we'd potentially bypass first-time Steam Cloud
+        # sync performed by the Steam client. Doing so could overwrite existing save data stored on the Steam Cloud.
+        if not path_compat_data_exists:
+            raise RuntimeError(
+                translation_service.get("messages.proton_missing_compatdata_error") + 
+                "\n\n" +
+                translation_service.get("messages.copy_launch_options_advice")
+            )
 
         # Steam Linux Runtime/Proton logging controls
         # env['PRESSURE_VESSEL_LOG_INFO'] = '1' # writes to stdout
@@ -113,11 +106,9 @@ class ProtonLaunchStrategy(LaunchStrategy):
 
         # inject the library that enables Steam overlay functionality
         # https://partner.steamgames.com/doc/store/application/platforms/linux#FAQ
-        if opt_preload_steam_gameoverlayrenderer and steam_gameoverlayrenderers_exist:
+        if not config.linux_steam_gameoverlayrenderer_disabled and steam_gameoverlayrenderer64_exists:
             if 'LD_PRELOAD' not in env:
                 env['LD_PRELOAD'] = ''
-            # Steam normally appends both 32 and 64-bit variants of the library to LD_PRELOAD
-            env['LD_PRELOAD'] += ':' + str(path_steam_gameoverlayrenderer32.resolve())
             env['LD_PRELOAD'] += ':' + str(path_steam_gameoverlayrenderer64.resolve())
 
         # prescribed Steam Linux Runtime/Proton configuration variables
@@ -148,7 +139,7 @@ class ProtonLaunchStrategy(LaunchStrategy):
         if steam_linux_runtime_exists:
             args.extend([config.linux_steam_runtime_path, '--'])
 
-        # Proton should probably always be present, but if it isn't, the user's system
+        # There probably isn't a good reason to launch without Proton, but if so, the system
         # will try to dispatch the exe file via binfmt, possibly using a native Wine installation.
         if proton_exists:
             args.extend([config.linux_proton_path, 'run'])
@@ -164,7 +155,7 @@ class ProtonLaunchStrategy(LaunchStrategy):
 
         subprocess.Popen(args, cwd=game_dir, env=env)
 
-    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str] = None) -> str:
+    def get_launch_options(self, mod_paths: List[str], game_dir: str, config: Config, extra_args: List[str]) -> str:
         parts = []
 
         parts_has_prefix = False

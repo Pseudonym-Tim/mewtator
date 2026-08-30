@@ -1,10 +1,12 @@
 import os
 import shlex
 from typing import List
+from app.core.models.mod_list import ModList
 from app.core.strategies.platform_strategy import PlatformFactory
 from app.core.strategies.launch_strategy import LaunchStrategyFactory
 from app.core.strategies.path_strategy import PathStrategyFactory
 from app.core.services.dll_injection_service import DllInjectionService
+from app.core.services.translation_service import TranslationService
 from app.utils.logging_utils import get_logger
 
 
@@ -64,7 +66,7 @@ class GameLauncherService:
         
         return extra_args
     
-    def launch_game(self, game_dir: str, mod_paths: List[str], config=None, mod_list=None):
+    def launch_game(self, game_dir: str, mod_paths: List[str], config: Config, mod_list: ModList, translation_service: TranslationService):
         exe_path = self.find_executable(game_dir)
         
         if not os.path.isfile(exe_path):
@@ -102,7 +104,7 @@ class GameLauncherService:
         for path in converted_paths:
             logger.info("Launch mod path: %s", path)
         
-        launch_strategy.launch(exe_path, converted_paths, game_dir, config, extra_args)
+        launch_strategy.launch(exe_path, converted_paths, game_dir, config, extra_args, translation_service)
     
     def get_launch_options(self, game_dir: str, mod_paths: List[str], config=None, mod_list=None) -> str:
         launch_strategy = LaunchStrategyFactory.create(game_dir)

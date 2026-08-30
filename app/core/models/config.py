@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import os
+import sys
 
 
 @dataclass
@@ -17,16 +18,36 @@ class Config:
     dll_injection_enabled: bool = False
     mewtator_intro_enabled: bool = True
     use_generic_font: bool = False
+    linux_allow_undefined_steam_runtime_or_proton: bool = False
+    linux_steam_gameoverlayrenderer_disabled: bool = False
     linux_steam_runtime_path: str = ""
     linux_proton_path: str = ""
+    linux_compatdata_override_dir: str = ""
     
     def is_valid(self) -> bool:
+        # Check whether the game install directory and mod folder are defined.
+        game_install_dir_is_dir = self.game_install_dir and os.path.isdir(self.game_install_dir)
+        mod_folder_is_dir = self.mod_folder and os.path.isdir(self.mod_folder)
+
+        linux_checks_pass = True
+        # Check whether Steam Linux Runtime and Proton launchers are defined.
+        if sys.platform.startswith("linux"):
+            steam_linux_runtime_is_file_or_legally_blank = \
+                (self.linux_steam_runtime_path and os.path.isfile(self.linux_steam_runtime_path)) \
+                or (self.linux_allow_undefined_steam_runtime_or_proton and not self.linux_steam_runtime_path)
+            proton_is_file_or_legally_blank = \
+                (self.linux_proton_path and os.path.isfile(self.linux_proton_path)) \
+                or (self.linux_allow_undefined_steam_runtime_or_proton and not self.linux_proton_path)
+            linux_checks_pass = \
+                steam_linux_runtime_is_file_or_legally_blank \
+                and proton_is_file_or_legally_blank \
+
         return bool(
-            self.game_install_dir 
-            and self.mod_folder 
-            and os.path.isdir(self.game_install_dir)
+            game_install_dir_is_dir
+            and mod_folder_is_dir
+            and linux_checks_pass
         )
-    
+
     def normalize_paths(self):
         if self.game_install_dir:
             self.game_install_dir = os.path.normpath(self.game_install_dir)
@@ -36,6 +57,8 @@ class Config:
             self.linux_steam_runtime_path = os.path.normpath(self.linux_steam_runtime_path)
         if self.linux_proton_path:
             self.linux_proton_path = os.path.normpath(self.linux_proton_path)
+        if self.linux_compatdata_override_dir:
+            self.linux_compatdata_override_dir = os.path.normpath(self.linux_compatdata_override_dir)
  
     def to_dict(self):
         return {
@@ -52,8 +75,11 @@ class Config:
             "dll_injection_enabled": self.dll_injection_enabled,
             "mewtator_intro_enabled": self.mewtator_intro_enabled,
             "use_generic_font": self.use_generic_font,
+            'linux_allow_undefined_steam_runtime_or_proton': self.linux_allow_undefined_steam_runtime_or_proton,
+            'linux_steam_gameoverlayrenderer_disabled': self.linux_steam_gameoverlayrenderer_disabled,
             "linux_steam_runtime_path": self.linux_steam_runtime_path,
-            "linux_proton_path": self.linux_proton_path
+            "linux_proton_path": self.linux_proton_path,
+            "linux_compatdata_override_dir": self.linux_compatdata_override_dir
         }
     
     @classmethod
@@ -72,6 +98,9 @@ class Config:
             dll_injection_enabled=data.get("dll_injection_enabled", False),
             mewtator_intro_enabled=data.get("mewtator_intro_enabled", True),
             use_generic_font=data.get("use_generic_font", False),
+            linux_allow_undefined_steam_runtime_or_proton=data.get("linux_allow_undefined_steam_runtime_or_proton", False),
+            linux_steam_gameoverlayrenderer_disabled=data.get("linux_steam_gameoverlayrenderer_disabled", False),
             linux_steam_runtime_path=data.get("linux_steam_runtime_path", ""),
-            linux_proton_path=data.get("linux_proton_path", "")
+            linux_proton_path=data.get("linux_proton_path", ""),
+            linux_compatdata_override_dir=data.get("linux_compatdata_override_dir", "")
         )

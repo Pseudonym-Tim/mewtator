@@ -102,7 +102,9 @@ class SettingsWindow:
 
     def _build_ui(self):
         t = self.translation_service
+        platform_is_linux = sys.platform.startswith("linux")
         
+        # Auto-Detect Game Install
         auto_detect_btn = ttk.Button(
             self.win,
             text=t.get("settings.auto_detect"),
@@ -113,30 +115,41 @@ class SettingsWindow:
         )
         auto_detect_btn.pack(pady=10)
         
-        self.game_entry, game_btn = self._make_row(t.get("settings.game_install_dir"))
-        if self.config.game_install_dir:
-            self.game_entry.insert(0, self.config.game_install_dir)
-        game_btn.config(command=self._browse_game)
+        # Game Install Directory
+        self.game_entry, game_btn = self._make_row(
+            t.get("settings.game_install_dir"),
+            has_button=True,
+            initial_text=self.config.game_install_dir,
+            button_cfg={'command': self._browse_game}
+        )
         
-        self.mod_entry, mod_btn = self._make_row(t.get("settings.mods_folder"))
-        if self.config.mod_folder:
-            self.mod_entry.insert(0, self.config.mod_folder)
-        mod_btn.config(command=self._browse_mod)
+        # Mods Folder
+        self.mod_entry, mod_btn = self._make_row(
+            t.get("settings.mods_folder"),
+            has_button=True,
+            initial_text=self.config.mod_folder,
+            button_cfg={'command': self._browse_mod}
+        )
 
-        if sys.platform.startswith("linux"):
-            self.linux_steam_runtime_path, mod_btn = self._make_row(t.get("settings.linux_steam_runtime_path"))
-            if self.config.linux_steam_runtime_path:
-                self.linux_steam_runtime_path.insert(0, self.config.linux_steam_runtime_path)
-            mod_btn.config(command=self._browse_linux_steam_runtime)
+        # (Linux) Steam Linux Runtime
+        self.linux_steam_runtime_path_entry, linux_steam_runtime_path_btn = self._make_row(
+            t.get("settings.linux_steam_runtime_path"),
+            has_button=True,
+            initial_text=self.config.linux_steam_runtime_path,
+            button_cfg={'command': self._browse_linux_steam_runtime},
+            show=platform_is_linux
+        )
 
-            self.linux_proton_path, mod_btn = self._make_row(t.get("settings.linux_proton_path"))
-            if self.config.linux_proton_path:
-                self.linux_proton_path.insert(0, self.config.linux_proton_path)
-            mod_btn.config(command=self._browse_linux_proton)
-        else:
-            self.linux_steam_runtime_path = None
-            self.linux_proton_path = None
+        # (Linux) Proton
+        self.linux_proton_path_entry, linux_proton_path_btn = self._make_row(
+            t.get("settings.linux_proton_path"),
+            has_button=True,
+            initial_text=self.config.linux_proton_path,
+            button_cfg={'command': self._browse_linux_proton},
+            show=platform_is_linux
+        )
 
+        # Language
         lang_row = ttk.Frame(self.win)
         lang_row.pack(fill="x", padx=10, pady=5)
         
@@ -165,15 +178,20 @@ class SettingsWindow:
         lang_menu.bind("<<ComboboxSelected>>", clear_language_text_selection, add="+")
         lang_menu.bind("<FocusIn>", clear_language_text_selection, add="+")
         
+        # Launch Options
         self._add_separator(t.get("settings.launch_options", "Launch Options"))
         
-        self.custom_launch_entry, _ = self._make_row(t.get("settings.custom_launch_options", "Custom Launch Options"), has_button=False)
-        if self.config.custom_launch_options:
-            self.custom_launch_entry.insert(0, self.config.custom_launch_options)
+        # Custom Launch Options
+        self.custom_launch_entry, _ = self._make_row(
+            t.get("settings.custom_launch_options", "Custom Launch Options"),
+            has_button=False,
+            initial_text=self.config.custom_launch_options
+        )
         
         checkbox_frame = ttk.Frame(self.win)
         checkbox_frame.pack(fill="x", padx=30, pady=5)
         
+        # Enable Dev Mode
         self.dev_mode_var = BooleanVar(value=self.config.dev_mode_enabled)
         dev_mode_check = ttk.Checkbutton(
             checkbox_frame,
@@ -182,7 +200,8 @@ class SettingsWindow:
             cursor="hand2"
         )
         dev_mode_check.pack(anchor="w")
-        
+
+        # Enable Debug Console
         self.debug_console_var = BooleanVar(value=self.config.debug_console_enabled)
         debug_console_check = ttk.Checkbutton(
             checkbox_frame,
@@ -191,7 +210,8 @@ class SettingsWindow:
             cursor="hand2"
         )
         debug_console_check.pack(anchor="w")
-        
+
+        # Enable Mewtator custom game intro
         self.mewtator_intro_var = BooleanVar(
             value=getattr(self.config, "mewtator_intro_enabled", True)
         )
@@ -206,6 +226,7 @@ class SettingsWindow:
         )
         mewtator_intro_check.pack(anchor="w")
 
+        # Enable DLL Mod Support
         self.dll_injection_var = BooleanVar(value=self.config.dll_injection_enabled)
         dll_injection_check = ttk.Checkbutton(
             checkbox_frame,
@@ -273,11 +294,13 @@ class SettingsWindow:
         # if self.config.inherit_save_override:
         #     self.inherit_save_entry.insert(0, self.config.inherit_save_override)
         
+        # Appearance
         self._add_separator(t.get("settings.appearance", "Appearance"))
 
         appearance_frame = ttk.Frame(self.win)
         appearance_frame.pack(fill="x", padx=30, pady=5)
 
+        # Use standard system font
         self.use_generic_font_var = BooleanVar(value=self.config.use_generic_font)
         generic_font_check = ttk.Checkbutton(
             appearance_frame,
@@ -302,6 +325,7 @@ class SettingsWindow:
         advanced_frame = ttk.Frame(self.win)
         advanced_frame.pack(fill="x", padx=30, pady=5)
         
+        # Close Launcher When Game Launches
         self.close_on_launch_var = BooleanVar(value=self.config.close_on_launch)
         close_on_launch_check = ttk.Checkbutton(
             advanced_frame,
@@ -310,7 +334,44 @@ class SettingsWindow:
             cursor="hand2"
         )
         close_on_launch_check.pack(anchor="w")
-        
+
+        # There isn't enough space to fit these widgets, but they aren't important, nor do I want to reorganize the settings window. :P
+        # Sorry about this - polymeric
+
+        # Begin hidden widgets
+        # (Linux) Allow launch without Steam Linux Runtime or Proton
+        self.linux_allow_undefined_steam_runtime_or_proton_var = BooleanVar(value=self.config.linux_allow_undefined_steam_runtime_or_proton)
+        linux_allow_undefined_steam_runtime_or_proton_check = ttk.Checkbutton(
+            advanced_frame,
+            text=t.get("settings.linux_allow_undefined_steam_runtime_or_proton", "Allow launch without Steam Linux Runtime or Proton"),
+            variable=self.linux_allow_undefined_steam_runtime_or_proton_var,
+            cursor="hand2"
+        )
+        # if platform_is_linux:
+        #     linux_allow_undefined_steam_runtime_or_proton_check.pack(anchor="w")
+
+        # (Linux) Disable Steam game overlay
+        self.linux_steam_gameoverlayrenderer_disabled_var = BooleanVar(value=self.config.linux_steam_gameoverlayrenderer_disabled)
+        linux_steam_gameoverlayrenderer_disabled_check = ttk.Checkbutton(
+            advanced_frame,
+            text=t.get("settings.linux_steam_gameoverlayrenderer_disabled", "Disable Steam game overlay"),
+            variable=self.linux_steam_gameoverlayrenderer_disabled_var,
+            cursor="hand2"
+        )
+        # if platform_is_linux:
+        #     linux_load_steam_gameoverlayrenderer_check.pack(anchor="w")
+
+        # (Linux) compatdata override
+        self.linux_compatdata_override_dir_entry, linux_compatdata_override_dir_btn = self._make_row(
+            t.get("settings.linux_compatdata_override_dir", "compatdata override"),
+            has_button=True,
+            initial_text=self.config.linux_compatdata_override_dir,
+            button_cfg={'command': self._browse_linux_compatdata_override_dir},
+            show=False #platform_is_linux
+        )
+        # End hidden widgets
+
+        # Save Settings
         save_btn = ttk.Button(
             self.win,
             text=t.get("settings.save", "Save Settings"),
@@ -345,16 +406,19 @@ class SettingsWindow:
         
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=(2, 0))
     
-    def _make_row(self, label_text: str, has_button: bool = True):
+    def _make_row(self, label_text: str, has_button: bool = True, initial_text: str = None, button_cfg: {} = None, show = True):
         row = ttk.Frame(self.win)
-        row.pack(fill="x", padx=10, pady=5)
+        if show:
+            row.pack(fill="x", padx=10, pady=5)
         
         lbl = ttk.Label(row, text=label_text, width=20, anchor="w")
         lbl.pack(side="left")
         
         entry = ttk.Entry(row, width=50, font="MewtatorBody")
         entry.pack(side="left", fill="x", expand=True, padx=5)
-        
+        if initial_text is not None:
+            entry.insert(0, initial_text)
+
         btn = None
         if has_button:
             btn = ttk.Button(
@@ -365,7 +429,9 @@ class SettingsWindow:
                 cursor="hand2",
             )
             btn.pack(side="right", padx=2)
-        
+            if button_cfg is not None:
+                btn.config(**button_cfg)
+
         return entry, btn
     
     def _auto_detect(self):
@@ -407,10 +473,10 @@ class SettingsWindow:
                 linux_steam_runtime_detected = auto_detect_game_install(steam_linux_runtime_app_name)
                 proton_detected = auto_detect_game_install(proton_app_name)
                 if linux_steam_runtime_detected and proton_detected:
-                    self.linux_steam_runtime_path.delete(0, END)
-                    self.linux_steam_runtime_path.insert(0, os.path.join(linux_steam_runtime_detected, "run"))
-                    self.linux_proton_path.delete(0, END)
-                    self.linux_proton_path.insert(0, os.path.join(proton_detected, "proton"))
+                    self.linux_steam_runtime_path_entry.delete(0, END)
+                    self.linux_steam_runtime_path_entry.insert(0, os.path.join(linux_steam_runtime_detected, "run"))
+                    self.linux_proton_path_entry.delete(0, END)
+                    self.linux_proton_path_entry.insert(0, os.path.join(proton_detected, "proton"))
                     pair_found = True
                     break
             if not pair_found:
@@ -450,8 +516,8 @@ class SettingsWindow:
             )
         
         if path:
-            self.linux_steam_runtime_path.delete(0, END)
-            self.linux_steam_runtime_path.insert(0, path)
+            self.linux_steam_runtime_path_entry.delete(0, END)
+            self.linux_steam_runtime_path_entry.insert(0, path)
 
     def _browse_linux_proton(self):
         with self.theme_service.file_dialog_safe_theme():
@@ -461,8 +527,16 @@ class SettingsWindow:
             )
         
         if path:
-            self.linux_proton_path.delete(0, END)
-            self.linux_proton_path.insert(0, path)
+            self.linux_proton_path_entry.delete(0, END)
+            self.linux_proton_path_entry.insert(0, path)
+
+    def _browse_linux_compatdata_override_dir(self):
+        with self.theme_service.file_dialog_safe_theme():
+            path = filedialog.askdirectory(parent=self.win)
+        
+        if path:
+            self.linux_compatdata_override_dir_entry.delete(0, END)
+            self.linux_compatdata_override_dir_entry.insert(0, path)
 
     def _show_notification(
         self,
@@ -486,6 +560,7 @@ class SettingsWindow:
         mod = self.mod_entry.get().strip()
         language = self.lang_var.get()
         
+        # Validate game directory
         if not game:
             self._show_notification(
                 self.translation_service.get("messages.error"),
@@ -504,6 +579,7 @@ class SettingsWindow:
             )
             return
         
+        # Validate mod directory
         if not mod:
             exe_dir = get_executable_dir()
             mod = os.path.join(exe_dir, "mods")
@@ -516,9 +592,44 @@ class SettingsWindow:
         if not os.path.exists(modlist_path):
             with open(modlist_path, "w", encoding="utf-8") as f:
                 f.write("")
-        
-        linux_steam_runtime_path = os.path.normpath(self.linux_steam_runtime_path.get().strip()) if self.linux_steam_runtime_path else ""
-        linux_proton_path = os.path.normpath(self.linux_proton_path.get().strip()) if self.linux_proton_path else ""
+
+        # Validate Steam Linux Runtime/Proton files
+        linux_steam_runtime_path = os.path.normpath(self.linux_steam_runtime_path_entry.get().strip()) if self.linux_steam_runtime_path_entry.get().strip() else ""
+        linux_proton_path = os.path.normpath(self.linux_proton_path_entry.get().strip()) if self.linux_proton_path_entry.get().strip() else ""
+        platform_is_linux = sys.platform.startswith("linux")
+        if platform_is_linux:
+            linux_allow_undefined_steam_runtime_or_proton = self.linux_allow_undefined_steam_runtime_or_proton_var.get()
+            if linux_steam_runtime_path and not os.path.isfile(linux_steam_runtime_path):
+                self._show_notification(
+                    self.translation_service.get("messages.error"),
+                    self.translation_service.get("messages.path_invalid").format(name='Steam Linux Runtime'),
+                    kind="error",
+                )
+                return
+            if linux_proton_path and not os.path.isfile(linux_proton_path):
+                self._show_notification(
+                    self.translation_service.get("messages.error"),
+                    self.translation_service.get("messages.path_invalid").format(name='Proton'),
+                    kind="error",
+                )
+                return
+            if not linux_allow_undefined_steam_runtime_or_proton and not linux_steam_runtime_path:
+                self._show_notification(
+                    self.translation_service.get("messages.error"),
+                    self.translation_service.get("messages.path_required").format(name='Steam Linux Runtime'),
+                    kind="error",
+                )
+                return
+            if not linux_allow_undefined_steam_runtime_or_proton and not linux_proton_path:
+                self._show_notification(
+                    self.translation_service.get("messages.error"),
+                    self.translation_service.get("messages.path_required").format(name='Proton'),
+                    kind="error",
+                )
+                return
+
+        # compatdata is checked at launch time
+        linux_compatdata_override_dir = os.path.normpath(self.linux_compatdata_override_dir_entry.get().strip()) if self.linux_compatdata_override_dir_entry.get().strip() else ""
 
         self.config.game_install_dir = game
         self.config.mod_folder = mod
@@ -533,8 +644,11 @@ class SettingsWindow:
         # self.config.savefile_suffix_override = self.savefile_suffix_entry.get().strip()
         # self.config.inherit_save_override = self.inherit_save_entry.get().strip()
         self.config.close_on_launch = self.close_on_launch_var.get()
+        self.config.linux_allow_undefined_steam_runtime_or_proton = self.linux_allow_undefined_steam_runtime_or_proton_var.get()
+        self.config.linux_steam_gameoverlayrenderer_disabled = self.linux_steam_gameoverlayrenderer_disabled_var.get()
         self.config.linux_steam_runtime_path = linux_steam_runtime_path
         self.config.linux_proton_path = linux_proton_path
+        self.config.linux_compatdata_override_dir = linux_compatdata_override_dir
         
         self.win.destroy()
         self.on_save(self.config)

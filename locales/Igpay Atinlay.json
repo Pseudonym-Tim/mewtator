@@ -183,7 +183,11 @@
     "export_modlist_failed": "Ailed-Fay o-tay export-ay odlist-may: {error}",
     "theme_change_failed": "Ailed-Fay o-tay ange-chay eme-thay: {error}",
     "open_mod_folder_failed": "Ailed-Fay o-tay open-ay od-may older-fay: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Unable-way o-tay etect-day Oton-pray or-way Eam-stay Inux-lay Untime-ray."
+    "proton_or_steam_linux_runtime_not_detected": "Unable-way o-tay etect-day Oton-pray or-way Eam-stay Inux-lay Untime-ray.",
+    "path_required": "E-thay ath-pay o-tay {name} is-way equired-ray.",
+    "path_invalid": "E-thay ath-pay o-tay {name} is-way invalid-way.",
+    "proton_missing_compatdata_error": "Ould-cay ot-nay etect-day Ewgenics-may ave-say ata-day (Oton-pray ompatdata-cay).\n\nEase-play ensure-way e-thay ame-gay as-hay een-bay aunched-lay efore-bay ough-thray Eam-stay, in-way order-way o-tay initialize-way is-thay ata-day.",
+    "copy_launch_options_advice": "If-way ou-yay are-way aving-hay issues-way ith-way Ewtator's-may aunch-lay utton-bay, y-tray an-way alternative-way aunch-lay ocedure-pray:\n1. Use-way 'Opy-cay Aunch-lay Options-way' om-fray e-thay Ile-fay enu-may\n2. Aste-pay em-thay in-way Eam-stay: ight-ray-ick-clay Ewgenics-may → Operties-pray → Aunch-lay Options-way\n3. Aunch-lay e-thay ame-gay om-fray Eam-stay"
   },
   "dialog": {
     "yes": "Es-Yay",

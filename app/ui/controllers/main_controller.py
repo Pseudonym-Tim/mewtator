@@ -605,7 +605,8 @@ class MainController:
                 self.config.game_install_dir,
                 enabled_paths,
                 self.config,
-                self.mod_list
+                self.mod_list,
+                self.translation_service
             )
             
             # Close launcher if option is enabled

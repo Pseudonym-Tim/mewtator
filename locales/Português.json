@@ -183,7 +183,11 @@
     "export_modlist_failed": "Falha ao exportar a lista de mods: {error}",
     "theme_change_failed": "Falha ao alterar o tema: {error}",
     "open_mod_folder_failed": "Não foi possível abrir a pasta do mod: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Não foi possível detetar o Proton ou o Steam Linux Runtime."
+    "proton_or_steam_linux_runtime_not_detected": "Não foi possível detetar o Proton ou o Steam Linux Runtime.",
+    "path_required": "É necessário indicar o caminho para {name}.",
+    "path_invalid": "O caminho para {name} é inválido.",
+    "proton_missing_compatdata_error": "Não foi possível detetar os dados guardados do Mewgenics (Proton compatdata).\n\nCertifique-se de que o jogo já foi iniciado anteriormente através do Steam, para que estes dados sejam inicializados.",
+    "copy_launch_options_advice": "Se estiver a ter problemas com o botão de lançamento do Mewtator, experimente um procedimento alternativo de lançamento:\n1. Utilize a opção «Copiar Opções de Lançamento» no menu Ficheiro\n2. Cole-as no Steam: clique com o botão direito do rato em Mewgenics → Propriedades → Opções de Lançamento\n3. Inicie o jogo a partir do Steam"
   },
   "dialog": {
     "yes": "Sim",

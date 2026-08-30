@@ -183,7 +183,11 @@
     "export_modlist_failed": "Meow",
     "theme_change_failed": "Meow",
     "open_mod_folder_failed": "Meow: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Meow"
+    "proton_or_steam_linux_runtime_not_detected": "Meow",
+    "path_required": "Meow {name}",
+    "path_invalid": "Meow {name}",
+    "proton_missing_compatdata_error": "Meow (Meow compatdata).\n\nMeow.",
+    "copy_launch_options_advice": "Meow:\n1. Meow 'Meow' meow\n2. Meow: Meow Meow → Meow → Meow\n3. Meow"
   },
   "dialog": {
     "yes": "Meow",

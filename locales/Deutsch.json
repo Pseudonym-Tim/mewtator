@@ -183,7 +183,11 @@
     "export_modlist_failed": "Modliste konnte nicht exportiert werden: {error}",
     "theme_change_failed": "Design konnte nicht geändert werden: {error}",
     "open_mod_folder_failed": "Mod-Ordner konnte nicht geöffnet werden: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Proton oder Steam Linux Runtime konnte nicht erkannt werden."
+    "proton_or_steam_linux_runtime_not_detected": "Proton oder Steam Linux Runtime konnte nicht erkannt werden.",
+    "path_required": "Der Pfad zu {name} ist erforderlich.",
+    "path_invalid": "Der Pfad zu {name} ist ungültig.",
+    "proton_missing_compatdata_error": "Mewgenics-Speicherdaten (Proton compatdata) konnten nicht erkannt werden.\n\nBitte stelle sicher, dass das Spiel zuvor über Steam gestartet wurde, um diese Daten zu initialisieren.",
+    "copy_launch_options_advice": "Wenn du Probleme mit der Startschaltfläche von Mewtator hast, versuche es mit einem alternativen Startvorgang:\n1. Wähle im Menü „Datei“ die Option „Startoptionen kopieren“\n2. Füge sie in Steam ein: Rechtsklick auf Mewgenics → Eigenschaften → Startoptionen\n3. Starte das Spiel über Steam"
   },
   "dialog": {
     "yes": "Ja",

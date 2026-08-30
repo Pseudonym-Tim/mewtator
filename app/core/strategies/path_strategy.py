@@ -28,7 +28,9 @@ class ProtonPathStrategy(PathStrategy):
         return [str(self._convert_to_proton_path(Path(p))) for p in paths]
     
     def should_warn_about_external_mods(self, mod_paths: List[str], game_dir: str) -> bool:
-        return any(not p.startswith(game_dir) for p in mod_paths)
+        # STEAM_COMPAT_MOUNTS allow arbitrary paths to be visible under Wine
+        # return any(not p.startswith(game_dir) for p in mod_paths)
+        return False
     
     @staticmethod
     def _convert_to_proton_path(path: Path) -> PureWindowsPath:

@@ -183,7 +183,11 @@
     "export_modlist_failed": "Failed to save mod manifest: {error}",
     "theme_change_failed": "Could not change th' ship's colors: {error}",
     "open_mod_folder_failed": "Couldn’t open th' mod hold: {error}",
-    "proton_or_steam_linux_runtime_not_detected": "Shiver me timbers, yer ship's steam engine or wine hold ain't in the usual places."
+    "proton_or_steam_linux_runtime_not_detected": "Shiver me timbers, thar be trouble with yer ship's Steam Engine or Wine Hold",
+    "path_required": "Th' path to {name} be required.",
+    "path_invalid": "Th' path to {name} be invalid.",
+    "proton_missing_compatdata_error": "Thar be no Mewgenics save data (Wine Hold compatdata).\n\nMake sure ye have launched th' game through Steam at least once, so this data be initialized.",
+    "copy_launch_options_advice": "If Mewtator's launch button be givin' ye trouble, try an alternative launch procedure:\n1. Use 'Copy Launch Options' from th' File menu\n2. Paste 'em in Steam: Right-click Mewgenics → Properties → Launch Options\n3. Launch th' game from Steam\n"
   },
   "dialog": {
     "yes": "Aye!",
