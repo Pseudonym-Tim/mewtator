@@ -1,4 +1,5 @@
 import tkinter as tk
+from app.ui.components.compat_label import Label
 
 from app.infrastructure.config_repository import ConfigRepository
 from app.infrastructure.mod_repository import ModRepository
@@ -41,12 +42,12 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     win.configure(bg=colors["bg"])
     theme_service.apply_titlebar(win, theme_name)
 
-    ttk.Label(
+    Label(
         win,
         text=translation_service.get("settings.select_language_title", "Select Language"),
         font="MewtatorHeading"
     ).pack(pady=15)
-    ttk.Label(
+    Label(
         win,
         text=translation_service.get("settings.select_language_text", "Choose your preferred language:")
     ).pack(pady=5)

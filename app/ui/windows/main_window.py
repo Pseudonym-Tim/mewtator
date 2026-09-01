@@ -1,5 +1,6 @@
 from tkinter import BOTH
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 
 from app.ui.components.menu_bar import MenuBarComponent
 from app.ui.components.mod_list_widget import ModListWidget
@@ -31,23 +32,23 @@ class MainWindow:
         self.header.columnconfigure(1, weight=1)
 
         self.brand_image = self.icons.brand()
-        ttk.Label(
+        Label(
             self.header,
             image=self.brand_image,
             style="HeroSubtitle.TLabel",
         ).grid(row=0, column=0, rowspan=3, padx=(0, 14))
 
-        ttk.Label(
+        Label(
             self.header,
             text=t.get("ui.app_name", "Mewtator"),
             style="HeroTitle.TLabel",
         ).grid(row=0, column=1, sticky="sw")
-        ttk.Label(
+        Label(
             self.header,
             text=t.get("ui.app_subtitle", "Mewgenics Mod Manager"),
             style="HeroSubtitle.TLabel",
         ).grid(row=1, column=1, sticky="nw")
-        ttk.Label(
+        Label(
             self.header,
             text=t.get(
                 "ui.shared_list_hint"
@@ -66,7 +67,7 @@ class MainWindow:
         self.footer.columnconfigure(0, weight=1)
         self.footer.columnconfigure(1, minsize=340)
 
-        self.summary_label = ttk.Label(
+        self.summary_label = Label(
             self.footer,
             text=t.get("ui.mod_summary", "Mods: 0 of 0 enabled"),
             style="FooterStatus.TLabel",

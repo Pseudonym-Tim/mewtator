@@ -3,6 +3,7 @@ import zipfile
 import tkinter as tk
 from tkinter import filedialog, simpledialog
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 import webbrowser
 from app.core.models.mod_list import ModList
 from app.core.services.mod_service import ModService
@@ -1121,21 +1122,21 @@ class MainController:
         container.pack(fill="both", expand=True, padx=20, pady=20)
         
         # Title
-        ttk.Label(
+        Label(
             container,
             text=title,
             font="MewtatorHeading",
         ).pack(anchor="w", pady=(0, 12))
         
         # Message
-        ttk.Label(container, text=message, wraplength=560, justify="left").pack(anchor="w", pady=(0, 12))
+        Label(container, text=message, wraplength=560, justify="left").pack(anchor="w", pady=(0, 12))
         
         # Clickable link if requested
         if show_link:
             link_frame = ttk.Frame(container)
             link_frame.pack(anchor="w", pady=(0, 12))
             
-            ttk.Label(
+            Label(
                 link_frame,
                 text=self.translation_service.get("messages.mewjector_link_text", "Get Mewjector here: "),
                 font="MewtatorBody"

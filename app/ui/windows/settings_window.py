@@ -1,5 +1,6 @@
 from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 from typing import Callable, Optional
 import os
 import webbrowser
@@ -153,7 +154,7 @@ class SettingsWindow:
         lang_row = ttk.Frame(self.win)
         lang_row.pack(fill="x", padx=10, pady=5)
         
-        ttk.Label(lang_row, text=t.get("settings.language"), width=20, anchor="w").pack(side="left")
+        Label(lang_row, text=t.get("settings.language"), width=20, anchor="w").pack(side="left")
         
         from app.infrastructure.translation_repository import TranslationRepository
         available_langs = TranslationRepository().get_available_languages()
@@ -240,7 +241,7 @@ class SettingsWindow:
         dll_hint_text = t.get("settings.dll_injection_hint", "Creates manifest for Mewjector chainloader (required for .dll mods)\nGet Mewjector: nexusmods.com/mewgenics/mods/218")
         lines = dll_hint_text.split('\n')
         
-        dll_hint_label = ttk.Label(
+        dll_hint_label = Label(
             checkbox_frame,
             text=lines[0],
             font="MewtatorSmall",
@@ -253,7 +254,7 @@ class SettingsWindow:
         link_frame.pack(anchor="w", padx=(20, 0))
         
         # Add the "Get Mewjector: " label
-        get_text_label = ttk.Label(
+        get_text_label = Label(
             link_frame,
             text=t.get("settings.mewjector_link_text", "Get Mewjector: "),
             font="MewtatorSmall",
@@ -263,7 +264,7 @@ class SettingsWindow:
         
         # Add the clickable link
         mewjector_url = "https://www.nexusmods.com/mewgenics/mods/218"
-        link_label = ttk.Label(
+        link_label = Label(
             link_frame,
             text=t.get("settings.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
             font="MewtatorSmallUnderline",
@@ -274,7 +275,7 @@ class SettingsWindow:
         link_label.bind("<Button-1>", lambda e: webbrowser.open(mewjector_url))
         
         # Add security warning for DLL injection
-        dll_warning_label = ttk.Label(
+        dll_warning_label = Label(
             checkbox_frame,
             text=t.get("settings.dll_injection_warning", "\u26a0 Security: Only install DLL mods from trusted sources"),
             font="MewtatorSmallBold",
@@ -309,7 +310,7 @@ class SettingsWindow:
             cursor="hand2"
         )
         generic_font_check.pack(anchor="w")
-        ttk.Label(
+        Label(
             appearance_frame,
             text=t.get(
                 "settings.use_generic_font_hint",
@@ -398,7 +399,7 @@ class SettingsWindow:
         frame = ttk.Frame(self.win)
         frame.pack(fill="x", padx=10, pady=(10, 5))
         
-        ttk.Label(
+        Label(
             frame,
             text=text,
             font="MewtatorBodyBold"
@@ -411,7 +412,7 @@ class SettingsWindow:
         if show:
             row.pack(fill="x", padx=10, pady=5)
         
-        lbl = ttk.Label(row, text=label_text, width=20, anchor="w")
+        lbl = Label(row, text=label_text, width=20, anchor="w")
         lbl.pack(side="left")
         
         entry = ttk.Entry(row, width=50, font="MewtatorBody")

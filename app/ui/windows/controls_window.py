@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import Toplevel
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 
 from app.utils.resource_utils import apply_app_icon
 
@@ -58,13 +59,13 @@ class ControlsWindow:
         outer = ttk.Frame(self.win, padding=(28, 24, 22, 20))
         outer.pack(fill="both", expand=True)
 
-        ttk.Label(
+        Label(
             outer,
             text=self.t.get("controls.title", "Controls & Shortcuts"),
             font="MewtatorTitle",
         ).pack(anchor="w")
 
-        ttk.Label(
+        Label(
             outer,
             text=self.t.get(
                 "controls.subtitle",
@@ -131,7 +132,7 @@ class ControlsWindow:
             if section_index:
                 ttk.Separator(content, orient="horizontal").pack(fill="x", pady=(14, 12))
 
-            ttk.Label(
+            Label(
                 content,
                 text=heading,
                 font="MewtatorHeading",
@@ -143,20 +144,20 @@ class ControlsWindow:
             section.columnconfigure(1, weight=1)
 
             for row_index, (control, description) in enumerate(rows):
-                ttk.Label(
+                Label(
                     section,
                     text=control,
                     style="ShortcutKey.TLabel",
                 ).grid(row=row_index, column=0, sticky="nw", padx=(0, 16), pady=3)
 
-                ttk.Label(
+                Label(
                     section,
                     text=description,
                     wraplength=420,
                     justify="left",
                 ).grid(row=row_index, column=1, sticky="nw", pady=5)
 
-        ttk.Label(
+        Label(
             content,
             text=self.t.get(
                 "controls.focus_hint",

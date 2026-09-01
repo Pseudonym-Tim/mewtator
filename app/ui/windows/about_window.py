@@ -1,5 +1,6 @@
 from tkinter import Toplevel
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 from app.utils.resource_utils import apply_app_icon
 from app.version import APP_VERSION_DISPLAY
 
@@ -40,32 +41,32 @@ class AboutWindow:
         container = ttk.Frame(self.win, padding=(28, 24))
         container.pack(fill="both", expand=True)
 
-        ttk.Label(
+        Label(
             container,
             text=self.t.get("ui.app_name"),
             font="MewtatorTitle",
         ).pack(anchor="w")
 
-        ttk.Label(
+        Label(
             container,
             text=self.t.get("about.subtitle"),
             font="MewtatorSubheading",
         ).pack(anchor="w", pady=(2, 4))
 
-        ttk.Label(
+        Label(
             container,
             text=f"{self.t.get('ui.version', 'Version')} {APP_VERSION_DISPLAY}",
             style="Hint.TLabel",
         ).pack(anchor="w", pady=(0, 18))
 
-        ttk.Label(
+        Label(
             container,
             text=self.t.get("about.description"),
             wraplength=560,
             justify="left",
         ).pack(anchor="w", pady=(0, 22))
 
-        ttk.Label(
+        Label(
             container,
             text=self.t.get("about.disclaimer"),
             wraplength=560,
@@ -75,7 +76,7 @@ class AboutWindow:
 
         ttk.Separator(container, orient="horizontal").pack(fill="x", pady=(0, 18))
 
-        ttk.Label(
+        Label(
             container,
             text=self.t.get("about.credits"),
             font="MewtatorHeading",
@@ -91,7 +92,7 @@ class AboutWindow:
         ]
 
         for credit in credits:
-            ttk.Label(
+            Label(
                 container,
                 text=f"• {credit}",
                 wraplength=550,

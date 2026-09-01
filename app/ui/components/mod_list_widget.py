@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font as tkfont
+from app.ui.components.compat_label import Label
 from typing import Callable, Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageTk
@@ -43,7 +44,7 @@ class ModListWidget(ttk.Frame):
         header.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         header.columnconfigure(0, weight=1)
 
-        self.title_label = ttk.Label(
+        self.title_label = Label(
             header,
             text=title,
             font="MewtatorHeadingUnderline",
@@ -104,7 +105,7 @@ class ModListWidget(ttk.Frame):
         self.search_frame = ttk.Frame(self)
         self.search_frame.grid(row=2, column=0, sticky="w", pady=(0, 10))
 
-        self.search_label = ttk.Label(
+        self.search_label = Label(
             self.search_frame,
             text="",
         )

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from app.ui.components.compat_label import Label
 from PIL import Image, ImageChops, ImageDraw, ImageTk
 from typing import Optional
 import webbrowser
@@ -38,7 +39,7 @@ class PreviewPanel(ttk.Frame):
         self.header = ttk.Frame(self, padding=(16, 14, 16, 2))
         self.header.grid(row=0, column=0, columnspan=2, sticky="ew")
 
-        self.mod_info_label = ttk.Label(
+        self.mod_info_label = Label(
             self.header,
             text=self.translation_service.get(
                 "preview.mod_info",
@@ -55,7 +56,7 @@ class PreviewPanel(ttk.Frame):
         self.empty_state.rowconfigure(3, weight=1)
         self.empty_icon = self.icons.brand()
 
-        self.empty_icon_label = ttk.Label(
+        self.empty_icon_label = Label(
             self.empty_state,
             image=self.empty_icon,
         )
@@ -66,7 +67,7 @@ class PreviewPanel(ttk.Frame):
             pady=(0, 14),
         )
 
-        self.empty_message_label = ttk.Label(
+        self.empty_message_label = Label(
             self.empty_state,
             text=self._empty_text,
             font="MewtatorSubheading",
@@ -106,19 +107,19 @@ class PreviewPanel(ttk.Frame):
         self.content.bind("<Configure>", self._update_scroll_region)
         self.panel_canvas.bind("<Configure>", self._resize_content)
 
-        self.title_label = ttk.Label(self.content, style="PreviewTitle.TLabel")
+        self.title_label = Label(self.content, style="PreviewTitle.TLabel")
         self.title_label.grid(row=0, column=0, sticky="w", padx=4)
 
         self.metadata_frame = ttk.Frame(self.content)
         self.metadata_frame.grid(row=1, column=0, sticky="ew", padx=4, pady=(3, 0))
 
-        self.author_label = ttk.Label(self.metadata_frame, style="Metadata.TLabel")
+        self.author_label = Label(self.metadata_frame, style="Metadata.TLabel")
         self.author_label.pack(side="left")
 
-        self.version_label = ttk.Label(self.metadata_frame, style="Metadata.TLabel")
+        self.version_label = Label(self.metadata_frame, style="Metadata.TLabel")
         self.version_label.pack(side="left", padx=(16, 0))
 
-        self.dll_info_label = ttk.Label(self.content, style="Warning.TLabel")
+        self.dll_info_label = Label(self.content, style="Warning.TLabel")
         self.dll_info_label.grid(row=2, column=0, sticky="w", padx=4, pady=(4, 0))
 
         self.url_label = tk.Label(
