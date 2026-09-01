@@ -85,6 +85,7 @@ class AboutWindow:
         credits = [
             self.t.get("about.credit_project"),
             self.t.get("about.credit_community"),
+            self.t.get("about.credit_polymeric"),
             self.t.get("about.credit_icons"),
             self.t.get("about.credit_polish"),
             self.t.get("about.credit_intro"),
