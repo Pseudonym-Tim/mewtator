@@ -4,14 +4,19 @@ import shutil
 import sys
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 
 PROJECT_ROOT = Path(SPECPATH).resolve()
 IS_WINDOWS = sys.platform == 'win32'
 
-# sv_ttk is cross-platform. pywinstyles is Windows-only, so only collect it when building on Windows...
-hiddenimports = collect_submodules('sv_ttk')
+sv_datas, sv_binaries, sv_hiddenimports = collect_all('sv_ttk')
+hiddenimports = list(sv_hiddenimports)
+
+hiddenimports += [
+    'PIL._imagingtk',
+    'PIL._tkinter_finder',
+]
 
 if IS_WINDOWS:
     hiddenimports += collect_submodules('pywinstyles')
@@ -19,12 +24,12 @@ if IS_WINDOWS:
 a = Analysis(
     [str(PROJECT_ROOT / 'app' / 'main.py')],
     pathex=[str(PROJECT_ROOT)],
-    binaries=[],
-    # Keep these available through sys._MEIPASS for bundled resource lookups.
+    binaries=sv_binaries,
     datas=[
         (str(PROJECT_ROOT / 'locales'), 'locales'),
         (str(PROJECT_ROOT / 'assets'), 'assets'),
-    ] + collect_data_files('sv_ttk'),
+        (str(PROJECT_ROOT / 'bundled_mods'), 'bundled_mods'),
+    ] + sv_datas,
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
@@ -44,7 +49,8 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    # Avoid compressing ELF/shared-library payloads on Linux...
+    upx=IS_WINDOWS,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
@@ -59,17 +65,13 @@ coll = COLLECT(
     a.binaries,
     a.datas,
     strip=False,
-    upx=True,
+    upx=IS_WINDOWS,
     upx_exclude=[],
     name='Mewtator',
 )
 
-
-# PyInstaller 6+ places bundled data under _internal by default. Mewtator's
-# locales are intentionally external/editable, and both folders are useful in
-# the distributable directory, so mirror them beside the executable as well...
 DIST_DIR = Path(DISTPATH) / 'Mewtator'
-for folder_name in ('locales', 'assets'):
+for folder_name in ('locales', 'assets', 'bundled_mods'):
     source_dir = PROJECT_ROOT / folder_name
     target_dir = DIST_DIR / folder_name
     if target_dir.exists():

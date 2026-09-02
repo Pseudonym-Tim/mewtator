@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import os
-import sys
 
 
 @dataclass
@@ -25,27 +24,13 @@ class Config:
     linux_compatdata_override_dir: str = ""
     
     def is_valid(self) -> bool:
-        # Check whether the game install directory and mod folder are defined.
-        game_install_dir_is_dir = self.game_install_dir and os.path.isdir(self.game_install_dir)
-        mod_folder_is_dir = self.mod_folder and os.path.isdir(self.mod_folder)
-
-        linux_checks_pass = True
-        # Check whether Steam Linux Runtime and Proton launchers are defined.
-        if sys.platform.startswith("linux"):
-            steam_linux_runtime_is_file_or_legally_blank = \
-                (self.linux_steam_runtime_path and os.path.isfile(self.linux_steam_runtime_path)) \
-                or (self.linux_allow_undefined_steam_runtime_or_proton and not self.linux_steam_runtime_path)
-            proton_is_file_or_legally_blank = \
-                (self.linux_proton_path and os.path.isfile(self.linux_proton_path)) \
-                or (self.linux_allow_undefined_steam_runtime_or_proton and not self.linux_proton_path)
-            linux_checks_pass = \
-                steam_linux_runtime_is_file_or_legally_blank \
-                and proton_is_file_or_legally_blank \
-
+        """Return whether Mewtator has enough configuration to open its main UI...
+        """
         return bool(
-            game_install_dir_is_dir
-            and mod_folder_is_dir
-            and linux_checks_pass
+            self.game_install_dir
+            and os.path.isdir(self.game_install_dir)
+            and self.mod_folder
+            and os.path.isdir(self.mod_folder)
         )
 
     def normalize_paths(self):

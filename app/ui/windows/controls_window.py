@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import Toplevel
 from tkinter import ttk
-from app.ui.components.compat_label import Label
+from app.ui.components.dialog_text import dialog_label
 
 from app.utils.resource_utils import apply_app_icon
 
@@ -55,17 +55,34 @@ class ControlsWindow:
             anchor="center",
         )
 
+    def _label(self, master, **kwargs):
+        """Render popup text with explicit colours instead of inherited ttk colours..."""
+        style_name = str(kwargs.pop("style", "") or "")
+        muted = style_name == "Hint.TLabel"
+
+        if style_name == "ShortcutKey.TLabel":
+            kwargs.setdefault("font", "MewtatorBodyBold")
+            kwargs.setdefault("background", self.colors["card_bg"])
+            kwargs.setdefault("foreground", self.colors["fg"])
+            kwargs.setdefault("padx", 8)
+            kwargs.setdefault("pady", 3)
+            kwargs.setdefault("anchor", "center")
+        else:
+            kwargs.setdefault("font", "MewtatorBody")
+
+        return dialog_label(master, self.colors, muted=muted, **kwargs)
+
     def _build_ui(self):
         outer = ttk.Frame(self.win, padding=(28, 24, 22, 20))
         outer.pack(fill="both", expand=True)
 
-        Label(
+        self._label(
             outer,
             text=self.t.get("controls.title", "Controls & Shortcuts"),
             font="MewtatorTitle",
         ).pack(anchor="w")
 
-        Label(
+        self._label(
             outer,
             text=self.t.get(
                 "controls.subtitle",
@@ -132,7 +149,7 @@ class ControlsWindow:
             if section_index:
                 ttk.Separator(content, orient="horizontal").pack(fill="x", pady=(14, 12))
 
-            Label(
+            self._label(
                 content,
                 text=heading,
                 font="MewtatorHeading",
@@ -144,20 +161,20 @@ class ControlsWindow:
             section.columnconfigure(1, weight=1)
 
             for row_index, (control, description) in enumerate(rows):
-                Label(
+                self._label(
                     section,
                     text=control,
                     style="ShortcutKey.TLabel",
                 ).grid(row=row_index, column=0, sticky="nw", padx=(0, 16), pady=3)
 
-                Label(
+                self._label(
                     section,
                     text=description,
                     wraplength=420,
                     justify="left",
                 ).grid(row=row_index, column=1, sticky="nw", pady=5)
 
-        Label(
+        self._label(
             content,
             text=self.t.get(
                 "controls.focus_hint",

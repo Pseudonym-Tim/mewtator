@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from app.ui.components.compat_label import Label
-from PIL import Image, ImageChops, ImageDraw, ImageTk
+from PIL import Image, ImageChops, ImageDraw
 from typing import Optional
 import webbrowser
 
 from app.ui.components.wide_scrollbar import WideScrollbar
 from app.ui.icon_set import IconSet
+from app.ui.tk_image_utils import pillow_to_photoimage
 
 
 class PreviewPanel(ttk.Frame):
@@ -366,7 +367,7 @@ class PreviewPanel(ttk.Frame):
 
         # Prepare the replacement before clearing the canvas. This prevents
         # an empty/black frame while a resized preview is being generated.
-        next_tk_image = ImageTk.PhotoImage(image)
+        next_tk_image = pillow_to_photoimage(image, master=self.image_stage)
         self.tk_image = next_tk_image
         self.image_stage.delete("all")
         self.image_stage.create_image(

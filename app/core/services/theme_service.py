@@ -3,6 +3,7 @@ import tkinter.font as tkfont
 from tkinter import ttk
 import sys
 from contextlib import contextmanager
+from pathlib import Path
 
 import sv_ttk
 from app.utils.resource_utils import register_private_font, resource_path
@@ -48,13 +49,61 @@ class ThemeService:
     def set_theme(self, theme_name: str):
         normalized = self.normalize_theme_name(theme_name)
         self.current_theme = normalized
+
+        # Always target this ThemeService's Tk interpreter explicitly...
+        theme_applied = False
+        theme_error = None
         try:
-            sv_ttk.set_theme(normalized)
+            try:
+                sv_ttk.set_theme(normalized, root=self.root)
+            except TypeError:
+                style = ttk.Style(self.root)
+                target_theme = f"sun-valley-{normalized}"
+                if target_theme not in style.theme_names():
+                    theme_file = Path(sv_ttk.__file__).with_name("sv.tcl")
+                    self.root.tk.call("source", str(theme_file))
+                style.theme_use(target_theme)
+            theme_applied = (
+                ttk.Style(self.root).theme_use() == f"sun-valley-{normalized}"
+            )
+        except Exception as exc:
+            theme_error = exc
+
+        self._configure_widget_styles()
+        self._apply_tk_palette()
+        self._apply_titlebar_theme(self.root)
+
+        if not theme_applied and theme_error is not None:
+            try:
+                from app.utils.logging_utils import get_logger
+                get_logger().warning(
+                    "Sun Valley theme failed; using explicit dark fallback: %s",
+                    theme_error,
+                )
+            except Exception:
+                pass
+
+    def _apply_tk_palette(self):
+        """Apply Mewtator colors to classic Tk widgets and the root surface..."""
+        colors = self.get_color_scheme(self.current_theme)
+        try:
+            self.root.configure(background=colors["bg"])
         except Exception:
             pass
 
-        self._configure_widget_styles()
-        self._apply_titlebar_theme(self.root)
+        try:
+            self.root.tk.call(
+                "tk_setPalette",
+                "background", colors["bg"],
+                "foreground", colors["fg"],
+                "activeBackground", colors["button_active_bg"],
+                "activeForeground", colors["fg"],
+                "selectBackground", colors["select_bg"],
+                "selectForeground", colors["select_fg"],
+                "highlightColor", colors["select_bg"],
+            )
+        except Exception:
+            pass
 
     def _generic_font_family(self) -> str:
         if sys.platform == "win32":
@@ -164,7 +213,74 @@ class ThemeService:
             small_font = self.app_fonts.get("MewtatorSmall", (family, 9))
             warning_font = self.app_fonts.get("MewtatorWarning", (family, 10, "italic"))
 
-            style.configure(".", font=body_font)
+            # Set base colors explicitly as well as the font...
+            style.configure(
+                ".",
+                font=body_font,
+                background=colors["bg"],
+                foreground=colors["fg"],
+                fieldbackground=colors["text_bg"],
+                troughcolor=colors["scrollbar_trough_bg"],
+                selectbackground=colors["select_bg"],
+                selectforeground=colors["select_fg"],
+            )
+            style.configure("TFrame", background=colors["bg"])
+            style.configure(
+                "TLabel",
+                background=colors["bg"],
+                foreground=colors["fg"],
+            )
+            style.configure(
+                "TCheckbutton",
+                background=colors["bg"],
+                foreground=colors["fg"],
+            )
+            style.configure(
+                "TRadiobutton",
+                background=colors["bg"],
+                foreground=colors["fg"],
+            )
+            style.configure(
+                "TEntry",
+                fieldbackground=colors["text_bg"],
+                foreground=colors["text_fg"],
+                insertcolor=colors["text_fg"],
+            )
+            style.configure(
+                "TCombobox",
+                fieldbackground=colors["button_bg"],
+                background=colors["button_bg"],
+                foreground=colors["fg"],
+            )
+            style.configure(
+                "Treeview",
+                background=colors["text_bg"],
+                fieldbackground=colors["text_bg"],
+                foreground=colors["text_fg"],
+            )
+            style.configure(
+                "Treeview.Heading",
+                background=colors["button_bg"],
+                foreground=colors["fg"],
+            )
+            style.configure("TSeparator", background=colors["menu_active_bg"])
+
+            style.map(
+                "TCheckbutton",
+                foreground=[
+                    ("disabled", colors["disabled_fg"]),
+                    ("!disabled", colors["fg"]),
+                ],
+                background=[("!disabled", colors["bg"])],
+            )
+            style.map(
+                "TRadiobutton",
+                foreground=[
+                    ("disabled", colors["disabled_fg"]),
+                    ("!disabled", colors["fg"]),
+                ],
+                background=[("!disabled", colors["bg"])],
+            )
 
             for style_name in (
                 "TLabel",

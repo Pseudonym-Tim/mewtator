@@ -1,6 +1,6 @@
 from tkinter import Toplevel
 from tkinter import ttk
-from app.ui.components.compat_label import Label
+from app.ui.components.dialog_text import dialog_frame, dialog_label
 from app.utils.resource_utils import apply_app_icon
 from app.version import APP_VERSION_DISPLAY
 
@@ -21,8 +21,8 @@ class AboutWindow:
         self.win.protocol("WM_DELETE_WINDOW", self.win.destroy)
         apply_app_icon(self.win)
 
-        colors = self.theme_service.get_color_scheme(self.theme_name)
-        self.win.configure(bg=colors["bg"])
+        self.colors = self.theme_service.get_color_scheme(self.theme_name)
+        self.win.configure(bg=self.colors["bg"])
         self.theme_service.apply_titlebar(self.win, self.theme_name)
 
         self._build_ui()
@@ -38,53 +38,62 @@ class AboutWindow:
         self.win.focus_set()
 
     def _build_ui(self):
-        container = ttk.Frame(self.win, padding=(28, 24))
+        container = dialog_frame(self.win, self.colors, padx=28, pady=24)
         container.pack(fill="both", expand=True)
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=self.t.get("ui.app_name"),
             font="MewtatorTitle",
         ).pack(anchor="w")
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=self.t.get("about.subtitle"),
             font="MewtatorSubheading",
         ).pack(anchor="w", pady=(2, 4))
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=f"{self.t.get('ui.version', 'Version')} {APP_VERSION_DISPLAY}",
-            style="Hint.TLabel",
+            font="MewtatorBody",
+            muted=True,
         ).pack(anchor="w", pady=(0, 18))
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=self.t.get("about.description"),
+            font="MewtatorBody",
             wraplength=560,
             justify="left",
         ).pack(anchor="w", pady=(0, 22))
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=self.t.get("about.disclaimer"),
+            font="MewtatorBody",
             wraplength=560,
             justify="left",
-            style="Hint.TLabel",
+            muted=True,
         ).pack(anchor="w", pady=(0, 22))
 
         ttk.Separator(container, orient="horizontal").pack(fill="x", pady=(0, 18))
 
-        Label(
+        dialog_label(
             container,
+            self.colors,
             text=self.t.get("about.credits"),
             font="MewtatorHeading",
         ).pack(anchor="w", pady=(0, 8))
 
         credits = [
             self.t.get("about.credit_project"),
-            self.t.get("about.credit_community"),
+            self.t.get("about.credit_tim"),
             self.t.get("about.credit_polymeric"),
             self.t.get("about.credit_icons"),
             self.t.get("about.credit_polish"),
@@ -93,14 +102,16 @@ class AboutWindow:
         ]
 
         for credit in credits:
-            Label(
+            dialog_label(
                 container,
+                self.colors,
                 text=f"• {credit}",
+                font="MewtatorBody",
                 wraplength=550,
                 justify="left",
             ).pack(anchor="w", pady=2)
 
-        button_row = ttk.Frame(container)
+        button_row = dialog_frame(container, self.colors)
         button_row.pack(side="bottom", fill="x", pady=(24, 0))
 
         ttk.Button(

@@ -4,10 +4,11 @@ from tkinter import font as tkfont
 from app.ui.components.compat_label import Label
 from typing import Callable, Dict, List, Optional, Tuple
 
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageDraw
 
 from app.ui.components.wide_scrollbar import WideScrollbar
 from app.ui.components.rounded_button import RoundedButton
+from app.ui.tk_image_utils import pillow_to_photoimage
 from app.utils.resource_utils import resource_path
 
 
@@ -551,7 +552,7 @@ class ModListWidget(ttk.Frame):
         target_width = max(1, round(tinted.width * target_height / tinted.height))
         resampling = getattr(Image, "Resampling", Image).LANCZOS
         tinted = tinted.resize((target_width, target_height), resampling)
-        return ImageTk.PhotoImage(tinted, master=self)
+        return pillow_to_photoimage(tinted, master=self)
 
     def _make_checkbox_image(self, enabled: bool, colors: Dict[str, str]) -> tk.PhotoImage:
         """Render an anti-aliased checkbox instead of a pixel-stepped Tk glyph..."""
@@ -587,7 +588,7 @@ class ModListWidget(ttk.Frame):
                 )
 
         image = image.resize((width, height), Image.Resampling.LANCZOS)
-        return ImageTk.PhotoImage(image, master=self)
+        return pillow_to_photoimage(image, master=self)
 
     def clear(self):
         # Delete filtered-out rows too, not only currently visible children... - Tim

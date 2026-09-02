@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog
 from tkinter import ttk
 from app.ui.components.compat_label import Label
@@ -28,12 +29,13 @@ class SettingsWindow:
         self.win = Toplevel(parent)
         self.win.withdraw()
         self.win.title(translation_service.get("settings.title", "Settings"))
-        self.win.resizable(False, False)
+        self.win.resizable(True, True)
         if parent.state() != "withdrawn":
             self.win.transient(parent)
         self.win.protocol("WM_DELETE_WINDOW", self._cancel)
 
         self._apply_theme()
+        self._build_scrollable_content()
         self._build_ui()
         self._position_dialog()
 
@@ -43,11 +45,68 @@ class SettingsWindow:
         self.win.focus_set()
 
 
+    def _build_scrollable_content(self):
+        """Create a vertically scrollable settings body while keeping Save visible..."""
+        colors = self.theme_service.get_color_scheme(
+            self.theme_service.normalize_theme_name(self.config.theme)
+        )
+
+        self._scroll_host = ttk.Frame(self.win)
+        self._scroll_host.pack(fill="both", expand=True)
+
+        self._settings_canvas = tk.Canvas(
+            self._scroll_host,
+            background=colors["bg"],
+            borderwidth=0,
+            highlightthickness=0,
+        )
+        self._settings_scrollbar = ttk.Scrollbar(
+            self._scroll_host, orient="vertical", command=self._settings_canvas.yview
+        )
+        self._settings_canvas.configure(yscrollcommand=self._settings_scrollbar.set)
+
+        self._settings_scrollbar.pack(side="right", fill="y")
+        self._settings_canvas.pack(side="left", fill="both", expand=True)
+
+        self.content_frame = ttk.Frame(self._settings_canvas)
+        self._content_window = self._settings_canvas.create_window(
+            (0, 0), window=self.content_frame, anchor="nw"
+        )
+
+        self.content_frame.bind(
+            "<Configure>",
+            lambda _event: self._settings_canvas.configure(
+                scrollregion=self._settings_canvas.bbox("all")
+            ),
+        )
+        self._settings_canvas.bind(
+            "<Configure>",
+            lambda event: self._settings_canvas.itemconfigure(
+                self._content_window, width=event.width
+            ),
+        )
+
+        def _wheel(event):
+            if getattr(event, "num", None) == 4:
+                delta = -1
+            elif getattr(event, "num", None) == 5:
+                delta = 1
+            else:
+                delta = -int(event.delta / 120) if event.delta else 0
+            if delta:
+                self._settings_canvas.yview_scroll(delta, "units")
+
+        self.win.bind("<MouseWheel>", _wheel, add="+")
+        self.win.bind("<Button-4>", _wheel, add="+")
+        self.win.bind("<Button-5>", _wheel, add="+")
+
     def _position_dialog(self):
         """Center Settings over its parent without changing the parent geometry..."""
 
-        width = 760
-        height = 790
+        screen_width = self.win.winfo_screenwidth()
+        screen_height = self.win.winfo_screenheight()
+        width = min(760, max(640, screen_width - 40), screen_width)
+        height = min(790, max(520, screen_height - 80), screen_height)
 
         # Make sure parent geometry is current before reading it...
         try:
@@ -72,15 +131,11 @@ class SettingsWindow:
                 parent_visible = False
 
         if not parent_visible:
-            screen_width = self.win.winfo_screenwidth()
-            screen_height = self.win.winfo_screenheight()
             x = max(0, (screen_width - width) // 2)
             y = max(0, (screen_height - height) // 2)
 
         # Clamp to visible desktop so centering a large dialog over a
         # partially off-screen parent can't push it farther off-screen... - Tim
-        screen_width = self.win.winfo_screenwidth()
-        screen_height = self.win.winfo_screenheight()
         x = max(0, min(x, max(0, screen_width - width)))
         y = max(0, min(y, max(0, screen_height - height)))
 
@@ -107,7 +162,7 @@ class SettingsWindow:
         
         # Auto-Detect Game Install
         auto_detect_btn = ttk.Button(
-            self.win,
+            self.content_frame,
             text=t.get("settings.auto_detect"),
             command=self._auto_detect,
             style="Primary.TButton",
@@ -151,7 +206,7 @@ class SettingsWindow:
         )
 
         # Language
-        lang_row = ttk.Frame(self.win)
+        lang_row = ttk.Frame(self.content_frame)
         lang_row.pack(fill="x", padx=10, pady=5)
         
         Label(lang_row, text=t.get("settings.language"), width=20, anchor="w").pack(side="left")
@@ -189,7 +244,7 @@ class SettingsWindow:
             initial_text=self.config.custom_launch_options
         )
         
-        checkbox_frame = ttk.Frame(self.win)
+        checkbox_frame = ttk.Frame(self.content_frame)
         checkbox_frame.pack(fill="x", padx=30, pady=5)
         
         # Enable Dev Mode
@@ -298,7 +353,7 @@ class SettingsWindow:
         # Appearance
         self._add_separator(t.get("settings.appearance", "Appearance"))
 
-        appearance_frame = ttk.Frame(self.win)
+        appearance_frame = ttk.Frame(self.content_frame)
         appearance_frame.pack(fill="x", padx=30, pady=5)
 
         # Use standard system font
@@ -323,7 +378,7 @@ class SettingsWindow:
         # Advanced Section
         self._add_separator(t.get("settings.advanced", "Advanced"))
         
-        advanced_frame = ttk.Frame(self.win)
+        advanced_frame = ttk.Frame(self.content_frame)
         advanced_frame.pack(fill="x", padx=30, pady=5)
         
         # Close Launcher When Game Launches
@@ -339,7 +394,7 @@ class SettingsWindow:
         # There isn't enough space to fit these widgets, but they aren't important, nor do I want to reorganize the settings window. :P
         # Sorry about this - polymeric
 
-        # Begin hidden widgets
+        # Linux launch options
         # (Linux) Allow launch without Steam Linux Runtime or Proton
         self.linux_allow_undefined_steam_runtime_or_proton_var = BooleanVar(value=self.config.linux_allow_undefined_steam_runtime_or_proton)
         linux_allow_undefined_steam_runtime_or_proton_check = ttk.Checkbutton(
@@ -348,8 +403,8 @@ class SettingsWindow:
             variable=self.linux_allow_undefined_steam_runtime_or_proton_var,
             cursor="hand2"
         )
-        # if platform_is_linux:
-        #     linux_allow_undefined_steam_runtime_or_proton_check.pack(anchor="w")
+        if platform_is_linux:
+            linux_allow_undefined_steam_runtime_or_proton_check.pack(anchor="w")
 
         # (Linux) Disable Steam game overlay
         self.linux_steam_gameoverlayrenderer_disabled_var = BooleanVar(value=self.config.linux_steam_gameoverlayrenderer_disabled)
@@ -370,7 +425,7 @@ class SettingsWindow:
             button_cfg={'command': self._browse_linux_compatdata_override_dir},
             show=False #platform_is_linux
         )
-        # End hidden widgets
+        # End Linux launch options
 
         # Save Settings
         save_btn = ttk.Button(
@@ -381,7 +436,7 @@ class SettingsWindow:
             width=25,
             cursor="hand2",
         )
-        save_btn.pack(pady=15)
+        save_btn.pack(side="bottom", pady=(8, 12))
         
         self.win.bind("<Return>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
         self.win.bind("<KP_Enter>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
@@ -396,7 +451,7 @@ class SettingsWindow:
     
     def _add_separator(self, text: str):
         """Add a section separator with label."""
-        frame = ttk.Frame(self.win)
+        frame = ttk.Frame(self.content_frame)
         frame.pack(fill="x", padx=10, pady=(10, 5))
         
         Label(
@@ -408,7 +463,7 @@ class SettingsWindow:
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=(2, 0))
     
     def _make_row(self, label_text: str, has_button: bool = True, initial_text: str = None, button_cfg: {} = None, show = True):
-        row = ttk.Frame(self.win)
+        row = ttk.Frame(self.content_frame)
         if show:
             row.pack(fill="x", padx=10, pady=5)
         
@@ -474,10 +529,15 @@ class SettingsWindow:
                 linux_steam_runtime_detected = auto_detect_game_install(steam_linux_runtime_app_name)
                 proton_detected = auto_detect_game_install(proton_app_name)
                 if linux_steam_runtime_detected and proton_detected:
+                    runtime_launcher = os.path.join(linux_steam_runtime_detected, "run")
+                    proton_launcher = os.path.join(proton_detected, "proton")
+                    if not (os.path.isfile(runtime_launcher) and os.path.isfile(proton_launcher)):
+                        continue
+
                     self.linux_steam_runtime_path_entry.delete(0, END)
-                    self.linux_steam_runtime_path_entry.insert(0, os.path.join(linux_steam_runtime_detected, "run"))
+                    self.linux_steam_runtime_path_entry.insert(0, runtime_launcher)
                     self.linux_proton_path_entry.delete(0, END)
-                    self.linux_proton_path_entry.insert(0, os.path.join(proton_detected, "proton"))
+                    self.linux_proton_path_entry.insert(0, proton_launcher)
                     pair_found = True
                     break
             if not pair_found:
@@ -611,20 +671,6 @@ class SettingsWindow:
                 self._show_notification(
                     self.translation_service.get("messages.error"),
                     self.translation_service.get("messages.path_invalid").format(name='Proton'),
-                    kind="error",
-                )
-                return
-            if not linux_allow_undefined_steam_runtime_or_proton and not linux_steam_runtime_path:
-                self._show_notification(
-                    self.translation_service.get("messages.error"),
-                    self.translation_service.get("messages.path_required").format(name='Steam Linux Runtime'),
-                    kind="error",
-                )
-                return
-            if not linux_allow_undefined_steam_runtime_or_proton and not linux_proton_path:
-                self._show_notification(
-                    self.translation_service.get("messages.error"),
-                    self.translation_service.get("messages.path_required").format(name='Proton'),
                     kind="error",
                 )
                 return

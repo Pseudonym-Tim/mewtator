@@ -3,8 +3,7 @@
 Wine/Proton makes Tk's themed labels shit the bed and draw the wrong background color behind some text...
 This fixes that problem!
 
-Native platforms still get the normal ttk widget, Wine/Proton gets a classic Tk label
-whose background is explicitly matched to its ttk parent/style...
+Wine/Proton and native Linux get a classic Tk label whose background is explicitly matched to its ttk parent/style...
 """
 
 from functools import lru_cache
@@ -164,7 +163,7 @@ def _padding_values(master: tk.Misc, value: Any) -> tuple[int, int]:
         return (max(numbers[0], numbers[2]), max(numbers[1], numbers[3]))
     return (max(numbers[0], numbers[2]), numbers[1])
 
-class _WineSafeLabel(tk.Label):
+class _CompatLabel(tk.Label):
     def __init__(self, master: tk.Misc, **kwargs: Any):
         style_name = str(kwargs.pop("style", "") or "")
         style = ttk.Style(master)
@@ -217,8 +216,13 @@ class _WineSafeLabel(tk.Label):
 
         super().__init__(master, **kwargs)
 
+def needs_compat_label() -> bool:
+    """Return True where ttk label backgrounds are unreliable for Mewtator..."""
+    return sys.platform.startswith("linux") or running_under_wine()
+
+
 def Label(master: tk.Misc, **kwargs: Any):
-    """Create a ttk label normally, or a Wine-safe classic label on Proton..."""
-    if running_under_wine():
-        return _WineSafeLabel(master, **kwargs)
+    """Create a normal ttk label unless the platform needs explicit background painting."""
+    if needs_compat_label():
+        return _CompatLabel(master, **kwargs)
     return ttk.Label(master, **kwargs)

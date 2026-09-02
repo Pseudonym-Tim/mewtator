@@ -44,7 +44,7 @@ def register_private_font(font_path: str) -> bool:
     except Exception:
         return False
 
-    # macOS has no simple process-private equivalent. (Tk will use fallback)... - Tim
+    # (Tk will use fallback)... - Tim
     return False
 
 

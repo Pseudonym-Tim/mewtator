@@ -90,6 +90,19 @@ class ProtonLaunchStrategy(LaunchStrategy):
         proton_exists = path_proton is not None and path_proton.is_file()
         path_compat_data_exists = path_compat_data.is_dir()
 
+        if not config.linux_allow_undefined_steam_runtime_or_proton:
+            missing_launchers = []
+            if not steam_linux_runtime_exists:
+                missing_launchers.append("Steam Linux Runtime")
+            if not proton_exists:
+                missing_launchers.append("Proton")
+            if missing_launchers:
+                required = "\n".join(
+                    translation_service.get("messages.path_required").format(name=name)
+                    for name in missing_launchers
+                )
+                raise RuntimeError(required)
+
         # We avoid blindly initializing Steam-managed compatdata (by making a directory that does not
         # already exist under steamapps/compatdata), because we'd potentially bypass first-time Steam Cloud
         # sync performed by the Steam client. Doing so could overwrite existing save data stored on the Steam Cloud.

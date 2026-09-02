@@ -36,7 +36,8 @@ def auto_detect_game_install(app_name: str) -> str:
         steam_paths = [
             Path.home() / ".local" / "share" / "Steam",  # Common Linux / Steam Deck default
             Path.home() / ".steam" / "steam",
-            Path("~/.steam/steam").expanduser(),
+            Path.home() / ".steam" / "debian-installation",
+            Path.home() / ".var" / "app" / "com.valvesoftware.Steam" / ".local" / "share" / "Steam",  # Flatpak
             Path("/home/deck/.local/share/Steam"),  # Steam Deck specific
         ]
         

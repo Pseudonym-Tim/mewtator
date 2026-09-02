@@ -3,7 +3,7 @@ import zipfile
 import tkinter as tk
 from tkinter import filedialog, simpledialog
 from tkinter import ttk
-from app.ui.components.compat_label import Label
+from app.ui.components.dialog_text import dialog_frame, dialog_label
 import webbrowser
 from app.core.models.mod_list import ModList
 from app.core.services.mod_service import ModService
@@ -825,7 +825,7 @@ class MainController:
         output_dir = os.path.join(self.config.mod_folder, "_unpacked")
         os.makedirs(output_dir, exist_ok=True)
         
-        pw = ProgressWindow(self.root, self.translation_service.get("progress.unpacking"), 100)
+        pw = ProgressWindow(self.root, self.translation_service.get("progress.unpacking"), 100, self.theme_service)
         
         try:
             def progress(current, total):
@@ -849,7 +849,7 @@ class MainController:
         source_dir = os.path.join(self.config.mod_folder, "_unpacked")
         gpak_output = os.path.join(self.config.game_install_dir, "resources.gpak")
         
-        pw = ProgressWindow(self.root, self.translation_service.get("progress.repacking"), 100)
+        pw = ProgressWindow(self.root, self.translation_service.get("progress.repacking"), 100, self.theme_service)
         
         try:
             def progress(current, total):
@@ -1105,78 +1105,132 @@ class MainController:
     
     def _show_dll_prompt_dialog(self, title: str, message: str, show_link: bool = True):
         """Show a custom yes/no dialog with optional clickable Mewjector link. Returns True if user clicks Yes."""
-
         dialog = tk.Toplevel(self.root)
+        dialog.withdraw()
         dialog.title(title)
-        dialog.geometry("600x400" if show_link else "600x350")
         dialog.resizable(False, False)
-        dialog.transient(self.root)
-        dialog.grab_set()
-        
+        dialog.protocol("WM_DELETE_WINDOW", lambda: on_no())
+
+        if self.root.winfo_viewable():
+            dialog.transient(self.root)
+
         theme_name = self.theme_service.normalize_theme_name(self.config.theme)
         colors = self.theme_service.get_color_scheme(theme_name)
         dialog.configure(bg=colors["bg"])
         self.theme_service.apply_titlebar(dialog, theme_name)
-        
-        container = ttk.Frame(dialog)
-        container.pack(fill="both", expand=True, padx=20, pady=20)
-        
-        # Title
-        Label(
+
+        container = dialog_frame(dialog, colors, padx=24, pady=22)
+        container.pack(fill="both", expand=True)
+
+        dialog_label(
             container,
+            colors,
             text=title,
             font="MewtatorHeading",
-        ).pack(anchor="w", pady=(0, 12))
-        
-        # Message
-        Label(container, text=message, wraplength=560, justify="left").pack(anchor="w", pady=(0, 12))
-        
-        # Clickable link if requested
+            anchor="w",
+            justify="left",
+        ).pack(fill="x", pady=(0, 12))
+
+        dialog_label(
+            container,
+            colors,
+            text=message or "",
+            font="MewtatorBody",
+            wraplength=552,
+            justify="left",
+            anchor="w",
+        ).pack(fill="x", pady=(0, 14))
+
         if show_link:
-            link_frame = ttk.Frame(container)
-            link_frame.pack(anchor="w", pady=(0, 12))
-            
-            Label(
+            link_frame = dialog_frame(container, colors)
+            link_frame.pack(fill="x", pady=(0, 12))
+
+            dialog_label(
                 link_frame,
-                text=self.translation_service.get("messages.mewjector_link_text", "Get Mewjector here: "),
-                font="MewtatorBody"
+                colors,
+                text=self.translation_service.get(
+                    "messages.mewjector_link_text", "Get Mewjector here: "
+                ),
+                font="MewtatorBody",
+                anchor="w",
             ).pack(side="left")
-            
+
             mewjector_url = "https://www.nexusmods.com/mewgenics/mods/218"
             link_color = "#5DADE2" if theme_name == "dark" else "#2E7DBE"
-            link_label = tk.Label(
+            link_label = dialog_label(
                 link_frame,
-                text=self.translation_service.get("messages.mewjector_url_display", "nexusmods.com/mewgenics/mods/218"),
+                colors,
+                text=self.translation_service.get(
+                    "messages.mewjector_url_display",
+                    "nexusmods.com/mewgenics/mods/218",
+                ),
                 font="MewtatorBodyUnderline",
-                fg=link_color,
-                bg=colors["bg"],
-                cursor="hand2"
+                foreground=link_color,
+                cursor="hand2",
+                anchor="w",
             )
             link_label.pack(side="left")
-            link_label.bind("<Button-1>", lambda e: webbrowser.open(mewjector_url))
-        
-        # Button frame
-        button_frame = ttk.Frame(container)
-        button_frame.pack(anchor="e", pady=(20, 0))
-        
+            link_label.bind("<Button-1>", lambda _event: webbrowser.open(mewjector_url))
+
+        button_frame = dialog_frame(container, colors)
+        button_frame.pack(fill="x", pady=(18, 0))
+
         result = {"value": False}
-        
+
         def on_yes():
             result["value"] = True
-            dialog.destroy()
-        
+            if dialog.winfo_exists():
+                dialog.destroy()
+
         def on_no():
             result["value"] = False
-            dialog.destroy()
-        
-        ttk.Button(button_frame, text=self.translation_service.get("dialog.no", "No"), command=on_no, width=10, cursor="hand2").pack(side="left", padx=5)
-        ttk.Button(button_frame, text=self.translation_service.get("dialog.yes", "Yes"), command=on_yes, width=10, cursor="hand2").pack(side="left", padx=5)
-        
-        # Wait for dialog to close
+            if dialog.winfo_exists():
+                dialog.destroy()
+
+        ttk.Button(
+            button_frame,
+            text=self.translation_service.get("dialog.yes", "Yes"),
+            command=on_yes,
+            width=10,
+            cursor="hand2",
+        ).pack(side="right", padx=(8, 0))
+        ttk.Button(
+            button_frame,
+            text=self.translation_service.get("dialog.no", "No"),
+            command=on_no,
+            width=10,
+            cursor="hand2",
+        ).pack(side="right")
+
+        # Size from actual content instead of clipping translated/wrapped text into
+        # a fixed-height dialog. Keep it centred over the main window... - Tim
+        dialog.update_idletasks()
+        width = max(600, dialog.winfo_reqwidth())
+        height = max(300, dialog.winfo_reqheight())
+        screen_width = dialog.winfo_screenwidth()
+        screen_height = dialog.winfo_screenheight()
+        width = min(width, max(420, screen_width - 80))
+        height = min(height, max(260, screen_height - 80))
+
+        try:
+            self.root.update_idletasks()
+            x = self.root.winfo_rootx() + (self.root.winfo_width() - width) // 2
+            y = self.root.winfo_rooty() + (self.root.winfo_height() - height) // 2
+        except tk.TclError:
+            x = (screen_width - width) // 2
+            y = (screen_height - height) // 2
+
+        x = max(0, min(x, max(0, screen_width - width)))
+        y = max(0, min(y, max(0, screen_height - height)))
+        dialog.geometry(f"{width}x{height}+{x}+{y}")
+        dialog.deiconify()
+        dialog.lift()
+        dialog.grab_set()
+        dialog.focus_set()
         dialog.wait_window()
-        
+
         return result["value"]
-    
+
     def _change_language(self, language: str):
         self.config.language = language
         self.config_service.save_config(self.config)
@@ -1202,31 +1256,50 @@ class MainController:
             )
     
     def _reload_ui(self):
-        self.root.destroy()
-        
+        """Rebuild the application inside the existing Tk interpreter...
+        """
+        if self._mod_filesystem_watch_job is not None:
+            try:
+                self.root.after_cancel(self._mod_filesystem_watch_job)
+            except tk.TclError:
+                pass
+            self._mod_filesystem_watch_job = None
+
+        self.root.withdraw()
+
+        for sequence in (
+            "<Button-1>",
+            "<Escape>",
+            "<F1>",
+            "<F2>",
+            "<F3>",
+            "<F5>",
+            "<Control-q>",
+        ):
+            try:
+                self.root.unbind(sequence)
+            except tk.TclError:
+                pass
+
+        for child in list(self.root.winfo_children()):
+            try:
+                child.destroy()
+            except tk.TclError:
+                pass
+
         from app.infrastructure.mod_repository import ModRepository
-        mod_repo = ModRepository(self.config.mod_folder)
-        from app.core.services.mod_service import ModService
-        new_mod_service = ModService(mod_repo)
-        
-        new_root = tk.Tk()
-        new_root.withdraw()
-        from app.utils.resource_utils import apply_app_icon
-        apply_app_icon(new_root)
-        self.theme_service.bind_root(new_root)
+        self.mod_service = ModService(ModRepository(self.config.mod_folder))
+        self.mod_list = None
+        self.window = None
+        self._last_mod_filesystem_state = None
+
+        self.theme_service.bind_root(self.root)
         self.theme_service.configure_fonts(self.config.use_generic_font)
         self.theme_service.set_theme(self.config.theme)
-        new_controller = MainController(
-            new_root,
-            self.config_service,
-            new_mod_service,
-            self.launcher_service,
-            self.translation_service,
-            self.pack_service,
-            self.modlist_io_service,
-            self.theme_service
-        )
-        new_controller.start()
+
+        self._build_main_window()
+        self.root.deiconify()
+        self.root.lift()
     
     def _record_mod_filesystem_state(self):
         """Capture the current disk state as the watcher's baseline..."""

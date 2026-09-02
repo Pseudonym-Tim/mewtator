@@ -16,7 +16,7 @@ class ExistingModError(FileExistsError):
 class ModImportService:
     """Import mod ZIP while collapsing redundant directories..."""
 
-    _IGNORED_NAMES = {"__MACOSX", ".DS_Store", "Thumbs.db", "desktop.ini"}
+    _IGNORED_NAMES = {"__MACOSX", ".DS_Store", "Thumbs.db", "desktop.ini"} # I doubt someone will make mods on macOS but, just in case I guess! hahaha... - Tim
     _MOD_METADATA_FILES = {"description.json", "info.json", "modinfo.json"}
 
     def import_zip(self, zip_path: str, mod_folder: str, replace: bool = False) -> Tuple[str, str]:

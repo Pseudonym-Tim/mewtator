@@ -1,5 +1,8 @@
+import os
+import traceback
+from pathlib import Path
 import tkinter as tk
-from app.ui.components.compat_label import Label
+from app.ui.components.dialog_text import dialog_label
 
 from app.infrastructure.config_repository import ConfigRepository
 from app.infrastructure.mod_repository import ModRepository
@@ -15,6 +18,7 @@ from app.core.services.theme_service import ThemeService
 from app.ui.controllers.main_controller import MainController
 from app.ui.windows.settings_window import SettingsWindow
 from app.utils.resource_utils import apply_app_icon
+from app.utils.platform_utils import get_executable_dir
 from app.version import versioned_title
 
 
@@ -42,14 +46,17 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     win.configure(bg=colors["bg"])
     theme_service.apply_titlebar(win, theme_name)
 
-    Label(
+    dialog_label(
         win,
+        colors,
         text=translation_service.get("settings.select_language_title", "Select Language"),
-        font="MewtatorHeading"
+        font="MewtatorHeading",
     ).pack(pady=15)
-    Label(
+    dialog_label(
         win,
-        text=translation_service.get("settings.select_language_text", "Choose your preferred language:")
+        colors,
+        text=translation_service.get("settings.select_language_text", "Choose your preferred language:"),
+        font="MewtatorBody",
     ).pack(pady=5)
     
     available_langs = translation_service.get_available_languages()
@@ -102,7 +109,7 @@ def main():
     root.withdraw()
     apply_app_icon(root)
     
-    config_repo = ConfigRepository("config.json")
+    config_repo = ConfigRepository(os.path.join(get_executable_dir(), "config.json"))
     translation_repo = TranslationRepository()
     
     config_service = ConfigService(config_repo)
@@ -149,6 +156,31 @@ def main():
     
     controller.start()
 
+def _report_startup_failure() -> None:
+    """Report startup exceptions..."""
+    details = traceback.format_exc()
+    try:
+        log_dir = Path(get_executable_dir()) / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_path = log_dir / "startup-error.log"
+        log_path.write_text(details, encoding="utf-8")
+    except Exception:
+        log_path = None
+
+    try:
+        from tkinter import messagebox
+        path_hint = f"\n\nDetails were written to:\n{log_path}" if log_path else ""
+        messagebox.showerror(
+            "Mewtator - Startup Error",
+            "Mewtator could not finish starting." + path_hint,
+        )
+    except Exception:
+        pass
+
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:
+        _report_startup_failure()
+        raise
