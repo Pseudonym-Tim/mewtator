@@ -1,23 +1,31 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import shutil
+import sys
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
 PROJECT_ROOT = Path(SPECPATH).resolve()
+IS_WINDOWS = sys.platform == 'win32'
+
+# sv_ttk is cross-platform. pywinstyles is Windows-only, so only collect it when building on Windows...
+hiddenimports = collect_submodules('sv_ttk')
+
+if IS_WINDOWS:
+    hiddenimports += collect_submodules('pywinstyles')
 
 a = Analysis(
-    ['app\\main.py'],
-    pathex=[],
+    [str(PROJECT_ROOT / 'app' / 'main.py')],
+    pathex=[str(PROJECT_ROOT)],
     binaries=[],
     # Keep these available through sys._MEIPASS for bundled resource lookups.
     datas=[
         (str(PROJECT_ROOT / 'locales'), 'locales'),
         (str(PROJECT_ROOT / 'assets'), 'assets'),
     ] + collect_data_files('sv_ttk'),
-    hiddenimports=collect_submodules('sv_ttk') + collect_submodules('pywinstyles'),
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -43,7 +51,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='assets\\icons\\mewtator.ico',
+    # .ico is only relevant to the Windows executable...
+    icon=str(PROJECT_ROOT / 'assets' / 'icons' / 'mewtator.ico') if IS_WINDOWS else None,
 )
 coll = COLLECT(
     exe,
@@ -58,7 +67,7 @@ coll = COLLECT(
 
 # PyInstaller 6+ places bundled data under _internal by default. Mewtator's
 # locales are intentionally external/editable, and both folders are useful in
-# the distributable directory, so mirror them beside Mewtator.exe as well.
+# the distributable directory, so mirror them beside the executable as well...
 DIST_DIR = Path(DISTPATH) / 'Mewtator'
 for folder_name in ('locales', 'assets'):
     source_dir = PROJECT_ROOT / folder_name
