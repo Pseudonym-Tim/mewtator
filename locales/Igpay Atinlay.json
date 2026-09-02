@@ -102,7 +102,10 @@
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
     "mewtator_intro": "Enable-ay Ewtator-May Ustom-Cay Ame-Gay Intro-ay",
     "linux_steam_runtime_path": "Eam-stay Inux-lay Untime-ray",
-    "linux_proton_path": "Oton-pray"
+    "linux_proton_path": "Oton-pray",
+    "linux_allow_undefined_steam_runtime_or_proton": "allow-way aunch-lay ithout-way Eam-stay Inux-lay Untime-ray or-way Oton-pray",
+    "linux_steam_gameoverlayrenderer_disabled": "Isable-day Eam-stay Ame-gay Overlay-way",
+    "linux_compatdata_override_dir": "ompatdata-cay override-way"
   },
   "messages": {
     "setup_required_title": "Etup-Say Equired-Ray",

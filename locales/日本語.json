@@ -102,7 +102,10 @@
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
     "mewtator_intro": "Mewtator カスタムゲームイントロを有効にする",
     "linux_steam_runtime_path": "Steam Linux Runtime",
-    "linux_proton_path": "Proton"
+    "linux_proton_path": "Proton",
+    "linux_allow_undefined_steam_runtime_or_proton": "Steam Linux Runtime または Proton がない場合でも起動を許可する",
+    "linux_steam_gameoverlayrenderer_disabled": "Steam ゲームオーバーレイを無効にする",
+    "linux_compatdata_override_dir": "compatdata の上書きディレクトリ"
   },
   "messages": {
     "setup_required_title": "設定が必要です",

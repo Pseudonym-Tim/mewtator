@@ -102,7 +102,10 @@
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
     "mewtator_intro": "Włącz niestandardowe intro gry Mewtator",
     "linux_steam_runtime_path": "Steam Linux Runtime",
-    "linux_proton_path": "Proton"
+    "linux_proton_path": "Proton",
+    "linux_allow_undefined_steam_runtime_or_proton": "Zezwól na uruchamianie bez środowiska uruchomieniowego Steam Linux lub Proton",
+    "linux_steam_gameoverlayrenderer_disabled": "Wyłącz nakładkę gry Steam",
+    "linux_compatdata_override_dir": "Katalog nadpisywania danych compatdata"
   },
   "messages": {
     "setup_required_title": "Wymagana konfiguracja",

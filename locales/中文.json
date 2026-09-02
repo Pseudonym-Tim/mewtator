@@ -102,7 +102,10 @@
     "mewjector_url_display": "nexusmods.com/mewgenics/mods/218",
     "mewtator_intro": "启用 Mewtator 自定义游戏开场",
     "linux_steam_runtime_path": "Steam Linux Runtime",
-    "linux_proton_path": "Proton"
+    "linux_proton_path": "Proton",
+    "linux_allow_undefined_steam_runtime_or_proton": "允许在未安装 Steam Linux 运行时或 Proton 的情况下启动游戏",
+    "linux_steam_gameoverlayrenderer_disabled": "禁用 Steam 游戏叠加层",
+    "linux_compatdata_override_dir": "compatdata 覆盖目录"
   },
   "messages": {
     "setup_required_title": "需要设置",

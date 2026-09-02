@@ -391,9 +391,6 @@ class SettingsWindow:
         )
         close_on_launch_check.pack(anchor="w")
 
-        # There isn't enough space to fit these widgets, but they aren't important, nor do I want to reorganize the settings window. :P
-        # Sorry about this - polymeric
-
         # Linux launch options
         # (Linux) Allow launch without Steam Linux Runtime or Proton
         self.linux_allow_undefined_steam_runtime_or_proton_var = BooleanVar(value=self.config.linux_allow_undefined_steam_runtime_or_proton)
@@ -415,7 +412,7 @@ class SettingsWindow:
             cursor="hand2"
         )
         # if platform_is_linux:
-        #     linux_load_steam_gameoverlayrenderer_check.pack(anchor="w")
+        #     linux_steam_gameoverlayrenderer_disabled_check.pack(anchor="w")
 
         # (Linux) compatdata override
         self.linux_compatdata_override_dir_entry, linux_compatdata_override_dir_btn = self._make_row(
