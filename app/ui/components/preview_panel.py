@@ -34,6 +34,7 @@ class PreviewPanel(ttk.Frame):
         self._stage_text_color = "#777777"
 
         self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, minsize=WideScrollbar.THICKNESS) # Keep the scrollbar gutter so the damn layout doesn't bounce around... - Tim
         self.rowconfigure(1, weight=1)
 
         # Keep the underlined Mod Info heading visually attached to the details below it... - Tim
