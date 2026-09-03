@@ -10,8 +10,8 @@ class RoundedButton(tk.Canvas):
         parent,
         text: str,
         font,
-        width: int,
-        height: int,
+        width: int = 0,
+        height: int = 0,
         radius: int = 8,
         command=None,
         image=None,
@@ -22,8 +22,8 @@ class RoundedButton(tk.Canvas):
     ):
         super().__init__(
             parent,
-            width=width,
-            height=height,
+            width=max(1, width),
+            height=max(1, height),
             borderwidth=0,
             highlightthickness=0,
             relief="flat",
@@ -33,8 +33,13 @@ class RoundedButton(tk.Canvas):
 
         self._text = text
         self._font = font
-        self._button_width = width
-        self._button_height = height
+        # Explicit minimums sizes, localized text, fonts, and icons are always allowed to grow the physical button beyond them... - Tim
+        self._min_width = max(0, int(width))
+        self._min_height = max(0, int(height))
+        self._button_width = max(1, self._min_width)
+        self._button_height = max(1, self._min_height)
+        self._horizontal_padding = 18
+        self._vertical_padding = 9
         self._radius = radius
         self._command = command
         self._image = image
@@ -64,6 +69,7 @@ class RoundedButton(tk.Canvas):
         self.bind("<KeyPress-space>", self._on_key_press)
         self.bind("<KeyRelease-space>", self._on_key_release)
         self.bind("<Return>", self._on_return)
+        self._recalculate_size()
         self._draw()
 
     def apply_theme(self, colors: dict):
@@ -105,15 +111,16 @@ class RoundedButton(tk.Canvas):
         kwargs.pop("compound", None)
 
         if "width" in kwargs:
-            self._button_width = int(kwargs["width"])
+            self._min_width = max(0, int(kwargs.pop("width")))
             redraw = True
         if "height" in kwargs:
-            self._button_height = int(kwargs["height"])
+            self._min_height = max(0, int(kwargs.pop("height")))
             redraw = True
 
         result = super().configure(**kwargs) if kwargs else None
 
         if redraw:
+            self._recalculate_size()
             super().configure(
                 cursor="arrow" if self._state == "disabled" else "hand2"
             )
@@ -122,6 +129,44 @@ class RoundedButton(tk.Canvas):
         return result
 
     config = configure
+
+    def _font_object(self):
+        try:
+            return tkfont.nametofont(self._font, root=self)
+        except tk.TclError:
+            return tkfont.Font(root=self, font=self._font)
+
+    def _content_size(self):
+        font = self._font_object()
+        lines = str(self._text or "").splitlines() or [""]
+        text_width = max((font.measure(line) for line in lines), default=0)
+        text_height = font.metrics("linespace") * max(1, len(lines)) if self._text else 0
+
+        leading_width = self._image.width() if self._image is not None else 0
+        leading_height = self._image.height() if self._image is not None else 0
+        trailing_width = self._trailing_image.width() if self._trailing_image is not None else 0
+        trailing_height = self._trailing_image.height() if self._trailing_image is not None else 0
+
+        content_width = text_width
+        if leading_width:
+            content_width += leading_width + (self._icon_gap if self._text else 0)
+        if trailing_width:
+            content_width += trailing_width + (self._icon_gap if self._text else 0)
+        if not self._text and leading_width and trailing_width:
+            content_width += self._icon_gap
+
+        content_height = max(text_height, leading_height, trailing_height)
+        return content_width, content_height
+
+    def _recalculate_size(self):
+        """Grow to fit the rendered label/icons while preserving configured minimums..."""
+        content_width, content_height = self._content_size()
+        width = max(self._min_width, content_width + (self._horizontal_padding * 2), 1)
+        height = max(self._min_height, content_height + (self._vertical_padding * 2), 1)
+
+        self._button_width = int(round(width))
+        self._button_height = int(round(height))
+        super().configure(width=self._button_width, height=self._button_height)
 
     def _rounded_points(self):
         width = self._button_width - 1
@@ -175,11 +220,11 @@ class RoundedButton(tk.Canvas):
             self._trailing_image.width() if self._trailing_image is not None else 0
         )
 
-        try:
-            font = tkfont.nametofont(self._font, root=self)
-        except tk.TclError:
-            font = tkfont.Font(root=self, font=self._font)
-        text_width = font.measure(self._text)
+        font = self._font_object()
+        text_width = max(
+            (font.measure(line) for line in str(self._text or "").splitlines() or [""]),
+            default=0,
+        )
 
         group_width = text_width
 

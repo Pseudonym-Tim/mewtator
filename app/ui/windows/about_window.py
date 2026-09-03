@@ -2,6 +2,7 @@ from tkinter import Toplevel
 from tkinter import ttk
 from app.ui.components.dialog_text import dialog_frame, dialog_label
 from app.utils.resource_utils import apply_app_icon
+from app.ui.layout_utils import fit_window_to_content
 from app.version import APP_VERSION_DISPLAY
 
 class AboutWindow:
@@ -27,10 +28,16 @@ class AboutWindow:
 
         self._build_ui()
 
-        self.win.update_idletasks()
-        dialog_width = max(620, self.win.winfo_reqwidth())
-        dialog_height = max(500, self.win.winfo_reqheight())
-        self._position_dialog(dialog_width, dialog_height)
+        fit_window_to_content(
+            self.win,
+            self.parent,
+            min_width=620,
+            min_height=500,
+            preferred_width=620,
+            preferred_height=500,
+            screen_margin_x=40,
+            screen_margin_y=80,
+        )
 
         self.win.deiconify()
         self.win.lift()
@@ -118,7 +125,6 @@ class AboutWindow:
             button_row,
             text=self.t.get("messages.close"),
             command=self.win.destroy,
-            width=12,
             cursor="hand2",
         ).pack(side="right")
 

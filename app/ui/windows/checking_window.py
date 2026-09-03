@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from app.ui.components.dialog_text import dialog_label
+from app.ui.layout_utils import fit_window_to_content
 
 
 class CheckingWindow:
@@ -14,7 +15,6 @@ class CheckingWindow:
         self.win = tk.Toplevel(root)
         self.win.withdraw()
         self.win.title(title)
-        self.win.geometry("420x140") # (Larger for Steam Deck)
         self.win.resizable(False, False)
         self.win.configure(background=colors["bg"])
         self.win.protocol("WM_DELETE_WINDOW", lambda: None)
@@ -34,6 +34,17 @@ class CheckingWindow:
             justify="center",
         )
         label.pack(expand=True, padx=20, pady=20)
+
+        fit_window_to_content(
+            self.win,
+            root,
+            min_width=420,
+            min_height=140,
+            preferred_width=420,
+            preferred_height=140,
+            screen_margin_x=40,
+            screen_margin_y=80,
+        )
 
         self.win.deiconify()
         self.win.lift()

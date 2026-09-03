@@ -4,6 +4,7 @@ from tkinter import ttk
 from app.ui.components.dialog_text import dialog_label
 
 from app.utils.resource_utils import apply_app_icon
+from app.ui.layout_utils import fit_window_to_content
 
 class ControlsWindow:
     """Keyboard shortcuts and mouse controls reference panel..."""
@@ -33,11 +34,18 @@ class ControlsWindow:
         self._build_ui()
 
         self.win.update_idletasks()
-        screen_width = self.win.winfo_screenwidth()
-        screen_height = self.win.winfo_screenheight()
-        dialog_width = min(720, max(560, screen_width - 80))
-        dialog_height = min(700, max(500, screen_height - 100))
-        self._position_dialog(dialog_width, dialog_height)
+        requested_width = self._content_frame.winfo_reqwidth() + 28 + 22 + self._scrollbar.winfo_reqwidth() + 18
+        fit_window_to_content(
+            self.win,
+            self.parent,
+            min_width=560,
+            min_height=500,
+            preferred_width=720,
+            preferred_height=700,
+            requested_width=requested_width,
+            screen_margin_x=80,
+            screen_margin_y=100,
+        )
 
         self.win.deiconify()
         self.win.lift()
@@ -100,13 +108,14 @@ class ControlsWindow:
             borderwidth=0,
             background=self.colors["bg"],
         )
-        scrollbar = ttk.Scrollbar(body, orient="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=scrollbar.set)
+        self._scrollbar = ttk.Scrollbar(body, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self._scrollbar.set)
 
         self.canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y", padx=(10, 0))
+        self._scrollbar.pack(side="right", fill="y", padx=(10, 0))
 
         content = ttk.Frame(self.canvas)
+        self._content_frame = content
         self._content_window = self.canvas.create_window((0, 0), window=content, anchor="nw")
         content.bind("<Configure>", self._update_scroll_region, add="+")
         self.canvas.bind("<Configure>", self._resize_content, add="+")
@@ -194,7 +203,6 @@ class ControlsWindow:
             button_row,
             text=self.t.get("messages.close", "Close"),
             command=self.win.destroy,
-            width=12,
             cursor="hand2",
         ).pack(side="right")
 

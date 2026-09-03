@@ -7,6 +7,7 @@ from app.ui.components.mod_list_widget import ModListWidget
 from app.ui.components.preview_panel import PreviewPanel
 from app.ui.components.rounded_button import RoundedButton
 from app.ui.icon_set import IconSet
+from app.ui.layout_utils import fit_window_to_content
 from app.version import versioned_title
 
 
@@ -48,13 +49,29 @@ class MainWindow:
             text=t.get("ui.app_subtitle", "Mewgenics Mod Manager"),
             style="HeroSubtitle.TLabel",
         ).grid(row=1, column=1, sticky="nw")
-        Label(
+        self.shared_list_hint_label = Label(
             self.header,
             text=t.get(
                 "ui.shared_list_hint"
             ),
             style="HeaderHint.TLabel",
-        ).grid(row=2, column=1, sticky="nw", pady=(3, 0))
+            justify="left",
+            wraplength=760,
+        )
+        self.shared_list_hint_label.grid(row=2, column=1, sticky="nw", pady=(3, 0))
+        self.header.bind("<Configure>", self._resize_header_wrap, add="+")
+
+    def _resize_header_wrap(self, event):
+        """Wrap localized header to the space beside the brand icon..."""
+        try:
+            brand_width = self.brand_image.width() + 14
+        except Exception:
+            brand_width = 80
+        wrap_width = max(260, event.width - brand_width - 40)
+        try:
+            self.shared_list_hint_label.configure(wraplength=wrap_width)
+        except Exception:
+            pass
 
     def _build_footer(self):
         t = self.translation_service
@@ -120,6 +137,20 @@ class MainWindow:
 
         self.preview_panel = PreviewPanel(self.preview_frame, t)
         self.preview_panel.pack(fill=BOTH, expand=True)
+
+    def fit_to_content(self):
+        """Grow main window when localized controls need more room..."""
+        fit_window_to_content(
+            self.root,
+            None,
+            min_width=1040,
+            min_height=660,
+            preferred_width=1380,
+            preferred_height=820,
+            screen_margin_x=24,
+            screen_margin_y=60,
+            set_minsize=True,
+        )
 
     def _apply_icons(self, theme_name: str):
         self.mod_list_widget.enable_all_button.config(

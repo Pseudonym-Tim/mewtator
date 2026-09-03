@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from app.ui.components.dialog_text import dialog_label
+from app.ui.layout_utils import fit_window_to_content
 
 
 class ProgressWindow:
@@ -19,7 +20,6 @@ class ProgressWindow:
         self.win = tk.Toplevel(root)
         self.win.withdraw()
         self.win.title(title)
-        self.win.geometry("500x160")
         self.win.resizable(False, False)
         self.win.configure(background=self.colors["bg"])
         self.win.protocol("WM_DELETE_WINDOW", lambda: None)
@@ -54,6 +54,17 @@ class ProgressWindow:
             font="MewtatorBody",
         )
         self.percent_label.pack()
+
+        fit_window_to_content(
+            self.win,
+            root,
+            min_width=500,
+            min_height=160,
+            preferred_width=500,
+            preferred_height=160,
+            screen_margin_x=40,
+            screen_margin_y=80,
+        )
 
         self.win.deiconify()
         self.win.lift()

@@ -23,6 +23,7 @@ from app.ui.windows.controls_window import ControlsWindow
 from app.ui.windows.progress_window import ProgressWindow
 from app.ui.windows.launch_options_window import LaunchOptionsWindow, ExportSuccessWindow
 from app.ui.components.pointer_menu import PointerMenu
+from app.ui.layout_utils import fit_window_to_content
 from app.utils.logging_utils import get_logger
 from app.utils.platform_utils import open_file_or_folder
 
@@ -104,6 +105,7 @@ class MainController:
         self._validate_requirements()
         self._refresh_lists()
         self.window.apply_theme(self.theme_service, self.config.theme)
+        self.window.fit_to_content()
         self._auto_configure_chainloader()
         self._start_mod_filesystem_watch()
 
@@ -1191,38 +1193,27 @@ class MainController:
             button_frame,
             text=self.translation_service.get("dialog.yes", "Yes"),
             command=on_yes,
-            width=10,
             cursor="hand2",
         ).pack(side="right", padx=(8, 0))
         ttk.Button(
             button_frame,
             text=self.translation_service.get("dialog.no", "No"),
             command=on_no,
-            width=10,
             cursor="hand2",
         ).pack(side="right")
 
-        # Size from actual content instead of clipping translated/wrapped text into
-        # a fixed-height dialog. Keep it centred over the main window... - Tim
-        dialog.update_idletasks()
-        width = max(600, dialog.winfo_reqwidth())
-        height = max(300, dialog.winfo_reqheight())
-        screen_width = dialog.winfo_screenwidth()
-        screen_height = dialog.winfo_screenheight()
-        width = min(width, max(420, screen_width - 80))
-        height = min(height, max(260, screen_height - 80))
-
-        try:
-            self.root.update_idletasks()
-            x = self.root.winfo_rootx() + (self.root.winfo_width() - width) // 2
-            y = self.root.winfo_rooty() + (self.root.winfo_height() - height) // 2
-        except tk.TclError:
-            x = (screen_width - width) // 2
-            y = (screen_height - height) // 2
-
-        x = max(0, min(x, max(0, screen_width - width)))
-        y = max(0, min(y, max(0, screen_height - height)))
-        dialog.geometry(f"{width}x{height}+{x}+{y}")
+        # Size from actual content instead of clipping translated/wrapped text into a fixed height dialog... - Tim
+        fit_window_to_content(
+            dialog,
+            self.root,
+            min_width=600,
+            min_height=300,
+            preferred_width=600,
+            preferred_height=300,
+            screen_margin_x=80,
+            screen_margin_y=80,
+        )
+        
         dialog.deiconify()
         dialog.lift()
         dialog.grab_set()

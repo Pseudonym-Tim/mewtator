@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import Toplevel, END, StringVar, BooleanVar, filedialog
 from tkinter import ttk
 from app.ui.components.compat_label import Label
@@ -8,6 +9,7 @@ import webbrowser
 import sys
 
 from app.ui.windows.notification_window import NotificationWindow
+from app.ui.layout_utils import fit_combobox_to_values, fit_window_to_content
 
 class SettingsWindow:
     def __init__(
@@ -61,7 +63,7 @@ class SettingsWindow:
             highlightthickness=0,
         )
         self._settings_scrollbar = ttk.Scrollbar(
-            self._scroll_host, orient="vertical", command=self._settings_canvas.yview
+            self._scroll_host, orient="vertical", command=self._on_settings_scrollbar
         )
         self._settings_canvas.configure(yscrollcommand=self._settings_scrollbar.set)
 
@@ -73,18 +75,23 @@ class SettingsWindow:
             (0, 0), window=self.content_frame, anchor="nw"
         )
 
-        self.content_frame.bind(
-            "<Configure>",
-            lambda _event: self._settings_canvas.configure(
+        def _content_configured(_event=None):
+            self._settings_canvas.configure(
                 scrollregion=self._settings_canvas.bbox("all")
-            ),
-        )
-        self._settings_canvas.bind(
-            "<Configure>",
-            lambda event: self._settings_canvas.itemconfigure(
+            )
+            self.win.after_idle(self._clamp_settings_scroll)
+
+        def _canvas_configured(event):
+            self._settings_canvas.itemconfigure(
                 self._content_window, width=event.width
-            ),
-        )
+            )
+            # Localized layout can become shorter than the viewport after a
+            # resize, Tk's Canvas allows yview_scroll() to move into negative
+            # space in that state, so just always snap the view back to the content... - Tim
+            self.win.after_idle(self._clamp_settings_scroll)
+
+        self.content_frame.bind("<Configure>", _content_configured)
+        self._settings_canvas.bind("<Configure>", _canvas_configured)
 
         def _wheel(event):
             if getattr(event, "num", None) == 4:
@@ -94,52 +101,77 @@ class SettingsWindow:
             else:
                 delta = -int(event.delta / 120) if event.delta else 0
             if delta:
-                self._settings_canvas.yview_scroll(delta, "units")
+                self._scroll_settings(delta)
 
         self.win.bind("<MouseWheel>", _wheel, add="+")
         self.win.bind("<Button-4>", _wheel, add="+")
         self.win.bind("<Button-5>", _wheel, add="+")
 
+    def _settings_content_needs_scroll(self):
+        """Return True only when the settings content exceeds the viewport..."""
+        bbox = self._settings_canvas.bbox("all")
+        if not bbox:
+            return False
+
+        content_height = max(0, bbox[3] - bbox[1])
+        viewport_height = max(1, self._settings_canvas.winfo_height())
+        return content_height > viewport_height
+
+    def _clamp_settings_scroll(self):
+        """Keep the canvas anchored to real content instead of blank space..."""
+        if not self._settings_content_needs_scroll():
+            self._settings_canvas.yview_moveto(0.0)
+            return
+
+        first, last = self._settings_canvas.yview()
+        if first <= 0.0:
+            self._settings_canvas.yview_moveto(0.0)
+        elif last >= 1.0:
+            self._settings_canvas.yview_moveto(1.0)
+
+    def _scroll_settings(self, delta):
+        """Scroll Settings without allowing Canvas overscroll..."""
+        if not self._settings_content_needs_scroll():
+            self._settings_canvas.yview_moveto(0.0)
+            return
+
+        self._settings_canvas.yview_scroll(delta, "units")
+        self._clamp_settings_scroll()
+
+    def _on_settings_scrollbar(self, *args):
+        """Apply scrollbar commands while preserving the same scroll bounds..."""
+        if not self._settings_content_needs_scroll():
+            self._settings_canvas.yview_moveto(0.0)
+            return
+
+        self._settings_canvas.yview(*args)
+        self._clamp_settings_scroll()
+
     def _position_dialog(self):
-        """Center Settings over its parent without changing the parent geometry..."""
+        """Size Settings from its localized content, then center it..."""
+        self.win.update_idletasks()
 
-        screen_width = self.win.winfo_screenwidth()
-        screen_height = self.win.winfo_screenheight()
-        width = min(760, max(640, screen_width - 40), screen_width)
-        height = min(790, max(520, screen_height - 80), screen_height)
+        content_width = self.content_frame.winfo_reqwidth()
+        scrollbar_width = self._settings_scrollbar.winfo_reqwidth()
+        requested_width = content_width + scrollbar_width + 8
 
-        # Make sure parent geometry is current before reading it...
-        try:
-            self.parent.update_idletasks()
-        except Exception:
-            pass
+        content_height = self.content_frame.winfo_reqheight()
+        save_height = getattr(self, "_save_button", self.win).winfo_reqheight()
+        requested_height = content_height + save_height + 36
 
-        try:
-            parent_visible = self.parent.state() != "withdrawn"
-        except Exception:
-            parent_visible = False
-
-        if parent_visible:
-            try:
-                parent_x = self.parent.winfo_rootx()
-                parent_y = self.parent.winfo_rooty()
-                parent_width = self.parent.winfo_width()
-                parent_height = self.parent.winfo_height()
-                x = parent_x + max(0, (parent_width - width) // 2)
-                y = parent_y + max(0, (parent_height - height) // 2)
-            except Exception:
-                parent_visible = False
-
-        if not parent_visible:
-            x = max(0, (screen_width - width) // 2)
-            y = max(0, (screen_height - height) // 2)
-
-        # Clamp to visible desktop so centering a large dialog over a
-        # partially off-screen parent can't push it farther off-screen... - Tim
-        x = max(0, min(x, max(0, screen_width - width)))
-        y = max(0, min(y, max(0, screen_height - height)))
-
-        self.win.geometry(f"{width}x{height}+{x}+{y}")
+        fit_window_to_content(
+            self.win,
+            self.parent,
+            min_width=640,
+            min_height=520,
+            preferred_width=760,
+            preferred_height=790,
+            requested_width=requested_width,
+            requested_height=requested_height,
+            screen_margin_x=40,
+            screen_margin_y=80,
+            set_minsize=True,
+        )
 
     def _apply_theme(self):
         theme_name = self.theme_service.normalize_theme_name(self.config.theme)
@@ -159,6 +191,25 @@ class SettingsWindow:
     def _build_ui(self):
         t = self.translation_service
         platform_is_linux = sys.platform.startswith("linux")
+
+        # Keep every settings row aligned without using a fixed character width that can clip translations... - Tim
+        row_label_texts = [
+            t.get("settings.game_install_dir"),
+            t.get("settings.mods_folder"),
+            t.get("settings.language"),
+            t.get("settings.custom_launch_options", "Custom Launch Options"),
+        ]
+        if platform_is_linux:
+            row_label_texts.extend([
+                t.get("settings.linux_steam_runtime_path"),
+                t.get("settings.linux_proton_path"),
+            ])
+
+        try:
+            body_font = tkfont.nametofont("MewtatorBody", root=self.win)
+            self._row_label_width_px = max(body_font.measure(text) for text in row_label_texts) + 14
+        except tk.TclError:
+            self._row_label_width_px = 180
         
         # Auto-Detect Game Install
         auto_detect_btn = ttk.Button(
@@ -166,7 +217,6 @@ class SettingsWindow:
             text=t.get("settings.auto_detect"),
             command=self._auto_detect,
             style="Primary.TButton",
-            width=25,
             cursor="hand2",
         )
         auto_detect_btn.pack(pady=10)
@@ -208,8 +258,12 @@ class SettingsWindow:
         # Language
         lang_row = ttk.Frame(self.content_frame)
         lang_row.pack(fill="x", padx=10, pady=5)
+        lang_row.columnconfigure(0, minsize=self._row_label_width_px)
+        lang_row.columnconfigure(1, weight=1)
         
-        Label(lang_row, text=t.get("settings.language"), width=20, anchor="w").pack(side="left")
+        Label(lang_row, text=t.get("settings.language"), anchor="w").grid(
+            row=0, column=0, sticky="w"
+        )
         
         from app.infrastructure.translation_repository import TranslationRepository
         available_langs = TranslationRepository().get_available_languages()
@@ -221,12 +275,12 @@ class SettingsWindow:
             textvariable=self.lang_var,
             values=available_langs,
             state="readonly",
-            width=25,
             height=15,
             cursor="hand2",
             style="Settings.Language.TCombobox",
         )
-        lang_menu.pack(side="left", padx=5)
+        fit_combobox_to_values(lang_menu, available_langs, min_chars=18)
+        lang_menu.grid(row=0, column=1, sticky="w", padx=5)
 
         def clear_language_text_selection(_event=None):
             self.win.after_idle(lang_menu.selection_clear)
@@ -425,15 +479,14 @@ class SettingsWindow:
         # End Linux launch options
 
         # Save Settings
-        save_btn = ttk.Button(
+        self._save_button = ttk.Button(
             self.win,
             text=t.get("settings.save", "Save Settings"),
             command=self._save_settings,
             style="Primary.TButton",
-            width=25,
             cursor="hand2",
         )
-        save_btn.pack(side="bottom", pady=(8, 12))
+        self._save_button.pack(side="bottom", pady=(8, 12))
         
         self.win.bind("<Return>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
         self.win.bind("<KP_Enter>", lambda e: self._save_settings() if e.widget not in [self.game_entry, self.mod_entry] else None)
@@ -464,11 +517,16 @@ class SettingsWindow:
         if show:
             row.pack(fill="x", padx=10, pady=5)
         
-        lbl = Label(row, text=label_text, width=20, anchor="w")
-        lbl.pack(side="left")
+        row.columnconfigure(0, minsize=self._row_label_width_px)
+        row.columnconfigure(1, weight=1)
+
+        lbl = Label(row, text=label_text, anchor="w")
+        lbl.grid(row=0, column=0, sticky="w")
         
-        entry = ttk.Entry(row, width=50, font="MewtatorBody")
-        entry.pack(side="left", fill="x", expand=True, padx=5)
+        # Entries expand with the window...
+        entry = ttk.Entry(row, width=32, font="MewtatorBody")
+        entry.grid(row=0, column=1, sticky="ew", padx=5)
+        
         if initial_text is not None:
             entry.insert(0, initial_text)
 
@@ -478,10 +536,9 @@ class SettingsWindow:
                 row,
                 text=self.translation_service.get("settings.browse"),
                 style="Compact.TButton",
-                width=11,
                 cursor="hand2",
             )
-            btn.pack(side="right", padx=2)
+            btn.grid(row=0, column=2, sticky="e", padx=2)
             if button_cfg is not None:
                 btn.config(**button_cfg)
 

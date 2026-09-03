@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from app.ui.components.rounded_button import RoundedButton
+from app.ui.layout_utils import fit_window_to_content
 
 class _ThemedDialogBase:
     """Shared stuff for launch/export windows..."""
@@ -68,27 +69,24 @@ class _ThemedDialogBase:
         return button
 
     def _show_centered(self, width: int, height: int, min_width: int = None, min_height: int = None):
-        if min_width is not None or min_height is not None:
-            self.win.minsize(min_width or width, min_height or height)
-
-        self.win.update_idletasks()
-
-        parent = self.parent
+        fit_window_to_content(
+            self.win,
+            self.parent,
+            min_width=min_width or 0,
+            min_height=min_height or 0,
+            preferred_width=width,
+            preferred_height=height,
+            screen_margin_x=40,
+            screen_margin_y=80,
+            set_minsize=True,
+        )
 
         try:
-            parent.update_idletasks()
-
-            if parent.winfo_viewable():
-                x = parent.winfo_rootx() + (parent.winfo_width() - width) // 2
-                y = parent.winfo_rooty() + (parent.winfo_height() - height) // 2
-                self.win.transient(parent)
-            else:
-                raise tk.TclError
+            if self.parent.winfo_viewable():
+                self.win.transient(self.parent)
         except tk.TclError:
-            x = (self.win.winfo_screenwidth() - width) // 2
-            y = (self.win.winfo_screenheight() - height) // 2
+            pass
 
-        self.win.geometry(f"{width}x{height}+{max(0, x)}+{max(0, y)}")
         self.win.deiconify()
         self.win.lift()
 

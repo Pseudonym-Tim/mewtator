@@ -374,7 +374,7 @@ class ThemeService:
             style.configure(
                 "Compact.TButton",
                 font=small_font,
-                padding=(8, 5),
+                padding=(10, 6),
                 foreground=colors["fg"],
             )
 

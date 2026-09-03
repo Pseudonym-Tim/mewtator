@@ -17,6 +17,10 @@ class MenuBarComponent:
         self.icons = IconSet(root)
         self.container = ttk.Frame(root, style="MenuBar.TFrame")
         self.container.pack(side="top", fill="x")
+        self.container.pack_propagate(False)
+        self._nav_buttons = []
+        self._nav_layout_job = None
+        self.container.bind("<Configure>", self._layout_nav_buttons, add="+")
         self.menubar = Menu(self.container, cursor="hand2")
         self._file_menu = None
         self._lang_menu = None
@@ -42,6 +46,63 @@ class MenuBarComponent:
         self._chevron_up = None
         self.root.bind("<Button-1>", self._on_root_click, add="+")
         self.root.bind("<Escape>", self._on_escape, add="+")
+
+    def _register_nav_button(self, button):
+        """Track a nav button,lay all nav controls out responsively..."""
+        if button not in self._nav_buttons:
+            self._nav_buttons.append(button)
+        self._schedule_nav_layout()
+
+    def _schedule_nav_layout(self):
+        if self._nav_layout_job is not None:
+            try:
+                self.root.after_cancel(self._nav_layout_job)
+            except tk.TclError:
+                pass
+        self._nav_layout_job = self.root.after_idle(self._layout_nav_buttons)
+
+    def _layout_nav_buttons(self, _event=None):
+        """Wrap localized nav buttons onto additional rows when needed..."""
+        self._nav_layout_job = None
+        if not self._nav_buttons:
+            self.container.configure(height=1)
+            return
+
+        try:
+            available_width = self.container.winfo_width()
+            if available_width <= 1:
+                available_width = self.root.winfo_width()
+            if available_width <= 1:
+                available_width = self.root.winfo_screenwidth()
+        except tk.TclError:
+            return
+
+        margin_x = 4
+        margin_y = 4
+        gap_x = 8
+        gap_y = 8
+        x = margin_x
+        y = margin_y
+        row_height = 0
+
+        for button in self._nav_buttons:
+            try:
+                button.update_idletasks()
+                width = max(1, button.winfo_reqwidth())
+                height = max(1, button.winfo_reqheight())
+            except tk.TclError:
+                continue
+
+            if x > margin_x and x + width + margin_x > available_width:
+                x = margin_x
+                y += row_height + gap_y
+                row_height = 0
+
+            button.place(x=x, y=y, width=width, height=height)
+            x += width + gap_x
+            row_height = max(row_height, height)
+
+        self.container.configure(height=y + row_height + margin_y)
 
     def _toggle_menu(self, button, menu):
         """Toggle a menu beneath its button and keep its arrow in sync..."""
@@ -260,7 +321,7 @@ class MenuBarComponent:
                 lambda: self._toggle_menu(self._file_button, self._file_menu),
                 dropdown=True,
             )
-            self._file_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._file_button)
         else:
             self._file_button.configure(
                 text=file_label,
@@ -294,7 +355,7 @@ class MenuBarComponent:
                 lambda: self._toggle_menu(self._lang_button, self._lang_menu),
                 dropdown=True,
             )
-            self._lang_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._lang_button)
         else:
             self._lang_button.configure(
                 text=language_label,
@@ -333,7 +394,7 @@ class MenuBarComponent:
                 lambda: self._toggle_menu(self._theme_button, self._theme_menu),
                 dropdown=True,
             )
-            self._theme_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._theme_button)
         else:
             self._theme_button.configure(
                 text=label,
@@ -352,7 +413,7 @@ class MenuBarComponent:
                 label,
                 lambda: self._invoke_menu_command(self._settings_command),
             )
-            self._settings_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._settings_button)
         else:
             self._settings_button.configure(
                 text=label,
@@ -377,7 +438,7 @@ class MenuBarComponent:
                 label,
                 lambda: self._invoke_menu_command(on_controls),
             )
-            self._controls_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._controls_button)
         else:
             self._controls_button.configure(
                 text=label,
@@ -395,7 +456,7 @@ class MenuBarComponent:
                 label,
                 lambda: self._invoke_menu_command(on_about),
             )
-            self._about_button.pack(side="left", padx=4, pady=4)
+            self._register_nav_button(self._about_button)
         else:
             self._about_button.configure(
                 text=label,
@@ -528,3 +589,4 @@ class MenuBarComponent:
                 cursor="hand2",
             )
         self._refresh_menu_indicators()
+        self._schedule_nav_layout()

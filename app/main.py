@@ -18,6 +18,7 @@ from app.core.services.theme_service import ThemeService
 from app.ui.controllers.main_controller import MainController
 from app.ui.windows.settings_window import SettingsWindow
 from app.utils.resource_utils import apply_app_icon
+from app.ui.layout_utils import fit_combobox_to_values, fit_window_to_content
 from app.utils.platform_utils import get_executable_dir
 from app.version import versioned_title
 
@@ -27,8 +28,8 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     from tkinter import ttk
     
     win = Toplevel(root)
+    win.withdraw()
     win.title(translation_service.get("window.dont_panic", "Don't Panic"))
-    win.geometry("440x260")
     win.resizable(False, False)
 
     if root.state() != "withdrawn":
@@ -70,11 +71,11 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
         textvariable=lang_var,
         values=available_langs,
         state="readonly",
-        width=30,
         height=15,
         cursor="hand2",
     )
 
+    fit_combobox_to_values(lang_menu, available_langs, min_chars=20)
     lang_menu.pack(pady=10)
     
     def confirm():
@@ -86,7 +87,6 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
         text=translation_service.get("settings.confirm", "Confirm"),
         command=confirm,
         style="Primary.TButton",
-        width=20,
         cursor="hand2",
     )
     
@@ -95,6 +95,17 @@ def show_language_selection_dialog(root, translation_service, theme_service, the
     win.bind("<Return>", lambda e: confirm())
     win.bind("<KP_Enter>", lambda e: confirm())
     
+    fit_window_to_content(
+        win,
+        root,
+        min_width=440,
+        min_height=260,
+        preferred_width=440,
+        preferred_height=260,
+        screen_margin_x=40,
+        screen_margin_y=80,
+    )
+
     lang_menu.focus_set()
     win.deiconify()
     win.lift()

@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from app.ui.components.rounded_button import RoundedButton
+from app.ui.layout_utils import fit_window_to_content
 
 class NotificationWindow:
     """Small notification..."""
@@ -113,10 +114,14 @@ class NotificationWindow:
             padx=(0, 10) if self.cancel_button is not None else 0,
         )
 
-        self.win.update_idletasks()
-        width = max(520, self.win.winfo_reqwidth())
-        height = self.win.winfo_reqheight()
-        self._center(width, height)
+        fit_window_to_content(
+            self.win,
+            self.parent,
+            min_width=520,
+            preferred_width=520,
+            screen_margin_x=40,
+            screen_margin_y=80,
+        )
 
         if parent.winfo_viewable():
             self.win.transient(parent)
